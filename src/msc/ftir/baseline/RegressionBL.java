@@ -21,6 +21,7 @@ import javax.swing.JOptionPane;
 import msc.ftir.main.InputData;
 import msc.ftir.main.Javaconnect;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.function.LineFunction2D;
@@ -304,7 +305,12 @@ public class RegressionBL {
         XYLineAndShapeRenderer xylineandshaperenderer = new XYLineAndShapeRenderer(true, false);
         xylineandshaperenderer.setSeriesPaint(0, Color.red);
         xyplot.setRenderer(2, xylineandshaperenderer);
-
+        
+      
+        
+        System.out.println(" Domain axis tick mark outside length = "+xyplot.getDomainAxis().getTickMarkOutsideLength());
+        System.out.println(" Domain axis tick mark inside length = "+xyplot.getDomainAxis().getTickMarkInsideLength());
+//                getDomainAxis.getTickUnit().getSize();
         //get query of avg_data table
         qdata_avg();
         

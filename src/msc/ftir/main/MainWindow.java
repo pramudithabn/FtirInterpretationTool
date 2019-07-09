@@ -53,7 +53,14 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import java.util.Properties;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+import msc.ftir.result.Predict;
 import org.jfree.chart.ChartFrame;
+import org.jfree.chart.ChartRenderingInfo;
+import org.jfree.chart.plot.PlotRenderingInfo;
 import org.jfree.chart.plot.ValueMarker;
 import org.jfree.ui.RectangleAnchor;
 import org.jfree.ui.TextAnchor;
@@ -85,6 +92,7 @@ public class MainWindow extends javax.swing.JFrame {
     private TriangularSmooth_Selection ts = null;
     private SavitzkyGolayFilter sgf = null, sg = null;
     private InterpolatedBL intpol = null;
+    private Predict pr = null;
 
     private RegressionBL bc = null;
     public static Boolean newInstance = false;
@@ -206,6 +214,10 @@ public class MainWindow extends javax.swing.JFrame {
         jLabel11 = new javax.swing.JLabel();
         h_slider = new javax.swing.JSlider();
         jLabel12 = new javax.swing.JLabel();
+        predictButton = new javax.swing.JButton();
+        tablePanel = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        dataTable = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
         threshText = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
@@ -214,9 +226,8 @@ public class MainWindow extends javax.swing.JFrame {
         Valleys = new javax.swing.JButton();
         jLabel7 = new javax.swing.JLabel();
         neighborSlider = new javax.swing.JSlider();
-        tablePanel = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        dataTable = new javax.swing.JTable();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        resultTable = new javax.swing.JTable();
         jPanel7 = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         filePathText = new javax.swing.JTextField();
@@ -263,7 +274,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         jPanel6.setLayout(new java.awt.BorderLayout());
 
-        specSplitPane.setDividerLocation(50);
+        specSplitPane.setDividerLocation(270);
         specSplitPane.setDividerSize(10);
         specSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         specSplitPane.setOneTouchExpandable(true);
@@ -325,7 +336,7 @@ public class MainWindow extends javax.swing.JFrame {
         );
         comPanelLayout.setVerticalGroup(
             comPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1146, Short.MAX_VALUE)
+            .addGap(0, 926, Short.MAX_VALUE)
         );
 
         specSplitPane.setRightComponent(comPanel);
@@ -505,7 +516,7 @@ public class MainWindow extends javax.swing.JFrame {
         cubicSplineCheckBox.setText("Cubic Spline");
 
         baselineButton.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        baselineButton.setText("Finish");
+        baselineButton.setText("Show");
         baselineButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 baselineButtonActionPerformed(evt);
@@ -540,7 +551,7 @@ public class MainWindow extends javax.swing.JFrame {
                             .addComponent(lineCheckBox)
                             .addComponent(cubicSplineCheckBox)
                             .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addGap(0, 146, Short.MAX_VALUE)
+                                .addGap(0, 149, Short.MAX_VALUE)
                                 .addComponent(baselineButton, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(nextButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)))))
@@ -611,22 +622,33 @@ public class MainWindow extends javax.swing.JFrame {
         jLabel12.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel12.setText("Noise");
 
+        predictButton.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        predictButton.setText("Finish");
+        predictButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                predictButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, 68, Short.MAX_VALUE)
-                        .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(threshSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(h_slider, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(noiseSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(predictButton, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, 68, Short.MAX_VALUE)
+                                .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(threshSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(h_slider, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(noiseSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(104, 104, 104))
         );
         jPanel4Layout.setVerticalGroup(
@@ -648,10 +670,45 @@ public class MainWindow extends javax.swing.JFrame {
                         .addComponent(jLabel11)
                         .addGap(19, 19, 19)
                         .addComponent(jLabel12)))
-                .addContainerGap(100, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 47, Short.MAX_VALUE)
+                .addComponent(predictButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20))
         );
 
-        settingsTabbedPane.addTab("Peak Bottoms", jPanel4);
+        settingsTabbedPane.addTab("Bands", jPanel4);
+
+        dataTable.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        dataTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {},
+                {},
+                {},
+                {}
+            },
+            new String [] {
+
+            }
+        ));
+        jScrollPane1.setViewportView(dataTable);
+
+        javax.swing.GroupLayout tablePanelLayout = new javax.swing.GroupLayout(tablePanel);
+        tablePanel.setLayout(tablePanelLayout);
+        tablePanelLayout.setHorizontalGroup(
+            tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(tablePanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 521, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        tablePanelLayout.setVerticalGroup(
+            tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(tablePanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        settingsTabbedPane.addTab("Data         ", tablePanel);
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 3, 12)); // NOI18N
         jLabel4.setText("Threshold");
@@ -748,53 +805,36 @@ public class MainWindow extends javax.swing.JFrame {
 
         settingsTabbedPane.addTab("Valleys    ", jPanel2);
 
-        dataTable.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        dataTable.setModel(new javax.swing.table.DefaultTableModel(
+        resultTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {},
-                {},
-                {},
-                {}
+
             },
             new String [] {
-
+                "Bond", "Functional Group"
             }
         ));
-        jScrollPane1.setViewportView(dataTable);
-
-        javax.swing.GroupLayout tablePanelLayout = new javax.swing.GroupLayout(tablePanel);
-        tablePanel.setLayout(tablePanelLayout);
-        tablePanelLayout.setHorizontalGroup(
-            tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(tablePanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 518, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        tablePanelLayout.setVerticalGroup(
-            tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(tablePanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
-        settingsTabbedPane.addTab("Data         ", tablePanel);
+        jScrollPane2.setViewportView(resultTable);
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
-                .addComponent(settingsTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 543, Short.MAX_VALUE)
-                .addContainerGap())
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 500, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addComponent(settingsTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 546, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 7, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(26, 26, 26)
                 .addComponent(settingsTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(964, Short.MAX_VALUE))
+                .addGap(40, 40, 40)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(676, Short.MAX_VALUE))
         );
 
         sectionSplitPane.setLeftComponent(jPanel5);
@@ -870,7 +910,7 @@ public class MainWindow extends javax.swing.JFrame {
         });
         jToolBar.add(clearButton);
 
-        jButton1.setText("BL eqn");
+        jButton1.setText("test");
         jButton1.setFocusable(false);
         jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -1338,26 +1378,22 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_thresholdSliderStateChanged
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        try {
+//        try {
+//
+//            System.out.println(" intpol.getY()  " + intpol.getY());
+//            //select only zero transmittance data
+//            String query1 = "select WAVENUMBER, TRANSMITTANCE from baseline_data where transmittance = " + intpol.getY();
+//            JDBCXYDataset dataset = new JDBCXYDataset(conn, query1);
+//
+//            RegressionBL bc1 = new RegressionBL();
+//            bc1.drawRegressionLine(duelchart, dataset, lowerBoundX, upperBoundX);
+////            System.out.println("Flat Line   y = " + bc1.getM1() + "*x + " + bc1.getC1());
+//
+//        } catch (Exception e) {
+//            System.err.println(e);
+//        }
 
-//            double Y = 0;
-//            if (intpol.getY() == 0) {
-//                Y = bc.getY();
-//            } else if (bc.getY() == 0) {
-//                Y = intpol.getY();
-//            }
-            System.out.println(" intpol.getY()  " + intpol.getY());
-            //select only zero transmittance data
-            String query1 = "select WAVENUMBER, TRANSMITTANCE from baseline_data where transmittance = " + intpol.getY();
-            JDBCXYDataset dataset = new JDBCXYDataset(conn, query1);
-
-            RegressionBL bc1 = new RegressionBL();
-            bc1.drawRegressionLine(duelchart, dataset, lowerBoundX, upperBoundX);
-//            System.out.println("Flat Line   y = " + bc1.getM1() + "*x + " + bc1.getC1());
-
-        } catch (Exception e) {
-            System.err.println(e);
-        }
+        v2.cal_d_w_lenghts();
 
 //        combined2Charts(createDataset(bc.getDifferencewithLine(), "Baseline Corrected"), createSmoothedDataset(), comPanel);
 
@@ -1387,59 +1423,12 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_baselineMethodComboActionPerformed
 
     private void baselineButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_baselineButtonActionPerformed
-        specTabbedPane.setSelectedIndex(2);
-        try {
-            if (baselineMethodCombo.getSelectedItem().toString().equalsIgnoreCase("Select...")) {
-                JOptionPane.showMessageDialog(null, "Invalid point connecting method!", "Error!", JOptionPane.WARNING_MESSAGE);
-            }
-            if (baselineMethodCombo.getSelectedItem().toString().equalsIgnoreCase("Regression")) {
-                bc = new RegressionBL();
-                create3charts(createSmoothedDataset(), createValleyDataset(v1.getPeaktops()), baseline_panel);
-
-                if (lineCheckBox.isSelected()) {
-
-                    bc.drawRegressionLine(charts3, createValleyDataset(v1.getPeaktops()), lowerBoundX, upperBoundX);
-                }
-                if (splineCheckBox.isSelected()) {
-
-                    bc.drawPolynomialFit(charts3, createValleyDataset(v1.getPeaktops()), lowerBoundX, upperBoundX);
-                }
-                combined2Charts(createDataset(bc.getLinePoints(), "Interpolated data"), createSmoothedDataset(), baseline_panel);
-                //result
-                combined2Charts(createDataset(bc.getDifferencewithLine(), "Baseline Corrected"), createSmoothedDataset(), comPanel);
-                showValleys("baseline_data");
-            }
-            if (baselineMethodCombo.getSelectedItem().toString().equalsIgnoreCase("Interpolation")) {
-                SortedMap<BigDecimal, BigDecimal> mapi = null;
-                InterpolatedBL intpol = new InterpolatedBL();
-
-                if (lineCheckBox.isSelected()) {
-                    mapi = intpol.linearInterp(createValleyDataset(v1.getPeaktops()), v1.getCandidates().size());
-                }
-
-                if (cubicSplineCheckBox.isSelected()) {
-                    mapi = intpol.cubicInterp(createValleyDataset(v1.getPeaktops()), v1.getCandidates().size());
-                }
-
-                combined2Charts(createDataset(mapi, "Interpolated data"), createSmoothedDataset(), baseline_panel);
-                //result
-                combined2Charts(createDataset(intpol.getDifferencewithLine(), "Baseline Corrected"), createSmoothedDataset(), comPanel);
-                showValleys("baseline_data");
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-//        baselineButton.addActionListener(new ActionListener() {
-//            public void actionPerformed(ActionEvent e) {
-//                nextButton2.setEnabled(true);
-//            }
-//        });
+        setBaseline();
     }//GEN-LAST:event_baselineButtonActionPerformed
 
     private void smoothningSliderMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_smoothningSliderMouseReleased
         specTabbedPane.setSelectedIndex(1);
-        
+
         sliderCurrentValue = smoothningSlider.getValue();
 
         if (sliderCurrentValue < sliderPreviousValue) {
@@ -1557,12 +1546,21 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_nextButton1ActionPerformed
 
     private void nextButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButton2ActionPerformed
+        setBaseline();
+
         if (bltab) {
             settingsTabbedPane.setSelectedIndex(2);
         } else {
             JOptionPane.showMessageDialog(null, "Error!", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_nextButton2ActionPerformed
+
+    private void predictButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_predictButtonActionPerformed
+        pr = new Predict();
+        pr.getResults();
+
+        updateResult_table();
+    }//GEN-LAST:event_predictButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -2158,7 +2156,7 @@ public class MainWindow extends javax.swing.JFrame {
 
             pst3 = conn.prepareStatement(sql3);
             pst3.execute();
-            
+
             pst4 = conn.prepareStatement(sql4);
             pst4.execute();
 
@@ -2383,6 +2381,10 @@ public class MainWindow extends javax.swing.JFrame {
         panel.validate();
         panel.setPreferredSize(new Dimension(654, 350));
         panel.setVisible(true);
+
+//        ChartRenderingInfo chartInfo = new ChartRenderingInfo();
+//        chart.createBufferedImage(chartConfig.width, chartConfig.height, chartInfo);
+//        PlotRenderingInfo plotInfo = chartInfo.getPlotInfo();
     }
 
     //three charts ftir and smoothed one together
@@ -2792,6 +2794,7 @@ public class MainWindow extends javax.swing.JFrame {
             v1.findCandidateSet();
             v1.discardBelowThresh(threshCurrent, lowerBoundT, upperBoundT);
             createDuel(createValleyDataset(v1.getCandidates()), createBaselineDataset(), comPanel);
+            updateCandidateTable(v1.getCandidates());
 
         } catch (SQLException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
@@ -2818,6 +2821,7 @@ public class MainWindow extends javax.swing.JFrame {
             v2.discardBelowThresh(threshCurrent, lowerBoundT, upperBoundT);
 
             createDuel(createValleyDataset(v2.getCandidates()), createBaselineDataset(), comPanel);
+            updateCandidateTable(v2.getCandidates());
 
         } catch (SQLException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
@@ -2894,6 +2898,26 @@ public class MainWindow extends javax.swing.JFrame {
         }//end
     }
 
+    //m,c of the baseline equation
+    public static double c = 0;
+    public static double m = 0;
+
+    public static double getC() {
+        return c;
+    }
+
+    public static void setC(double c) {
+        MainWindow.c = c;
+    }
+
+    public static double getM() {
+        return m;
+    }
+
+    public static void setM(double m) {
+        MainWindow.m = m;
+    }
+
     private void getBaselineEquation() {
         try {
 
@@ -2903,15 +2927,19 @@ public class MainWindow extends javax.swing.JFrame {
             JDBCXYDataset dataset = new JDBCXYDataset(conn, query1);
 
             RegressionBL bc1 = new RegressionBL();
+            System.out.println("===== Baseline Equation =====");
             bc1.drawRegressionLine(duelchart, dataset, lowerBoundX, upperBoundX);
-            double c = bc1.getC1();
-//            double c = bc1.getC1();
+            System.out.println("=============================");
+            c = bc1.getC1();
+            m = bc1.getM1();
+            System.out.println(m + "," + c);
 
         } catch (Exception e) {
             System.err.println(e);
         }
     }
 
+    //calculate perpendicular distance from peak point to the line  
     private void ragneMarker() {
         ValueMarker marker = null;
         plot = duelchart.getXYPlot();
@@ -2926,6 +2954,157 @@ public class MainWindow extends javax.swing.JFrame {
         marker.setLabelTextAnchor(TextAnchor.TOP_CENTER);
         marker.setPaint(Color.YELLOW);
         plot.addRangeMarker(marker);
+    }
+
+    public void setBaseline() {
+        bltab = true;
+        specTabbedPane.setSelectedIndex(2);
+        try {
+            if (baselineMethodCombo.getSelectedItem().toString().equalsIgnoreCase("Select...")) {
+                JOptionPane.showMessageDialog(null, "Invalid point connecting method!", "Error!", JOptionPane.WARNING_MESSAGE);
+            }
+            if (baselineMethodCombo.getSelectedItem().toString().equalsIgnoreCase("Regression")) {
+                bc = new RegressionBL();
+                create3charts(createSmoothedDataset(), createValleyDataset(v1.getPeaktops()), baseline_panel);
+
+                if (lineCheckBox.isSelected()) {
+
+                    bc.drawRegressionLine(charts3, createValleyDataset(v1.getPeaktops()), lowerBoundX, upperBoundX);
+                }
+                if (splineCheckBox.isSelected()) {
+
+                    bc.drawPolynomialFit(charts3, createValleyDataset(v1.getPeaktops()), lowerBoundX, upperBoundX);
+                }
+                combined2Charts(createDataset(bc.getLinePoints(), "Interpolated data"), createSmoothedDataset(), baseline_panel);
+                //result
+                combined2Charts(createDataset(bc.getDifferencewithLine(), "Baseline Corrected"), createSmoothedDataset(), comPanel);
+                showValleys("baseline_data");
+            }
+            if (baselineMethodCombo.getSelectedItem().toString().equalsIgnoreCase("Interpolation")) {
+                SortedMap<BigDecimal, BigDecimal> mapi = null;
+                InterpolatedBL intpol = new InterpolatedBL();
+
+                if (lineCheckBox.isSelected()) {
+                    mapi = intpol.linearInterp(createValleyDataset(v1.getPeaktops()), v1.getCandidates().size());
+                }
+
+                if (cubicSplineCheckBox.isSelected()) {
+                    mapi = intpol.cubicInterp(createValleyDataset(v1.getPeaktops()), v1.getCandidates().size());
+                }
+
+                combined2Charts(createDataset(mapi, "Interpolated data"), createSmoothedDataset(), baseline_panel);
+                //result
+                combined2Charts(createDataset(intpol.getDifferencewithLine(), "Baseline Corrected"), createSmoothedDataset(), comPanel);
+                showValleys("baseline_data");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+//        baselineButton.addActionListener(new ActionListener() {
+//            public void actionPerformed(ActionEvent e) {
+//                nextButton2.setEnabled(true);
+//            }
+//        });
+    }
+
+    public void updateCandidateTable(NavigableMap<BigDecimal, BigDecimal> list) {
+        clearCandidateTable();
+        String fullarrays = "";
+        for (BigDecimal wavelength : list.keySet()) {
+
+            BigDecimal key = wavelength;
+            BigDecimal value = list.get(wavelength);
+            String twoarrays = "(" + key + " , " + value + ")";
+            fullarrays = fullarrays + twoarrays + ",";
+
+        }
+        fullarrays = fullarrays.substring(0, fullarrays.length() - 1);
+
+        String sql = "INSERT INTO candidates (wavenumber,transmittance)  VALUES " + fullarrays;
+        ResultSet rs = null;
+        PreparedStatement pst = null;
+
+        try {
+            pst = conn.prepareStatement(sql);
+            pst.executeUpdate();
+
+        } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+            try {
+                rs.close();
+                pst.close();
+            } catch (Exception e) {
+
+            }
+        }
+
+    }
+
+    private void clearCandidateTable() {
+
+        String sql1 = "delete from candidates";
+        try {
+            pst = conn.prepareStatement(sql1);
+            pst.executeUpdate();
+
+        } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+            try {
+                pst.close();
+
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }
+
+    }
+
+    private void updateResult_table() {
+
+        DefaultTableModel model = (DefaultTableModel) resultTable.getModel();
+        int n = pr.getFinalset().size();
+        String[][] row = new String[n][2];
+
+        JTableHeader header = resultTable.getTableHeader();
+        TableColumnModel colMod = header.getColumnModel();
+        TableColumn tabCol = colMod.getColumn(0);
+        tabCol.setHeaderValue("Bond");
+
+        TableColumn tabCol2 = colMod.getColumn(1);
+        tabCol2.setHeaderValue("Functional Group");
+        header.repaint();
+
+        for (String bond : pr.getFinalset().keySet()) {
+
+            String key = bond;
+            String func_grp = pr.getFinalset().get(bond);
+            Object[] objs = {key, func_grp};
+
+            model.addRow(objs);
+
+        }
+
+        try {
+            String sql = "select ID AS \"Index\", Bond AS 'Bond' , TRANSMITTANCE AS 'Transmittance' from input_data";
+
+            pst = conn.prepareStatement(sql);
+            rs = pst.executeQuery();
+            dataTable.setModel(DbUtils.resultSetToTableModel(rs));
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        } finally {
+            try {
+                rs.close();
+                pst.close();
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, e);
+            }
+        }
+
     }
 
 
@@ -2971,6 +3150,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JToolBar jToolBar;
     private javax.swing.JCheckBox lineCheckBox;
@@ -2986,8 +3166,10 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JMenu optionsMenu;
     private javax.swing.JButton peakButton;
     private javax.swing.ButtonGroup pointsbuttonGroup;
+    private javax.swing.JButton predictButton;
     private javax.swing.JMenuItem printMenuItem;
     private javax.swing.JButton resetSmoothButton;
+    public javax.swing.JTable resultTable;
     private javax.swing.JPanel resultsPanel;
     public javax.swing.JPanel rsPanel;
     private javax.swing.JMenuItem saveMenuItem;

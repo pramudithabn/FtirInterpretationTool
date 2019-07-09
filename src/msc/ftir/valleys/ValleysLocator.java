@@ -5,6 +5,7 @@
  */
 package msc.ftir.valleys;
 
+import static java.lang.Double.compare;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,6 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.NavigableMap;
 import java.util.SortedMap;
@@ -21,6 +23,8 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import msc.ftir.main.InputData;
 import msc.ftir.main.Javaconnect;
+import msc.ftir.main.MainWindow;
+import org.jfree.data.jdbc.JDBCXYDataset;
 import org.jfree.data.statistics.Regression;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
@@ -61,15 +65,18 @@ public class ValleysLocator {
 
     //original data map
     private NavigableMap<BigDecimal, BigDecimal> allPoints = new TreeMap<BigDecimal, BigDecimal>();
-    
+
     //baseline data map
     private NavigableMap<BigDecimal, BigDecimal> bcPoints = new TreeMap<BigDecimal, BigDecimal>();
-    
+
     //candidate valley set 
     private NavigableMap<BigDecimal, BigDecimal> candidates = new TreeMap<BigDecimal, BigDecimal>();
 
     //peak tops set 
     private NavigableMap<BigDecimal, BigDecimal> peaktops = new TreeMap<BigDecimal, BigDecimal>();
+
+    //baseline corrcted point set
+    private NavigableMap<BigDecimal, BigDecimal> bl_points = new TreeMap<BigDecimal, BigDecimal>();
 
     public NavigableMap<BigDecimal, BigDecimal> getPeaktops() {
         return peaktops;
@@ -106,7 +113,7 @@ public class ValleysLocator {
 
     public ArrayList<InputData> qdata(String tablename) {
 
-        String sql = "select * from "+tablename;
+        String sql = "select * from " + tablename;
         ResultSet rs = null;
         PreparedStatement pst = null;
         allPoints.clear();
@@ -138,7 +145,7 @@ public class ValleysLocator {
         return smoothedPointList;
 
     }
-    
+
     public ArrayList<InputData> qBLdata() {
 
         String sql = "select * from baseline_data";
@@ -171,12 +178,10 @@ public class ValleysLocator {
         }
 
         listSize = baselineCorrectedPointList.size();
-        System.out.println("list size " + listSize);
+//        System.out.println("list size " + listSize);
         return baselineCorrectedPointList;
 
     }
-
-
 
     //1. 1st order derivatives    
     public void cal_1storder_derivative(ArrayList<InputData> list) {
@@ -219,8 +224,7 @@ public class ValleysLocator {
 
         firstOrderDerivatives.put(list.get(listSize - 1).getWavenumber(), result);
 
-        System.out.println("FOD " + firstOrderDerivatives.size());
-
+//        System.out.println("FOD " + firstOrderDerivatives.size());
     }
 
     //2nd order derivatives
@@ -279,8 +283,7 @@ public class ValleysLocator {
 //
 //            System.out.println(key + " , " + fod + " , " + sod);
 //        }
-        System.out.println("SOD " + secondOrderDerivatives.size());
-
+//        System.out.println("SOD " + secondOrderDerivatives.size());
     }
 
     //3. create a candidate set
@@ -330,7 +333,6 @@ public class ValleysLocator {
         double threshold = ((upperT - lowerB) / 100) * (100 - n);
 
 //        System.out.println("Threshold old " + threshold);
-
         //adjust the new value to existing noiseLevel
         if (lowerB < 0) {
             threshold = threshold + lowerB;
@@ -352,8 +354,7 @@ public class ValleysLocator {
         candidates.clear();
         candidates = temp;
 
-        System.out.println("New size " + candidates.size());
-
+//        System.out.println("New size " + candidates.size());
         //print all
 /*        for (BigDecimal name : candidates.keySet()) {
 
@@ -435,7 +436,7 @@ public class ValleysLocator {
 
         candidates.clear();
         candidates = temp;
-        System.out.println("After noise removal " + candidates.size());
+//        System.out.println("After noise removal " + candidates.size());
 
 //        System.out.println(candidates.size()+"     "+nextDiff.size()+"   "+prevDiff.size());
     }
@@ -450,7 +451,7 @@ public class ValleysLocator {
 
         valleys = getCandidates();
         peaks = peakTopSet();
-        System.out.println("sizes " + peaks.size() + "  " + valleys.size());
+//        System.out.println("sizes " + peaks.size() + "  " + valleys.size());
 
         for (Entry<BigDecimal, BigDecimal> entry : valleys.entrySet()) {
             //find lower Peak > wavelength of last Vi
@@ -1274,7 +1275,7 @@ public class ValleysLocator {
 //        }
         return peaktops;
     }
-    
+
     private XYDataset createDataset(NavigableMap<BigDecimal, BigDecimal> pointList) {
         final XYSeries valleyPoints = new XYSeries("Valley Points");
 
@@ -1288,6 +1289,132 @@ public class ValleysLocator {
         final XYSeriesCollection dataset = new XYSeriesCollection();
         dataset.addSeries(valleyPoints);
         return dataset;
+    }
+
+    public void cal_d_w_lenghts() {
+
+        System.out.println("Candidate point list size ===== " + candidates.size());
+        //1. get m,c of baseline equation
+        double a = MainWindow.getM();
+        double b = -1;
+        double c = MainWindow.getC();
+        double x1 = 0, x2 = 0;
+        BigDecimal X=null;
+        double d = 0, w=0;
+        String type="";
+        //4.query baseline corrected data from the baseline_data table
+        String sql = "select * from baseline_data";
+        ResultSet rs = null;
+        PreparedStatement pst = null;
+        bl_points.clear();
+
+        try {
+            pst = conn.prepareStatement(sql);
+            rs = pst.executeQuery();
+            InputData bl;
+            while (rs.next()) {
+                bl = new InputData(rs.getInt("ID"), rs.getBigDecimal("WAVENUMBER"), rs.getBigDecimal("TRANSMITTANCE"));
+                bl_points.put(rs.getBigDecimal("WAVENUMBER"), rs.getBigDecimal("TRANSMITTANCE"));
+
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Javaconnect.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                rs.close();
+                pst.close();
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, e);
+            }
+        }
+
+//            Map<String, String> treemap =  new TreeMap<String, String>(Collections.reverseOrder());
+        //2. get candidate point list
+        for (BigDecimal wavelength : candidates.keySet()) {
+
+            X = wavelength;
+            System.out.println("X = " + X);
+            double x = wavelength.doubleValue();
+            double y = candidates.get(wavelength).doubleValue();
+
+            //3. perpendicular length to point from the line ---> d vertical
+            //|ax + by + c| / sqrt(a^2 + b^2)
+            d = (a * x + b * y + c) / (Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2)));
+//            System.out.println("d------  " + d);
+            NavigableMap<BigDecimal, BigDecimal> headmap = bl_points.headMap(X, false).descendingMap();
+            NavigableMap<BigDecimal, BigDecimal> tailmap = bl_points.tailMap(X, false);
+
+            //finding cutting peak of left side
+            for (BigDecimal wlength : headmap.keySet()) {
+                double x0 = wlength.doubleValue();
+                double y0 = headmap.get(wlength).doubleValue();
+                double l = a * x0 + c;
+                double r = y0;
+                final double THRESHOLD = 0.000001;
+
+                //Threshold based floating point comparison
+                if (Math.abs(l - r) < THRESHOLD) {
+
+//                    System.out.println("x2 ="+x0);
+                    x2 = x0;
+                    break;
+
+                }
+
+            }
+            //finding cutting peak of right side 
+            for (BigDecimal wlength : tailmap.keySet()) {
+                double x0 = wlength.doubleValue();
+                double y0 = tailmap.get(wlength).doubleValue();
+                double l = a * x0 + c;
+                double r = y0;
+                final double THRESHOLD = 0.000001;
+
+                //Threshold based floating point comparison
+                if (Math.abs(l - r) < THRESHOLD) {
+
+//                    System.out.println("x1 ="+x0);
+                    x1 = x0;
+                    break;
+
+                }
+
+            }
+
+            w = Math.abs(x1 - x2);
+//            System.out.println("w------  " + w);
+
+            if(d>w){
+                type= "sharp";
+            }else if(w>d && X.doubleValue()>3000){
+                type ="broad";
+            }
+            
+            //empty table
+            String sql1 = "INSERT INTO `band`(`WAVENUMBER`, `D`, `W`, `TYPE`) VALUES (?,?,?,?)";
+            ResultSet rs1 = null;
+            PreparedStatement pst1 = null;
+
+            try {
+                pst1 = conn.prepareStatement(sql1);
+                pst1.setBigDecimal(1, X);
+                pst1.setBigDecimal(2, BigDecimal.valueOf(d));
+                pst1.setBigDecimal(3, BigDecimal.valueOf(w));
+                pst1.setString(4, type);
+                pst1.execute();
+
+            } catch (Exception e) {
+                System.out.println(e);
+            } finally {
+                try {
+                    pst1.close();
+                } catch (Exception e) {
+
+                }
+            }
+
+        }
+
     }
 
 }
