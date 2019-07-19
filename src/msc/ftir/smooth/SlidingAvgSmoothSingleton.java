@@ -24,7 +24,7 @@ import javax.swing.JOptionPane;
  *
  * @author Pramuditha Buddhini
  */
-public class SlidingAvgSmooth implements SlidingWindow{
+public class SlidingAvgSmoothSingleton implements SlidingWindow{
 
     private Connection conn = null;
     private PreparedStatement pst = null;
@@ -34,9 +34,9 @@ public class SlidingAvgSmooth implements SlidingWindow{
     private NavigableMap<BigDecimal, BigDecimal> originalPointList = new TreeMap<BigDecimal, BigDecimal>();
     private SortedMap<BigDecimal, BigDecimal> smoothedPointList = new TreeMap<BigDecimal, BigDecimal>();
     public static int count = 0;
-    private static volatile SlidingAvgSmooth instance;
+    private static volatile SlidingAvgSmoothSingleton instance;
 
-    public SlidingAvgSmooth() {
+    public SlidingAvgSmoothSingleton() {
         conn = Javaconnect.ConnecrDb();
 
         qdata();
@@ -44,6 +44,9 @@ public class SlidingAvgSmooth implements SlidingWindow{
 
     }
 
+//    static {
+//        instance = new SlidingAvgSmoothSingleton();
+//    }
 
     public void reset() {
         instance = null;
@@ -54,7 +57,10 @@ public class SlidingAvgSmooth implements SlidingWindow{
     
    
 
- 
+    public static SlidingAvgSmoothSingleton getInstance() {
+        instance = new SlidingAvgSmoothSingleton();
+        return instance;
+    }
 
     public ArrayList<InputData> qdata() {
 

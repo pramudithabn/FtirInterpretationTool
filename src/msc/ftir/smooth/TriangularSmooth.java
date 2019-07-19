@@ -18,7 +18,7 @@ import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import static msc.ftir.smooth.SlidingAvgSmooth.count;
+import static msc.ftir.smooth.SlidingAvgSmoothSingleton.count;
 
 /**
  *
@@ -67,11 +67,7 @@ public class TriangularSmooth implements SlidingWindow {
         }
     }
 
-    public static TriangularSmooth getInstance() {
-        instance = new TriangularSmooth();
-        return instance;
-    }
-
+  
     public static void main(String[] args) {
         TriangularSmooth nw = new TriangularSmooth();
 

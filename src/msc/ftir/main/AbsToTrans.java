@@ -18,36 +18,35 @@ import msc.ftir.util.FileType;
  *
  * @author Pramuditha Buddhini
  */
-public class TransToAbs {
+public class AbsToTrans {
 
     Connection conn = null;
     PreparedStatement pst = null;
     ResultSet rs = null;
     private FileType fileType;
-    private ArrayList<BigDecimal> transmittance = new ArrayList<BigDecimal>(); // store them in an arraylist
+    private ArrayList<BigDecimal> absorbance = new ArrayList<BigDecimal>(); // store them in an arraylist
     private ArrayList<BigDecimal> wavenumber = new ArrayList<BigDecimal>();
-    private ArrayList<BigDecimal> absorbance = new ArrayList<BigDecimal>();
+    private ArrayList<BigDecimal> transmittance = new ArrayList<BigDecimal>();
     int size;
 
-    public TransToAbs() {
+    public AbsToTrans() {
         conn = Javaconnect.ConnecrDb();
         convert();
         updateTable();
-        
 
     }
 
     public void convert() {
 
-        String query1 = "select * from input_data"; // get all the id's from the table 
+        String query1 = "select * from abs_data"; // get all the id's from the table 
 
         try {
             PreparedStatement stmnt = conn.prepareStatement(query1);
             ResultSet rs = stmnt.executeQuery();
             while (rs.next()) {
                 wavenumber.add(rs.getBigDecimal("Wavenumber"));
-                transmittance.add(rs.getBigDecimal("Transmittance"));
-                size = transmittance.size();
+                absorbance.add(rs.getBigDecimal("Transmittance"));
+                size = absorbance.size();
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -59,31 +58,50 @@ public class TransToAbs {
 
             }
         }
+        //A = 2 - log T
+        //T = 100*10^(-A)
 
         for (int i = 0; i < size; i++) {
-            double a = transmittance.get(i).doubleValue();
-            double aa = Double.valueOf(2) - Math.log10(a);
-            DecimalFormat df = new DecimalFormat(".########");
-            System.out.println(df.format(aa));
-            BigDecimal abs = new BigDecimal(aa);
-            BigDecimal a2 = abs.setScale(8, RoundingMode.HALF_UP);
+
+            double w = wavenumber.get(i).doubleValue();
+
+            if (w >= 400 && w <= 4000) { //skip values outside 400-4000 range
+                double a = absorbance.get(i).doubleValue();
+                System.out.println(a);
+                double t = 100 * Math.pow(10, -a);
+//            double aa = Double.valueOf(2) - Math.log10(a);
+                DecimalFormat df = new DecimalFormat(".########");
+                System.out.println(df.format(t));
+                BigDecimal trans = new BigDecimal(t);
+                BigDecimal a2 = trans.setScale(8, RoundingMode.HALF_UP);
+                System.out.println(a2);
 //            BigDecimal bd = abs.setScale(8, RoundingMode.HALF_UP);
-  
-            absorbance.add(a2);
+
+                transmittance.add(a2);
+
+            }
+
         }
     }
 
     public void updateTable() {
         clearTable();
         String fullarrays = "";
+        int size = transmittance.size();
         for (int i = 0; i < size; i++) {
-            String twoarrays = "(" + wavenumber.get(i) + " , " + absorbance.get(i) + ")";
-            fullarrays = fullarrays + twoarrays + ",";
+
+            double w = wavenumber.get(i).doubleValue();
+
+            if (w >= 400 && w <= 4000) {
+                String twoarrays = "(" + wavenumber.get(i) + " , " + transmittance.get(i) + ")";
+                fullarrays = fullarrays + twoarrays + ",";
+            }
+
         }
         fullarrays = fullarrays.substring(0, fullarrays.length() - 1);
 
-        String sql = "INSERT INTO input_data (WAVENUMBER,TRANSMITTANCE)  VALUES " + fullarrays ;
-        System.out.println(sql);
+        String sql = "INSERT INTO input_data (WAVENUMBER,TRANSMITTANCE)  VALUES " + fullarrays;
+//        System.out.println(sql);
 
         try {
             pst = conn.prepareStatement(sql);
@@ -101,7 +119,7 @@ public class TransToAbs {
         }
 
     }
-    
+
     public void clearTable() {
 
         String sql1 = "delete from input_data";

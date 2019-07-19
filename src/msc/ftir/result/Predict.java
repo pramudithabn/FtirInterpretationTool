@@ -6,11 +6,13 @@
 package msc.ftir.result;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 import java.util.logging.Level;
@@ -35,30 +37,27 @@ public class Predict {
     private InputData d;
     public static ArrayList<InputData> valleyList = new ArrayList<InputData>();
     //results
-    public NavigableMap<String, String> finalset = new TreeMap<String, String>();
 
-    public NavigableMap<String, String> getFinalset() {
-        return finalset;
-    }
-    
+    public ArrayList<Result> resultset = new ArrayList<Result>();
+
     public static void main(String[] args) {
         Predict p = new Predict();
         p.getResults();
     }
-    
+
     public Predict() {
         conn = Javaconnect.ConnecrDb();
-       getCandidates();
+        getCandidates();
 
     }
 
     public void getCandidates() {
-        
+
         String sql = "SELECT * FROM `candidates`";
         valleyList.clear();
         ResultSet rs = null;
         PreparedStatement pst = null;
-        
+
         try {
             pst = conn.prepareStatement(sql);
             rs = pst.executeQuery();
@@ -81,35 +80,40 @@ public class Predict {
     }
 
     public void getResults() {
-        finalset.clear();
+        resultset.clear();
         for (int r = 0; r < listSize; r++) {
 
             f = valleyList.get(r).getWavenumber();
 
-            String sql = "Select * from bonds where " + f + "  <= start_frq AND " + f + ">= end_frq";
+            if (f.doubleValue() >= 1000) { //exclude fingerprint region
+                String sql = "Select * from bonds where " + f + "  <= start_frq AND " + f + ">= end_frq";
 //            bond, functional_group
-            try {
-                pst = conn.prepareStatement(sql);
-                rs = pst.executeQuery();
-
-                while (rs.next()) {
-//                    System.out.println(rs.getString("BOND")+" , "+rs.getString("FUNCTIONAL_GROUP"));
-
-                    finalset.put(rs.getString("BOND"), rs.getString("FUNCTIONAL_GROUP"));
-                   
-//                    MainWindow.resultTable.setModel(DbUtils.resultSetToTableModel(rs));
-
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(Javaconnect.class.getName()).log(Level.SEVERE, null, ex);
-            } finally {
                 try {
-                    rs.close();
-                    pst.close();
-                } catch (Exception e) {
-                    System.err.print(e);
-//                    JOptionPane.showMessageDialog(null, e);
+                    pst = conn.prepareStatement(sql);
+                    rs = pst.executeQuery();
+                    Result rst;
+
+                    while (rs.next()) {
+
+
+                        rst = new Result(f, rs.getString("BOND"), rs.getString("FUNCTIONAL_GROUP"));
+                        resultset.add(rst);
+
+
+                    }
+                } catch (SQLException ex) {
+                    System.err.println(ex);
+                    Logger.getLogger(Javaconnect.class.getName()).log(Level.SEVERE, null, ex);
+                } finally {
+                    try {
+                        rs.close();
+                        pst.close();
+                    } catch (Exception e) {
+                        System.err.print(e);
+
+                    }
                 }
+
             }
 
         }
@@ -117,8 +121,59 @@ public class Predict {
     }
 
 //     createDuel(createValleyDataset(v2.getCandidates()), createBaselineDataset(), comPanel);
-    
-   
+    public void updateResultsTable() {
 
+        clearTable();
+        String fullarrays = "";
+
+        for (int i = 0; i < resultset.size(); i++) {
+
+            BigDecimal w = resultset.get(i).getWavenumber();
+            String bond = resultset.get(i).getBond();
+            String fngrp = resultset.get(i).getFunctional_group();
+
+            String twoarrays = "(" + w + " ,\" " + bond + "\" , \"" + fngrp + "\")";
+            fullarrays = fullarrays + twoarrays + ",";
+        }
+
+        fullarrays = fullarrays.substring(0, fullarrays.length() - 1);
+
+        String sql = "INSERT INTO result ( WAVENUMBER,BOND, FUNCTIONAL_GROUP )  VALUES " + fullarrays;
+        ResultSet rs = null;
+        PreparedStatement pst = null;
+
+        try {
+            pst = conn.prepareStatement(sql);
+            pst.executeUpdate();
+
+        } catch (Exception e) {
+            System.err.println(e);
+        } finally {
+            try {
+                rs.close();
+                pst.close();
+            } catch (Exception e) {
+
+            }
+        }
+    }
+
+    private void clearTable() {
+        String sql1 = "delete from result";
+        try {
+            pst = conn.prepareStatement(sql1);
+            pst.executeUpdate();
+
+        } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+            try {
+                pst.close();
+
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }
+    }
 
 }

@@ -29,7 +29,7 @@ import org.jfree.data.xy.XYSeriesCollection;
  *
  * @author Pramuditha Buddhini
  */
-public class SavitzkyGolayFilter {
+public class SavitzkyGolayFilterSingleton {
 
     private Connection conn = null;
     private PreparedStatement pst = null;
@@ -37,7 +37,7 @@ public class SavitzkyGolayFilter {
     public ArrayList<InputData> originalPoints = new ArrayList<InputData>();
     public ArrayList<BigDecimal> transmittanceValues = new ArrayList<BigDecimal>();
     public RegressionBL bc;
-    private static volatile SavitzkyGolayFilter instance;
+    private static volatile SavitzkyGolayFilterSingleton instance;
     private int listSize = 0;
     private SortedMap<BigDecimal, BigDecimal> pointset = new TreeMap<BigDecimal, BigDecimal>();
     private SortedMap<BigDecimal, BigDecimal> filteredPointset = new TreeMap<BigDecimal, BigDecimal>();
@@ -49,7 +49,7 @@ public class SavitzkyGolayFilter {
     private double c1 = 0; //intercept of the regression line
     public static int count = 0;
 
-    public SavitzkyGolayFilter() {
+    public SavitzkyGolayFilterSingleton() {
         conn = Javaconnect.ConnecrDb();
         qdata();
 
@@ -61,8 +61,13 @@ public class SavitzkyGolayFilter {
         qdata();
     }
 
-   public static void main(String[] args) {
-        SavitzkyGolayFilter sgf = new SavitzkyGolayFilter();
+    public static SavitzkyGolayFilterSingleton getInstance() {
+        instance = new SavitzkyGolayFilterSingleton();
+        return instance;
+    }
+
+    public static void main(String[] args) {
+        SavitzkyGolayFilterSingleton sgf = new SavitzkyGolayFilterSingleton();
         sgf.applyFilter_3points();
     }
 
@@ -426,9 +431,8 @@ public class SavitzkyGolayFilter {
         }
 
         fullarrays = fullarrays.substring(0, fullarrays.length() - 1);
-        
+
         String sql = "INSERT INTO avg_data (wavenumber,transmittance)  VALUES " + fullarrays;
-        
         ResultSet rs = null;
         PreparedStatement pst = null;
 

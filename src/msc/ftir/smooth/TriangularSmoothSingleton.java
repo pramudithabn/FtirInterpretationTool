@@ -24,7 +24,7 @@ import static msc.ftir.smooth.SlidingAvgSmoothSingleton.count;
  *
  * @author Pramuditha Buddhini
  */
-public class TriangularSmooth_Selection {
+public class TriangularSmoothSingleton implements SlidingWindow {
 
     Connection conn = null;
     PreparedStatement pst = null;
@@ -32,12 +32,12 @@ public class TriangularSmooth_Selection {
     public ArrayList<InputData> originalPoints = new ArrayList<InputData>();
     SortedMap<BigDecimal, BigDecimal> originalPointList = new TreeMap<BigDecimal, BigDecimal>();
     public ArrayList<BigDecimal> smoothedPoints = new ArrayList<BigDecimal>();
-    private static volatile TriangularSmooth_Selection instance;
-    private int listSize = 0;
-    private ArrayList<Integer> filteredIDList = new ArrayList<Integer>();
-    private int startx, endx;
+    private static volatile TriangularSmoothSingleton instance;
+    private int listSize = 0 ;
+    public static int count = 0;
+ 
 
-    public TriangularSmooth_Selection() {
+    public TriangularSmoothSingleton() {
         conn = Javaconnect.ConnecrDb();
 
         qdata();
@@ -46,10 +46,12 @@ public class TriangularSmooth_Selection {
     }
 
 //    static {
-//        instance = new TriangularSmooth();
+//        instance = new TriangularSmoothSingleton();
 //    }
     public void reset() {
         instance = null;
+        count = 0;
+        qdata();
     }
 
     public void reverse() {
@@ -65,13 +67,13 @@ public class TriangularSmooth_Selection {
         }
     }
 
-    public static TriangularSmooth_Selection getInstance() {
-        instance = new TriangularSmooth_Selection();
+    public static TriangularSmoothSingleton getInstance() {
+        instance = new TriangularSmoothSingleton();
         return instance;
     }
 
     public static void main(String[] args) {
-        TriangularSmooth_Selection nw = new TriangularSmooth_Selection();
+        TriangularSmoothSingleton nw = new TriangularSmoothSingleton();
 
         for (BigDecimal wn : nw.originalPointList.keySet()) {
             BigDecimal key = wn;
@@ -94,7 +96,7 @@ public class TriangularSmooth_Selection {
             InputData d;
             originalPoints.clear();
             while (rs.next()) {
-                d = new InputData(rs.getInt("ID"), rs.getBigDecimal("WAVENUMBER"), rs.getBigDecimal("TRANSMITTANCE"));
+                d = new InputData(rs.getInt("ID"),rs.getBigDecimal("WAVENUMBER"), rs.getBigDecimal("TRANSMITTANCE"));
                 originalPoints.add(d);
 
             }
@@ -120,8 +122,8 @@ public class TriangularSmooth_Selection {
         }
     }
 
-
-    public void cal_5point_avg(int start, int end) {
+    @Override
+    public void cal_5point_avg() {
 
         if (!smoothedPoints.isEmpty()) {
             for (int i = 0; i < smoothedPoints.size(); i++) {
@@ -145,7 +147,7 @@ public class TriangularSmooth_Selection {
         smoothedPoints.add(start0);
         smoothedPoints.add(start1);
 
-        for (rindex = start; rindex < end ; rindex++) {
+        for (rindex = 2; rindex < listSize - 2; rindex++) {
 
             double n1 = (originalPoints.get(rindex - 2).getTransmittance()).doubleValue();
             double n2 = (originalPoints.get(rindex - 1).getTransmittance()).doubleValue();
@@ -163,11 +165,12 @@ public class TriangularSmooth_Selection {
         }
         smoothedPoints.add(end1);
         smoothedPoints.add(end2);
+        updateSmoothedValue();
         count++;
 
     }
 
-
+    @Override
     public void updateSmoothedValue() {
         clearAvgTable();
         String fullarrays = "";
@@ -198,7 +201,20 @@ public class TriangularSmooth_Selection {
 
     }
 
-   
+    @Override
+    public void cal_3point_avg() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void cal_7point_avg() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void cal_9point_avg() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
     public void clearAvgTable() {
 
@@ -219,128 +235,7 @@ public class TriangularSmooth_Selection {
         }
 
     }
+    
 
-    //smooth the selected section only
-    public void marked_section_smoothing_algorithm() {
-        filteredIDList.clear();
-        BigDecimal diff = null;
-        double start = MouseMarker.getMarkerStart();
-        double end = MouseMarker.getMarkerEnd();
-        Double d2 = new Double(start);
-        Double d3 = new Double(end);
-        int startIndex = 0, endIndex = 0;
-
-        for (int i = 0; i < listSize; i++) {
-
-            double w = originalPoints.get(i).getWavenumber().doubleValue();
-            Double d1 = new Double(w);
-
-            if ((d2 < d1) && (d1 < d3)) {
-                int x = originalPoints.get(i).getId();
-                filteredIDList.add(x);
-
-            }
-        }
-
-        startx = getIndexById(filteredIDList.get(0));
-        endx = getIndexById(filteredIDList.get(filteredIDList.size() - 1));
-
-    }
-
-    //select a section and run a smooth only to that section, other sections remain same
-    public void smooth_selected_section() {
-        clearAvgTable();
-        marked_section_smoothing_algorithm();
-        updateUnsmoothedSection(0, startx);
-        cal_5point_avg(startx,endx);
-//MainWindow.getPoints()
-//int k=9;
-//        switch (k) {
-//            case 3:
-//                cal_3point_avg(startx, endx);
-//            case 5:
-//                cal_5point_avg(startx, endx);
-//            case 7:
-//                cal_7point_avg(startx, endx);
-//            case 9:
-//                cal_9point_avg(startx, endx);
-//        }
-        updateSmoothedValue(startx, endx);
-        updateUnsmoothedSection(endx, listSize);
-    }
-
-    private int getIndexById(int id) {
-        for (int i = 0; i < originalPoints.size(); i++) {
-            if (originalPoints != null && (originalPoints.get(i).getId() == id)) {
-                return i;
-            }
-        }
-        return -1;// not there is list
-    }
-
-//Update selected section
-    public void updateUnsmoothedSection(int start, int end) {
-//        clearAvgTable();
-        String fullarrays = "";
-        System.out.println(start + " " + (end - 1));
-        for (int i = start; i < end; i++) {
-            String twoarrays = "(" + originalPoints.get(i).getWavenumber() + " , " + originalPoints.get(i).getTransmittance() + ")";
-            fullarrays = fullarrays + twoarrays + ",";
-        }
-        fullarrays = fullarrays.substring(0, fullarrays.length() - 1);
-
-        String sql = "INSERT INTO avg_data (wavenumber,transmittance)  VALUES " + fullarrays;
-        ResultSet rs = null;
-        PreparedStatement pst = null;
-
-        try {
-            pst = conn.prepareStatement(sql);
-            pst.executeUpdate();
-
-        } catch (Exception e) {
-            System.out.println(e);
-        } finally {
-            try {
-                rs.close();
-                pst.close();
-            } catch (Exception e) {
-
-            }
-        }
-
-    }
-
-    public void updateSmoothedValue(int start, int end) {
-//        clearAvgTable();
-        String fullarrays = "";
-        int i, j;
-        System.out.println(start + " " + (end - 1));
-        for (i = start, j = 0; i < end && j < smoothedPoints.size(); i++, j++) { //this line has used for i,j both at once
-            String twoarrays = "(" + originalPoints.get(i).getWavenumber() + " , " + smoothedPoints.get(j) + ")";
-            fullarrays = fullarrays + twoarrays + ",";
-        }
-        fullarrays = fullarrays.substring(0, fullarrays.length() - 1);
-
-        String sql = "INSERT INTO avg_data (wavenumber,transmittance)  VALUES " + fullarrays;
-
-        ResultSet rs = null;
-        PreparedStatement pst = null;
-
-        try {
-            pst = conn.prepareStatement(sql);
-            pst.executeUpdate();
-
-        } catch (Exception e) {
-            System.out.println(e);
-        } finally {
-            try {
-                rs.close();
-                pst.close();
-            } catch (Exception e) {
-
-            }
-        }
-
-    }
 
 }
