@@ -5,7 +5,6 @@
  */
 package msc.ftir.valleys;
 
-import static java.lang.Double.compare;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,7 +12,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.NavigableMap;
 import java.util.SortedMap;
@@ -24,7 +22,6 @@ import javax.swing.JOptionPane;
 import msc.ftir.main.InputData;
 import msc.ftir.main.Javaconnect;
 import msc.ftir.main.MainWindow;
-import org.jfree.data.jdbc.JDBCXYDataset;
 import org.jfree.data.statistics.Regression;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
@@ -309,7 +306,7 @@ public class ValleysLocator {
 
         }
 
-        System.out.println("Candidate size " + candidates.size());
+//        System.out.println("Candidate size " + candidates.size());
         return candidates;
         //print all
 //        for (BigDecimal name : candidates.keySet()) {
@@ -324,15 +321,26 @@ public class ValleysLocator {
     //4. threshold adjuster
     public void discardBelowThresh(int n, double l, double u) {
 
+//            double max = candidates.values().stream().max(Integer::compare).get();
+//            double min = candidates.values().stream().min(Integer::compare).get();
+//            
+//            System.out.println("Max   "+ max);
+//            System.out.println("Min   "+ min);
+        double max = Collections.max(candidates.values()).doubleValue();
+        double min = Collections.min(candidates.values()).doubleValue();
+
+        System.out.println("Max   " + max);
+        System.out.println("Min   " + min);
+
         lowerB = l;
         upperT = u;
         NavigableMap<BigDecimal, BigDecimal> temp = new TreeMap<BigDecimal, BigDecimal>();
 
 //        System.out.println(lowerB + "," + upperT);
 //        System.out.println(n + "," + (100-n));
-        double threshold = ((upperT - lowerB) / 100) * (100 - n);
+        double threshold = (((max - min) / 100) * (100 - n)) + min;
 
-//        System.out.println("Threshold old " + threshold);
+        System.out.println("Threshold " + threshold);
         //adjust the new value to existing noiseLevel
         if (lowerB < 0) {
             threshold = threshold + lowerB;
@@ -1299,9 +1307,9 @@ public class ValleysLocator {
         double b = -1;
         double c = MainWindow.getC();
         double x1 = 0, x2 = 0;
-        BigDecimal X=null;
-        double d = 0, w=0;
-        String type="";
+        BigDecimal X = null;
+        double d = 0, w = 0;
+        String type = "";
         //4.query baseline corrected data from the baseline_data table
         String sql = "select * from baseline_data";
         ResultSet rs = null;
@@ -1384,12 +1392,12 @@ public class ValleysLocator {
             w = Math.abs(x1 - x2);
 //            System.out.println("w------  " + w);
 
-            if(d>w){
-                type= "sharp";
-            }else if(w>d && X.doubleValue()>3000){
-                type ="broad";
+            if (d > w) {
+                type = "sharp";
+            } else if (w > d && X.doubleValue() > 3000) {
+                type = "broad";
             }
-            
+
             //empty table
             String sql1 = "INSERT INTO `band`(`WAVENUMBER`, `D`, `W`, `TYPE`) VALUES (?,?,?,?)";
             ResultSet rs1 = null;
