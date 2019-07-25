@@ -1348,7 +1348,7 @@ public class ValleysLocator {
             //3. perpendicular length to point from the line ---> d vertical
             //|ax + by + c| / sqrt(a^2 + b^2)
             d = (a * x + b * y + c) / (Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2)));
-//            System.out.println("d------  " + d);
+            System.out.println("d------  " + d);
             NavigableMap<BigDecimal, BigDecimal> headmap = bl_points.headMap(X, false).descendingMap();
             NavigableMap<BigDecimal, BigDecimal> tailmap = bl_points.tailMap(X, false);
 
@@ -1390,14 +1390,14 @@ public class ValleysLocator {
             }
 
             w = Math.abs(x1 - x2);
-//            System.out.println("w------  " + w);
+            System.out.println("w------  " + w);
 
-            if (d > w) {
+            if (d*100 > w) {
                 type = "sharp";
             } else if (w > d && X.doubleValue() > 3000) {
                 type = "broad";
             }
-
+            System.err.println("Type = " +type);
             //empty table
             String sql1 = "INSERT INTO `band`(`WAVENUMBER`, `D`, `W`, `TYPE`) VALUES (?,?,?,?)";
             ResultSet rs1 = null;
