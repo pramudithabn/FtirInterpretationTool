@@ -85,7 +85,7 @@ public class Predict {
 
             f = valleyList.get(r).getWavenumber();
 
-            if (f.doubleValue() >= 1000) { //exclude fingerprint region
+//            if (f.doubleValue() >= 1000) { //exclude fingerprint region
                 String sql = "Select * from bonds where " + f + "  <= start_frq AND " + f + ">= end_frq";
 //            bond, functional_group
                 try {
@@ -116,7 +116,7 @@ public class Predict {
 
             }
 
-        }
+//        }
 
     }
 

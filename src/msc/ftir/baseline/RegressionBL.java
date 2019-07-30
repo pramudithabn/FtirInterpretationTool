@@ -308,8 +308,8 @@ public class RegressionBL {
         
       
         
-        System.out.println(" Domain axis tick mark outside length = "+xyplot.getDomainAxis().getTickMarkOutsideLength());
-        System.out.println(" Domain axis tick mark inside length = "+xyplot.getDomainAxis().getTickMarkInsideLength());
+//        System.out.println(" Domain axis tick mark outside length = "+xyplot.getDomainAxis().getTickMarkOutsideLength());
+//        System.out.println(" Domain axis tick mark inside length = "+xyplot.getDomainAxis().getTickMarkInsideLength());
 //                getDomainAxis.getTickUnit().getSize();
         //get query of avg_data table
         qdata_avg();

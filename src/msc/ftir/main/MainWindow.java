@@ -1,5 +1,6 @@
 package msc.ftir.main;
 
+import java.awt.BasicStroke;
 import msc.ftir.baseline.InterpolatedBL;
 import msc.ftir.valleys.ValleysLocator;
 import msc.ftir.smooth.*;
@@ -7,11 +8,12 @@ import msc.ftir.baseline.RegressionBL;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.geom.Rectangle2D;
 import net.proteanit.sql.DbUtils;
 import java.io.BufferedReader;
 import java.io.File;
@@ -20,10 +22,11 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import javax.swing.JFileChooser;
 import java.sql.*;
+import java.text.DecimalFormat;
 import javax.swing.*;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -53,14 +56,17 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import java.util.Properties;
 import javax.swing.table.DefaultTableCellRenderer;
+import msc.ftir.library.LibraryFtir;
 import msc.ftir.result.Predict;
 import org.jfree.chart.ChartFrame;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
+import org.jfree.chart.annotations.XYPointerAnnotation;
 import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.entity.XYItemEntity;
+import org.jfree.chart.panel.CrosshairOverlay;
+import org.jfree.chart.plot.Crosshair;
 import org.jfree.chart.plot.ValueMarker;
-import org.jfree.data.Range;
 import org.jfree.data.xy.XYDataItem;
 import org.jfree.ui.RectangleAnchor;
 import org.jfree.ui.TextAnchor;
@@ -95,7 +101,7 @@ public class MainWindow extends javax.swing.JFrame {
     private Predict pr = null;
     private SavitzkyGolayFilter sg = null;
     private PreparedStatement pst2 = null, pst3 = null, pst4 = null, pst5 = null, pst6 = null, pst7 = null; //for clear all
-
+    private XYPointerAnnotation pointer = null, pointer2 = null;
     private RegressionBL bc = null;
     public static Boolean newInstance = false;
     private ArrayList<Integer> sliderValuesList = new ArrayList<Integer>();
@@ -118,8 +124,11 @@ public class MainWindow extends javax.swing.JFrame {
     private ValleysLocator v1, v2;
     private XYDataset peakset = null;
     private XYPlot xyplotT = null;
-    private boolean done = true;
+    private boolean bandstab = false;
     private ChartPanel chartPanel_com = null;
+    private Crosshair xCrosshair;
+    private Crosshair yCrosshair;
+    private CrosshairOverlay crosshairOverlay, crosshairOverlay2;
 
     public static int getPoints() {
         return points;
@@ -211,6 +220,8 @@ public class MainWindow extends javax.swing.JFrame {
         resetSmoothButton = new javax.swing.JButton();
         nextButton1 = new javax.swing.JButton();
         jSeparator2 = new javax.swing.JSeparator();
+        jLabel4 = new javax.swing.JLabel();
+        changeValueText = new javax.swing.JTextField();
         jPanel3 = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
         baselineMethodCombo = new javax.swing.JComboBox<>();
@@ -225,6 +236,7 @@ public class MainWindow extends javax.swing.JFrame {
         predictButton = new javax.swing.JButton();
         jLabel11 = new javax.swing.JLabel();
         numBandsText = new javax.swing.JTextField();
+        jPanel2 = new javax.swing.JPanel();
         tablePanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         dataTable = new javax.swing.JTable();
@@ -266,7 +278,7 @@ public class MainWindow extends javax.swing.JFrame {
         jRadioButtonMenuItem10 = new javax.swing.JRadioButtonMenuItem();
         jRadioButtonMenuItem11 = new javax.swing.JRadioButtonMenuItem();
         optionsMenu = new javax.swing.JMenu();
-        jMenuItem4 = new javax.swing.JMenuItem();
+        searchMenu = new javax.swing.JMenuItem();
         jMenuItem5 = new javax.swing.JMenuItem();
         toolsMenu = new javax.swing.JMenu();
         jMenuItem3 = new javax.swing.JMenuItem();
@@ -456,6 +468,11 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
+        jLabel4.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        jLabel4.setText("Change");
+
+        changeValueText.setFocusable(false);
+
         javax.swing.GroupLayout resultsPanelLayout = new javax.swing.GroupLayout(resultsPanel);
         resultsPanel.setLayout(resultsPanelLayout);
         resultsPanelLayout.setHorizontalGroup(
@@ -463,41 +480,45 @@ public class MainWindow extends javax.swing.JFrame {
             .addGroup(resultsPanelLayout.createSequentialGroup()
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 540, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 1, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, resultsPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(resetSmoothButton, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(nextButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
             .addGroup(resultsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(resultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, resultsPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(resetSmoothButton, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(nextButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(resultsPanelLayout.createSequentialGroup()
                         .addGroup(resultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel2))
-                        .addGap(24, 24, 24)
-                        .addGroup(resultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(smAlgoCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(resultsPanelLayout.createSequentialGroup()
-                                .addComponent(threepoints)
-                                .addGap(18, 18, 18)
-                                .addComponent(fivepoints)
-                                .addGap(18, 18, 18)
-                                .addComponent(sevenpoints)
-                                .addGap(18, 18, 18)
-                                .addComponent(ninepoints))))
-                    .addGroup(resultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, resultsPanelLayout.createSequentialGroup()
-                            .addComponent(jLabel5)
-                            .addGap(18, 18, 18)
-                            .addComponent(filterPassLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(resultsPanelLayout.createSequentialGroup()
-                            .addGap(2, 2, 2)
-                            .addComponent(jLabel1)
-                            .addGap(18, 18, 18)
-                            .addComponent(smoothningSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 430, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGroup(resultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel3)
+                                    .addComponent(jLabel2))
+                                .addGap(24, 24, 24)
+                                .addGroup(resultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(smAlgoCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(resultsPanelLayout.createSequentialGroup()
+                                        .addComponent(threepoints)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(fivepoints)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(sevenpoints)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(ninepoints))
+                                    .addComponent(changeValueText, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(resultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, resultsPanelLayout.createSequentialGroup()
+                                    .addComponent(jLabel5)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(filterPassLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(resultsPanelLayout.createSequentialGroup()
+                                    .addGap(2, 2, 2)
+                                    .addComponent(jLabel1)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(smoothningSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 430, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         resultsPanelLayout.setVerticalGroup(
             resultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -516,7 +537,10 @@ public class MainWindow extends javax.swing.JFrame {
                 .addGap(9, 9, 9)
                 .addGroup(resultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(nextButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(resetSmoothButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(resultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(resetSmoothButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel4)
+                        .addComponent(changeValueText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -705,6 +729,19 @@ public class MainWindow extends javax.swing.JFrame {
 
         settingsTabbedPane.addTab("Bands", jPanel4);
 
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 541, Short.MAX_VALUE)
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 246, Short.MAX_VALUE)
+        );
+
+        settingsTabbedPane.addTab("Result     ", jPanel2);
+
         dataTable.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         dataTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -746,6 +783,11 @@ public class MainWindow extends javax.swing.JFrame {
                 "Bond", "Functional Group"
             }
         ));
+        resultTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                resultTableMouseMoved(evt);
+            }
+        });
         resultTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 resultTableMouseClicked(evt);
@@ -1016,13 +1058,13 @@ public class MainWindow extends javax.swing.JFrame {
 
         optionsMenu.setText("Library");
 
-        jMenuItem4.setText("Search");
-        jMenuItem4.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jMenuItem4MouseClicked(evt);
+        searchMenu.setText("Search");
+        searchMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchMenuActionPerformed(evt);
             }
         });
-        optionsMenu.add(jMenuItem4);
+        optionsMenu.add(searchMenu);
 
         jMenuItem5.setText("Save to library");
         optionsMenu.add(jMenuItem5);
@@ -1393,7 +1435,8 @@ public class MainWindow extends javax.swing.JFrame {
 //        }
 
 //        v2.cal_d_w_lenghts();
-        reduceMinfromAllY();
+//        reduceMinfromAllY();
+        measurechange();
 
 //        combined2Charts(createDataset(bc.getDifferencewithLine(), "Baseline Corrected"), createSmoothedDataset(), comPanel);
 
@@ -1472,6 +1515,7 @@ public class MainWindow extends javax.swing.JFrame {
     private void nextButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButton2ActionPerformed
         setBaseline();
         performThresh();
+        bandstab = true;
 
         if (bltab) {
             settingsTabbedPane.setSelectedIndex(2);
@@ -1486,6 +1530,11 @@ public class MainWindow extends javax.swing.JFrame {
         pr.updateResultsTable();//database
 
         updateResult_table();//interface result table
+        if (bandstab) {
+            settingsTabbedPane.setSelectedIndex(3);
+        } else {
+            JOptionPane.showMessageDialog(null, "Error!", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_predictButtonActionPerformed
 
     private void fivepointsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fivepointsMouseClicked
@@ -1515,17 +1564,35 @@ public class MainWindow extends javax.swing.JFrame {
 
     private void resultTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_resultTableMouseClicked
 
-//        int row = resultTable.rowAtPoint(evt.getPoint());
         int row = resultTable.getSelectedRow();
-//        int column = resultTable.getSelectedColumn();
 
         double w = Double.parseDouble(String.valueOf(resultTable.getValueAt(row, 0)));
         BigDecimal wv = BigDecimal.valueOf(w);
-        System.out.println("Selected wave = " + w);
 
         XYSeriesCollection dataSet0 = (XYSeriesCollection) xyplotT.getDataset(0);
         XYSeries series0 = dataSet0.getSeries(0);
         XYItemRenderer renderer1 = new MyXYBarRenderer();
+
+        chartPanel_com.removeOverlay(crosshairOverlay);
+        xyplotT.removeAnnotation(pointer);
+        xyplotT.removeAnnotation(pointer2);
+
+        crosshairOverlay = new CrosshairOverlay();
+        xCrosshair = new Crosshair(Double.NaN, Color.GRAY, new BasicStroke(0f));
+        xCrosshair.setLabelVisible(false);
+        yCrosshair = new Crosshair(Double.NaN, Color.GRAY, new BasicStroke(0f));
+        yCrosshair.setLabelVisible(false);
+        crosshairOverlay.addDomainCrosshair(xCrosshair);
+        crosshairOverlay.addRangeCrosshair(yCrosshair);
+        chartPanel_com.addOverlay(crosshairOverlay);
+
+        pointer = new XYPointerAnnotation("", 0, 0, 7.0 * Math.PI / 4.0);
+        pointer.setTipRadius(3.0);
+        pointer.setBaseRadius(15.0);
+        pointer.setPaint(Color.blue);
+        pointer.setTextAnchor(TextAnchor.HALF_ASCENT_LEFT);
+        pointer.setBackgroundPaint(Color.yellow);
+
         // Shapes only
         for (Object i : series0.getItems()) {
             XYDataItem item = (XYDataItem) i;
@@ -1534,9 +1601,15 @@ public class MainWindow extends javax.swing.JFrame {
 
             if (Math.abs(x - w) < 0.0000001) {
 
-                xyplotT.setRenderer(0, renderer1);
-//                renderer1.getItemPaint();
-                System.out.println("found!");
+                if (y > 0) {
+                    pointer.setX(x);
+                    pointer.setY(y);
+                    pointer.setText(x + " , " + y);
+                    xyplotT.addAnnotation(pointer);
+                }
+                xCrosshair.setValue(x);
+                yCrosshair.setValue(y);
+
             }
         }
 
@@ -1611,18 +1684,6 @@ public class MainWindow extends javax.swing.JFrame {
         generate_spectrum(specPanel, "input_data");
     }//GEN-LAST:event_toolsMenuMouseClicked
 
-    private void jMenuItem4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuItem4MouseClicked
-//        String s = (String)JOptionPane.showInputDialog(
-//                    frame,
-//                    "Complete the sentence:\n"
-//                    + "\"Green eggs and...\"",
-//                    "Customized Dialog",
-//                    JOptionPane.PLAIN_MESSAGE,
-//                    icon,
-//                    possibilities,
-//                    "ham");
-    }//GEN-LAST:event_jMenuItem4MouseClicked
-
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
 
 //        jMenuItem2.addActionListener(new ActionListener() {
@@ -1672,10 +1733,18 @@ public class MainWindow extends javax.swing.JFrame {
 ////
 ////            System.exit(0);
 //    });
-        restart();
-
 
     }//GEN-LAST:event_jMenuItem2ActionPerformed
+
+    private void resultTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_resultTableMouseMoved
+        // TODO add your handling code here:
+    }//GEN-LAST:event_resultTableMouseMoved
+
+    private void searchMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchMenuActionPerformed
+        LibraryFtir lb = new LibraryFtir();
+        lb.setVisible(true);
+        lb.setLocationRelativeTo(null);
+    }//GEN-LAST:event_searchMenuActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1744,8 +1813,6 @@ public class MainWindow extends javax.swing.JFrame {
 
             String query1 = "select WAVENUMBER, TRANSMITTANCE from " + tableName;
 
-//            String query1 = "SELECT WAVENUMBER, TRANSMITTANCE - (SELECT MIN(TRANSMITTANCE) FROM "+tableName+" ) FROM " + tableName;
-//            System.out.println(query1);
             JDBCXYDataset dataset = new JDBCXYDataset(conn, query1);
 
 //            JFreeChart spec = ChartFactory.createXYLineChart("", "Wavenumber (cm-1)", "Transmittance %", dataset, PlotOrientation.VERTICAL, false, true, true);
@@ -1755,7 +1822,6 @@ public class MainWindow extends javax.swing.JFrame {
             spec.getXYPlot().setDomainGridlinesVisible(true);
 
             ChartPanel chartPanel = new ChartPanel(spec);
-//            System.out.println(chartPanel_com.getPreferredSize());
 //            chartPanel_com.setPreferredSize(new Dimension(654, 350));
             chartPanel.setDomainZoomable(false);
             chartPanel.addMouseListener(new MouseMarker(chartPanel));
@@ -1782,7 +1848,6 @@ public class MainWindow extends javax.swing.JFrame {
             lowerBoundT = plot.getRangeAxis().getRange().getLowerBound();
             upperBoundT = plot.getRangeAxis().getRange().getUpperBound();
 
-//            System.out.println(lowerBoundX + " " + upperBoundX + "     " + lowerBoundT + " " + upperBoundT);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e);
         }
@@ -1826,7 +1891,6 @@ public class MainWindow extends javax.swing.JFrame {
             spec.getXYPlot().setDomainGridlinesVisible(false);
 
             ChartPanel chartPanel = new ChartPanel(spec);
-//            System.out.println(chartPanel_com.getPreferredSize());
             chartPanel.setPreferredSize(new Dimension(654, 350));
             chartPanel.setDomainZoomable(true);
 
@@ -1922,10 +1986,7 @@ public class MainWindow extends javax.swing.JFrame {
 
                 Pattern input_pattern = Pattern.compile(point);
                 regrexMatch = input_pattern.matcher(line);
-//                System.out.println("aaa" + line + "aaa");
-//                System.out.println(line);
                 boolean m = regrexMatch.matches();
-//                System.out.println(m);
 
                 if (!regrexMatch.matches()) {
                     ++invalid_input;
@@ -1941,10 +2002,7 @@ public class MainWindow extends javax.swing.JFrame {
             }
             br.close();
 
-//            System.out.println(invalid_input + " invalid inputs found at line #" + Arrays.toString(errorLine.toArray()));
             System.out.println("Invalid inputs found!");
-//            System.out.println("valid inputs = " + valid_input);
-//            System.out.println("Total Number of lines = " + lineNumber);
             if (invalid_input > 0) {
 
 //                String msg = "Data format errors are found at line #" + Arrays.toString(errorLine.toArray());
@@ -2278,6 +2336,7 @@ public class MainWindow extends javax.swing.JFrame {
         newInstance = true;
         filterPassLabel.setText(null);
         filePathText.setText(null);
+        changeValueText.setText(null);
 
         threshSlider1.setValue(2);
         numBandsText.setText(null);
@@ -2498,13 +2557,39 @@ public class MainWindow extends javax.swing.JFrame {
 
 //        duelchart.setAutoRangeIncludesZero(false);
         //to retain zoom
-        chartPanel_com.setMouseWheelEnabled(true);
-        chartPanel_com.setHorizontalAxisTrace(true);
-        chartPanel_com.setVerticalAxisTrace(true);
+//        chartPanel_com.setMouseWheelEnabled(true);
+//        chartPanel_com.setHorizontalAxisTrace(true);
+//        chartPanel_com.setVerticalAxisTrace(true);
+        crosshairOverlay = new CrosshairOverlay();
+        xCrosshair = new Crosshair(Double.NaN, Color.GRAY, new BasicStroke(0f));
+        xCrosshair.setLabelVisible(false);
+        yCrosshair = new Crosshair(Double.NaN, Color.GRAY, new BasicStroke(0f));
+        yCrosshair.setLabelVisible(false);
+        crosshairOverlay.addDomainCrosshair(xCrosshair);
+        crosshairOverlay.addRangeCrosshair(yCrosshair);
+
+        pointer = new XYPointerAnnotation("", 0, 0, 7.0 * Math.PI / 4.0);
+        pointer.setTipRadius(3.0);
+        pointer.setBaseRadius(15.0);
+        pointer.setPaint(Color.blue);
+        pointer.setTextAnchor(TextAnchor.HALF_ASCENT_LEFT);
+        pointer.setBackgroundPaint(Color.yellow);
+
+        pointer2 = new XYPointerAnnotation("", 0, 0, 7.0 * Math.PI / 4.0);
+        pointer2.setTipRadius(3.0);
+        pointer2.setBaseRadius(15.0);
+        pointer2.setPaint(Color.blue);
+        pointer2.setTextAnchor(TextAnchor.HALF_ASCENT_LEFT);
+        pointer2.setBackgroundPaint(Color.gray);
+//        pointer.setBackgroundPaint(new Color(180, 180, 180, 180));
 
 //        chartPanel_com.addChartMouseListener(new ThisMouseListener() {
 //        });
+        DecimalFormat df = new DecimalFormat();
+        df.setMaximumFractionDigits(3);
+
         chartPanel_com.addChartMouseListener(new ChartMouseListener() {
+
             @Override
             public void chartMouseClicked(ChartMouseEvent event) {
                 ChartEntity entity = event.getEntity();
@@ -2517,9 +2602,8 @@ public class MainWindow extends javax.swing.JFrame {
 
                     double x = set1.getXValue(sindex, iindex);
 
-                    System.out.println("x = " + x);
-                    System.out.println("y = " + set1.getYValue(sindex, iindex));
-
+//                    System.out.println("x = " + x);
+//                    System.out.println("y = " + set1.getYValue(sindex, iindex));
                     for (int i = 0; i < resultTable.getRowCount(); i++) {
 
                         double d = Double.parseDouble(String.valueOf(resultTable.getValueAt(i, 0)));
@@ -2538,8 +2622,69 @@ public class MainWindow extends javax.swing.JFrame {
             }
 
             @Override
-            public void chartMouseMoved(ChartMouseEvent cme) {
-                //To change body of generated methods, choose Tools | Templates.
+            public void chartMouseMoved(ChartMouseEvent event) {
+
+                xyplotT.removeAnnotation(pointer);
+                xyplotT.removeAnnotation(pointer2);
+
+                ChartEntity chartentity = event.getEntity();
+                Rectangle2D dataArea = chartPanel_com.getScreenDataArea();
+                ValueAxis xAxis = xyplotT.getDomainAxis();
+                ValueAxis yAxis = xyplotT.getRangeAxis();
+
+//                System.out.println(x0 + "   " + y0);
+                if (chartentity != null && chartentity instanceof XYItemEntity) {
+                    XYItemEntity e = (XYItemEntity) chartentity;
+
+                    int i = e.getItem();
+                    int s = e.getSeriesIndex();
+                    double x = collection1.getXValue(s, i);
+                    double y = collection1.getYValue(s, i);
+
+                    if (y > 0) {
+                        pointer.setX(x);
+                        pointer.setY(y);
+                        pointer.setText(df.format(x) + " , " + df.format(y));
+
+                        xyplotT.addAnnotation(pointer);
+                    }
+                    xCrosshair.setValue(x);
+                    yCrosshair.setValue(y);
+                    chartPanel_com.addOverlay(crosshairOverlay);
+                    chartPanel_com.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+                }
+                if (!(chartentity instanceof XYItemEntity)) {
+
+                    chartPanel_com.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+
+                    double x = xAxis.java2DToValue(event.getTrigger().getX(), dataArea, xyplotT.getDomainAxisEdge());
+                    double y = yAxis.java2DToValue(event.getTrigger().getY(), dataArea, xyplotT.getRangeAxisEdge());
+
+//                    double x = plot.getDomainAxis().java2DToValue(p.getX(), plotArea, plot.getDomainAxisEdge());
+//                    double y = plot.getRangeAxis().java2DToValue(p.getY(), plotArea, plot.getRangeAxisEdge());
+//                    double y = DatasetUtilities.findYValue(plot.getDataset(), 0, x);
+                    pointer2.setX(x);
+                    pointer2.setY(y);
+                    pointer2.setText(df.format(x) + " , " + df.format(x));
+                    xyplotT.addAnnotation(pointer2);
+
+                    xCrosshair.setValue(x);
+                    yCrosshair.setValue(y);
+                    chartPanel_com.addOverlay(crosshairOverlay);
+
+                    if (!(x < 4000 || y > 0)) {
+
+                        xyplotT.removeAnnotation(pointer);
+                        xyplotT.removeAnnotation(pointer2);
+                        chartPanel_com.removeOverlay(crosshairOverlay);
+                    }
+
+//                    chartPanel_com.setMouseWheelEnabled(true);
+//                    chartPanel_com.setHorizontalAxisTrace(true);
+//                    chartPanel_com.setVerticalAxisTrace(true);
+                }
+
             }
 
         }
@@ -2560,7 +2705,6 @@ public class MainWindow extends javax.swing.JFrame {
                 return c;
             }
         });
-
     }
 
     public void create3charts(XYDataset set1, XYDataset set2, JPanel panel) {
@@ -2872,7 +3016,6 @@ public class MainWindow extends javax.swing.JFrame {
             v2.evaluateNeighbourhood();
 
             createDuel(createValleyDataset(v2.getCandidates()), createBaselineDataset(), comPanel);
-            System.out.println("new plot");
         } catch (SQLException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -3248,6 +3391,7 @@ public class MainWindow extends javax.swing.JFrame {
             }
 
         }
+        measurechange();
         showValleys("avg_data");
 
     }
@@ -3406,7 +3550,6 @@ public class MainWindow extends javax.swing.JFrame {
             System.out.println("=============================");
             c = bc1.getC1();
             m = bc1.getM1();
-            System.out.println(m + "," + c);
 
         } catch (Exception e) {
             System.err.println(e);
@@ -3624,6 +3767,7 @@ public class MainWindow extends javax.swing.JFrame {
                 {
                     sg = new SavitzkyGolayFilter();
                     sg.applyFilter_3points();
+                    measurechange(); //change from original value = change/no.of points
 
                     combined2Charts(createInputDataset(), createSmoothedDataset(), smoothPanel);
 
@@ -3671,24 +3815,6 @@ public class MainWindow extends javax.swing.JFrame {
 
     }
 
-    public void restart() {
-        StringBuilder cmd = new StringBuilder();
-        cmd.append(System.getProperty("java.home") + File.separator + "bin" + File.separator + "java ");
-        for (String jvmArg : ManagementFactory.getRuntimeMXBean().getInputArguments()) {
-            cmd.append(jvmArg + " ");
-        }
-        cmd.append("-cp ").append(ManagementFactory.getRuntimeMXBean().getClassPath()).append(" ");
-        cmd.append(Window.class.getName()).append(" ");
-
-        try {
-            Runtime.getRuntime().exec(cmd.toString());
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        System.exit(0);
-    }
-
     //min value is reduced from all Y values to fix scale
     private void reduceMinfromAllY() {
         BigDecimal min = null;
@@ -3701,11 +3827,10 @@ public class MainWindow extends javax.swing.JFrame {
             rs = pst.executeQuery(sql1);
 
             if (rs.next()) {
-                 min = rs.getBigDecimal("min");
+                min = rs.getBigDecimal("min");
             }
-           
 
-            String sql2 = "UPDATE `input_data` SET TRANSMITTANCE = TRANSMITTANCE - " + min;
+            String sql2 = "UPDATE `input_data` SET TRANSMITTANCE = TRANSMITTANCE  - " + min;
             pst1 = conn.prepareStatement(sql2);
             pst1.executeUpdate();
 
@@ -3723,6 +3848,41 @@ public class MainWindow extends javax.swing.JFrame {
 
     }
 
+    //the change of original value after smoothing 
+    private void measurechange() {
+        BigDecimal result = null;
+        ResultSet rs = null;
+
+        String sql1 = "SELECT sum(abs(input_data.TRANSMITTANCE - avg_data.TRANSMITTANCE))/count(input_data.TRANSMITTANCE - avg_data.TRANSMITTANCE) as result FROM input_data INNER JOIN avg_data ON input_data.WAVENUMBER = avg_data.WAVENUMBER ";
+        try {
+            pst = conn.prepareStatement(sql1);
+            rs = pst.executeQuery(sql1);
+
+            if (rs.next()) {
+                result = rs.getBigDecimal("result");
+            }
+            double c = result.doubleValue() * 100;
+//            System.out.println(c);
+
+            DecimalFormat df = new DecimalFormat();
+            df.setMaximumFractionDigits(4);
+//            System.out.println(df.format(c));
+
+            changeValueText.setText(String.valueOf(df.format(c)));
+
+        } catch (Exception e) {
+            System.err.println(e);
+        } finally {
+            try {
+                pst.close();
+
+            } catch (Exception e) {
+                System.err.println(e);
+            }
+        }
+
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup algorithmMenu;
@@ -3732,6 +3892,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.ButtonGroup blMethodMenu;
     private javax.swing.ButtonGroup blmethodButtonGroup;
     private javax.swing.JButton button_specgen;
+    private javax.swing.JTextField changeValueText;
     private javax.swing.JButton clearButton;
     private javax.swing.JPanel comPanel;
     private javax.swing.JCheckBox cubicSplineCheckBox;
@@ -3748,6 +3909,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
@@ -3761,9 +3923,9 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
-    private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
@@ -3802,6 +3964,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JButton resetSmoothButton;
     public javax.swing.JTable resultTable;
     private javax.swing.JPanel resultsPanel;
+    private javax.swing.JMenuItem searchMenu;
     private javax.swing.JSplitPane sectionSplitPane;
     private javax.swing.JTabbedPane settingsTabbedPane;
     private javax.swing.JRadioButton sevenpoints;

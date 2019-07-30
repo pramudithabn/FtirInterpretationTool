@@ -340,7 +340,6 @@ public class ValleysLocator {
 //        System.out.println(n + "," + (100-n));
         double threshold = (((max - min) / 100) * (100 - n)) + min;
 
-        System.out.println("Threshold " + threshold);
         //adjust the new value to existing noiseLevel
         if (lowerB < 0) {
             threshold = threshold + lowerB;
