@@ -10,6 +10,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -1563,7 +1564,9 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_ninepointsMouseClicked
 
     private void resultTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_resultTableMouseClicked
-
+        performThresh();
+        DecimalFormat df = new DecimalFormat();
+        df.setMaximumFractionDigits(3);
         int row = resultTable.getSelectedRow();
 
         double w = Double.parseDouble(String.valueOf(resultTable.getValueAt(row, 0)));
@@ -1589,6 +1592,7 @@ public class MainWindow extends javax.swing.JFrame {
         pointer = new XYPointerAnnotation("", 0, 0, 7.0 * Math.PI / 4.0);
         pointer.setTipRadius(3.0);
         pointer.setBaseRadius(15.0);
+        pointer.setFont(new Font("SansSerif", Font.PLAIN, 14));
         pointer.setPaint(Color.blue);
         pointer.setTextAnchor(TextAnchor.HALF_ASCENT_LEFT);
         pointer.setBackgroundPaint(Color.yellow);
@@ -1604,7 +1608,7 @@ public class MainWindow extends javax.swing.JFrame {
                 if (y > 0) {
                     pointer.setX(x);
                     pointer.setY(y);
-                    pointer.setText(x + " , " + y);
+                    pointer.setText("X = "+df.format(x) + " , Y = " + df.format(y));
                     xyplotT.addAnnotation(pointer);
                 }
                 xCrosshair.setValue(x);
@@ -2569,6 +2573,7 @@ public class MainWindow extends javax.swing.JFrame {
         crosshairOverlay.addRangeCrosshair(yCrosshair);
 
         pointer = new XYPointerAnnotation("", 0, 0, 7.0 * Math.PI / 4.0);
+        pointer.setFont(new Font("SansSerif", Font.PLAIN, 14));
         pointer.setTipRadius(3.0);
         pointer.setBaseRadius(15.0);
         pointer.setPaint(Color.blue);
@@ -2576,11 +2581,12 @@ public class MainWindow extends javax.swing.JFrame {
         pointer.setBackgroundPaint(Color.yellow);
 
         pointer2 = new XYPointerAnnotation("", 0, 0, 7.0 * Math.PI / 4.0);
+        pointer2.setFont(new Font("SansSerif", Font.PLAIN, 14));
         pointer2.setTipRadius(3.0);
         pointer2.setBaseRadius(15.0);
         pointer2.setPaint(Color.blue);
         pointer2.setTextAnchor(TextAnchor.HALF_ASCENT_LEFT);
-        pointer2.setBackgroundPaint(Color.gray);
+        pointer2.setBackgroundPaint(new Color(255, 255, 255));
 //        pointer.setBackgroundPaint(new Color(180, 180, 180, 180));
 
 //        chartPanel_com.addChartMouseListener(new ThisMouseListener() {
@@ -2644,7 +2650,7 @@ public class MainWindow extends javax.swing.JFrame {
                     if (y > 0) {
                         pointer.setX(x);
                         pointer.setY(y);
-                        pointer.setText(df.format(x) + " , " + df.format(y));
+                        pointer.setText("X = "+df.format(x) + " , Y = " + df.format(y));
 
                         xyplotT.addAnnotation(pointer);
                     }
@@ -2666,7 +2672,7 @@ public class MainWindow extends javax.swing.JFrame {
 //                    double y = DatasetUtilities.findYValue(plot.getDataset(), 0, x);
                     pointer2.setX(x);
                     pointer2.setY(y);
-                    pointer2.setText(df.format(x) + " , " + df.format(x));
+                    pointer2.setText("X = "+df.format(x) + " , Y = " + df.format(y));
                     xyplotT.addAnnotation(pointer2);
 
                     xCrosshair.setValue(x);
