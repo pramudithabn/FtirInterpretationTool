@@ -11,6 +11,8 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -25,6 +27,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import javax.swing.JFileChooser;
 import java.sql.*;
 import java.text.DecimalFormat;
@@ -56,6 +59,7 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import java.util.Properties;
+import javafx.scene.control.MultipleSelectionModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import msc.ftir.library.LibraryFtir;
 import msc.ftir.result.Predict;
@@ -1492,7 +1496,7 @@ public class MainWindow extends javax.swing.JFrame {
 
     private void threshSlider1MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_threshSlider1MouseReleased
         threshCurrent = threshSlider1.getValue();
-        ragneMarker();
+//        ragneMarker();
 
         if (threshCurrent < threshPrevious) {
 
@@ -1608,7 +1612,7 @@ public class MainWindow extends javax.swing.JFrame {
                 if (y > 0) {
                     pointer.setX(x);
                     pointer.setY(y);
-                    pointer.setText("X = "+df.format(x) + " , Y = " + df.format(y));
+                    pointer.setText("X = " + df.format(x) + " , Y = " + df.format(y));
                     xyplotT.addAnnotation(pointer);
                 }
                 xCrosshair.setValue(x);
@@ -2081,7 +2085,7 @@ public class MainWindow extends javax.swing.JFrame {
 //              && line.matches("[^#].*")
             while ((line = br.readLine()) != null) {
 
-                if (line.startsWith(commentChar) | line.equals("")) {
+                if (line.startsWith(commentChar) | line.equals("") | line.contains("[a-zA-Z]+")) {
                     //skip lines starting with # and empty lines
                     System.out.println(line + " Skipped");
                     continue;
@@ -2118,13 +2122,13 @@ public class MainWindow extends javax.swing.JFrame {
                             String sql = "INSERT INTO input_data (wavenumber, transmittance) VALUES('" + wavenumber + "','" + transmittance + "')";
                             pst = conn.prepareStatement(sql);
                             pst.execute();
-                            System.out.println("Import rows " + i);
+//                            System.out.println("Import rows " + i);
                         }
                         conn.commit();
                         pst.close();
                         conn.close();
                         input.close();
-                        System.out.println("Successfully imported excel to mysql table");
+//                        System.out.println("Successfully imported excel to mysql table");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -2193,6 +2197,59 @@ public class MainWindow extends javax.swing.JFrame {
             }
         }
 
+    }
+
+    private void uploadTxt() {
+
+        try {
+
+            BufferedReader br = new BufferedReader(new FileReader(fileName));
+            String line = "";
+            String[] value = null;
+            String fullarrays = "";
+            Pattern pattern = Pattern.compile(".*[a-zA-Z]+.*");
+
+            while ((line = br.readLine()) != null) {
+
+                Matcher matcher = pattern.matcher(line);
+
+                if (matcher.matches() || line.equals("")) {
+                    //skip lines with letters and empty lines
+                    continue;
+                } else {
+
+                    switch (fileType) {
+                        case CSV:
+                            value = line.split(",");//for cvs
+                            break;
+                        case TXT:
+                            value = line.split("\\s+"); //white space regex
+                            break;
+                        case DPT:
+                            value = line.split("\t"); //for DPT
+                    }
+
+                    String twoarrays = "(" + value[0].trim() + " , " + value[1].trim() + ")";
+                    fullarrays = fullarrays + twoarrays + ",";
+
+                }
+
+            }
+
+            fullarrays = fullarrays.substring(0, fullarrays.length() - 1);
+
+            String sql = "insert into input_data (WAVENUMBER , TRANSMITTANCE) values " + fullarrays;
+            System.out.println(sql);
+
+            PreparedStatement pst = null;
+            pst = conn.prepareStatement(sql);
+            pst.executeUpdate();
+
+            br.close();
+
+        } catch (Exception e) {
+            System.err.println(e);
+        }
     }
 
     public void arrayFill() {
@@ -2425,8 +2482,60 @@ public class MainWindow extends javax.swing.JFrame {
     }
 
     public void readFile() throws FileNotFoundException, IOException, SQLException {
-        String value = " ";
-//        validateFileType();
+        try {
+
+            BufferedReader br = new BufferedReader(new FileReader(fileName));
+            String line = "";
+            String[] value = null;
+            String fullarrays = "";
+            Pattern pattern = Pattern.compile(".*[a-zA-Z]+.*");
+
+            while ((line = br.readLine()) != null) {
+
+                Matcher matcher = pattern.matcher(line);
+
+                if (matcher.matches() || line.equals("")) {
+                    //skip lines with letters and empty lines
+                    continue;
+                } else {
+
+                    switch (fileType) {
+                        case CSV:
+                            value = line.split(",");//for cvs
+                            break;
+                        case TXT:
+                            value = line.split("\\s+"); //white space regex
+                            break;
+                        case DPT:
+                            value = line.split("\t"); //for DPT
+                    }
+
+                    String twoarrays = "(" + value[0].trim() + " , " + value[1].trim() + ")";
+                    fullarrays = fullarrays + twoarrays + ",";
+
+                }
+
+            }
+
+            fullarrays = fullarrays.substring(0, fullarrays.length() - 1);
+
+            String sql = "insert into input_data (WAVENUMBER , TRANSMITTANCE) values " + fullarrays;
+            System.out.println(sql);
+
+            PreparedStatement pst = null;
+            pst = conn.prepareStatement(sql);
+            pst.executeUpdate();
+
+            br.close();
+
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+
+        update_table();
+
+        /* String value = " ";
+        validateFileType();
 
         try {
 
@@ -2435,7 +2544,11 @@ public class MainWindow extends javax.swing.JFrame {
                     value = ",";//for cvs
                     break;
                 case TXT:
-                    value = " ";//for txt
+
+//                    uploadTxt();
+//                    value = " ";//for txt    
+//                    value = "\\s+";//for txt
+//                    value = "[:space:]";
                     break;
                 case DPT:
                     value = "\t"; //for DPT
@@ -2446,11 +2559,7 @@ public class MainWindow extends javax.swing.JFrame {
             pst = conn.prepareStatement(qry);
             pst.executeUpdate();
 
-//            String qrydel = "DELETE FROM input_data WHERE wavenumber > 4001 AND wavenumber < 399 ";
-//            pst = conn.prepareStatement(qrydel);
-//            pst.executeUpdate();
             update_table();
-
         } catch (Exception e) {
             System.out.println(e);
         } finally {
@@ -2458,7 +2567,7 @@ public class MainWindow extends javax.swing.JFrame {
             pst.close();
         }
 
-        //Delete out of range data
+        //Delete out of range data 0
         try {
             String qrydel = "DELETE FROM input_data WHERE wavenumber < 399 ";
             pst = conn.prepareStatement(qrydel);
@@ -2469,12 +2578,68 @@ public class MainWindow extends javax.swing.JFrame {
         } finally {
 
             pst.close();
-        }
-
+        }*/
     }
 
     public void readAbsFile() throws FileNotFoundException, IOException, SQLException {
-        String value = " ";
+
+        try {
+
+            BufferedReader br = new BufferedReader(new FileReader(fileName));
+            String line = "";
+            String[] value = null;
+            String fullarrays = "";
+            Pattern pattern = Pattern.compile(".*[a-zA-Z]+.*");
+
+            while ((line = br.readLine()) != null) {
+
+                Matcher matcher = pattern.matcher(line);
+
+                if (matcher.matches() || line.equals("")) {
+                    //skip lines with letters and empty lines
+                    continue;
+                } else {
+
+                    switch (fileType) {
+                        case CSV:
+                            value = line.split(",");//for cvs
+                            break;
+                        case TXT:
+                            value = line.split("\\s+"); //white space regex
+                            break;
+                        case DPT:
+                            value = line.split("\t"); //for DPT
+                    }
+
+                    String twoarrays = "(" + value[0].trim() + " , " + value[1].trim() + ")";
+                    fullarrays = fullarrays + twoarrays + ",";
+
+                }
+
+            }
+
+            fullarrays = fullarrays.substring(0, fullarrays.length() - 1);
+
+            String sql = "insert into abs_data (WAVENUMBER , TRANSMITTANCE) values " + fullarrays;
+
+            String qrydel = "DELETE FROM input_data WHERE wavenumber = 0.00000000";
+            pst = conn.prepareStatement(qrydel);
+            pst.executeUpdate();
+
+            PreparedStatement pst = null;
+            pst = conn.prepareStatement(sql);
+            pst.executeUpdate();
+
+            br.close();
+            
+
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+
+        
+
+        /*String value = " ";
 //        validateFileType();
 
         try {
@@ -2506,8 +2671,7 @@ public class MainWindow extends javax.swing.JFrame {
         } finally {
 
             pst.close();
-        }
-
+        }*/
     }
 
     public void createDuel(XYDataset set1, XYDataset set2, JPanel panel) {
@@ -2610,17 +2774,29 @@ public class MainWindow extends javax.swing.JFrame {
 
 //                    System.out.println("x = " + x);
 //                    System.out.println("y = " + set1.getYValue(sindex, iindex));
-                    for (int i = 0; i < resultTable.getRowCount(); i++) {
+                    ListSelectionModel model = resultTable.getSelectionModel();
+                    model.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+                    ArrayList<Integer> indices = new ArrayList<Integer>();
+                    try {
 
-                        double d = Double.parseDouble(String.valueOf(resultTable.getValueAt(i, 0)));
+                        for (int i = 0; i < resultTable.getRowCount(); i++) {
 
-                        if (Math.abs(d - x) < 0.0000001) {
+                            double d = Double.parseDouble(String.valueOf(resultTable.getValueAt(i, 0)));
 
-                            ListSelectionModel model = resultTable.getSelectionModel();
-                            model.setSelectionInterval(i, i);
+                            if (Math.abs(d - x) < 0.0000001) {
+
+                                indices.add(i);
+
+                            }
 
                         }
+                        int f = Collections.min(indices);
+                        int l = Collections.max(indices);
+                        model.setSelectionInterval(f, l);
+                        resultTable.scrollRectToVisible(resultTable.getCellRect(f, 0, true));
 
+                    } catch (NoSuchElementException e) {
+                        System.out.println(e);
                     }
 
                 }
@@ -2641,23 +2817,25 @@ public class MainWindow extends javax.swing.JFrame {
 //                System.out.println(x0 + "   " + y0);
                 if (chartentity != null && chartentity instanceof XYItemEntity) {
                     XYItemEntity e = (XYItemEntity) chartentity;
+                    try {
+                        int i = e.getItem();
+                        int s = e.getSeriesIndex();
+                        double x = collection1.getXValue(s, i);
+                        double y = collection1.getYValue(s, i);
 
-                    int i = e.getItem();
-                    int s = e.getSeriesIndex();
-                    double x = collection1.getXValue(s, i);
-                    double y = collection1.getYValue(s, i);
+                        if (y > 0) {
+                            pointer.setX(x);
+                            pointer.setY(y);
+                            pointer.setText("X = " + df.format(x) + " , Y = " + df.format(y));
 
-                    if (y > 0) {
-                        pointer.setX(x);
-                        pointer.setY(y);
-                        pointer.setText("X = "+df.format(x) + " , Y = " + df.format(y));
-
-                        xyplotT.addAnnotation(pointer);
+                            xyplotT.addAnnotation(pointer);
+                        }
+                        xCrosshair.setValue(x);
+                        yCrosshair.setValue(y);
+                        chartPanel_com.addOverlay(crosshairOverlay);
+                        chartPanel_com.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                    } catch (Exception exp) {
                     }
-                    xCrosshair.setValue(x);
-                    yCrosshair.setValue(y);
-                    chartPanel_com.addOverlay(crosshairOverlay);
-                    chartPanel_com.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
                 }
                 if (!(chartentity instanceof XYItemEntity)) {
@@ -2672,7 +2850,7 @@ public class MainWindow extends javax.swing.JFrame {
 //                    double y = DatasetUtilities.findYValue(plot.getDataset(), 0, x);
                     pointer2.setX(x);
                     pointer2.setY(y);
-                    pointer2.setText("X = "+df.format(x) + " , Y = " + df.format(y));
+                    pointer2.setText("X = " + df.format(x) + " , Y = " + df.format(y));
                     xyplotT.addAnnotation(pointer2);
 
                     xCrosshair.setValue(x);
@@ -3686,33 +3864,7 @@ public class MainWindow extends javax.swing.JFrame {
     }
 
     private void updateResult_table() {
-//
-//        DefaultTableModel model = (DefaultTableModel) resultTable.getModel();
-//        int n = pr.getFinalset().size();
-//    
-//
-//        JTableHeader header = resultTable.getTableHeader();
-//        TableColumnModel colMod = header.getColumnModel();
-//        
-//        TableColumn tabCol = colMod.getColumn(0);
-//        tabCol.setHeaderValue("Wavenumber");
-//        
-//        TableColumn tabCo2 = colMod.getColumn(1);
-//        tabCo2.setHeaderValue("Bond");
-//
-//        TableColumn tabCol3 = colMod.getColumn(2);
-//        tabCol3.setHeaderValue("Functional Group");
-//        header.repaint();
 
-        /*for (String bond : pr.getFinalset().keySet()) {
-
-            String key = bond;
-            String func_grp = pr.getFinalset().get(bond);
-            Object[] objs = {key, func_grp};
-
-            model.addRow(objs);
-
-        }*/
         try {
             String sql = "select `WAVENUMBER` AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group' from result";
 
@@ -3765,6 +3917,7 @@ public class MainWindow extends javax.swing.JFrame {
                     readAbsFile();
                     AbsToTrans ab = new AbsToTrans();
                     reduceMinfromAllY();
+                    update_table();
                     //create spectrum
                     generate_spectrum(specPanel, "input_data"); //original spectrum
                 }

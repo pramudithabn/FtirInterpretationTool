@@ -67,14 +67,14 @@ public class AbsToTrans {
 
             if (w >= 400 && w <= 4000) { //skip values outside 400-4000 range
                 double a = absorbance.get(i).doubleValue();
-                System.out.println(a);
+                
                 double t = 100 * Math.pow(10, -a);
 //            double aa = Double.valueOf(2) - Math.log10(a);
                 DecimalFormat df = new DecimalFormat(".########");
-                System.out.println(df.format(t));
+               
                 BigDecimal trans = new BigDecimal(t);
                 BigDecimal a2 = trans.setScale(8, RoundingMode.HALF_UP);
-                System.out.println(a2);
+               
 //            BigDecimal bd = abs.setScale(8, RoundingMode.HALF_UP);
 
                 transmittance.add(a2);
@@ -101,7 +101,7 @@ public class AbsToTrans {
         fullarrays = fullarrays.substring(0, fullarrays.length() - 1);
 
         String sql = "INSERT INTO input_data (WAVENUMBER,TRANSMITTANCE)  VALUES " + fullarrays;
-//        System.out.println(sql);
+
 
         try {
             pst = conn.prepareStatement(sql);

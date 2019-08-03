@@ -321,16 +321,11 @@ public class ValleysLocator {
     //4. threshold adjuster
     public void discardBelowThresh(int n, double l, double u) {
 
-//            double max = candidates.values().stream().max(Integer::compare).get();
-//            double min = candidates.values().stream().min(Integer::compare).get();
-//            
-//            System.out.println("Max   "+ max);
-//            System.out.println("Min   "+ min);
+
         double max = Collections.max(candidates.values()).doubleValue();
         double min = Collections.min(candidates.values()).doubleValue();
 
-        System.out.println("Max   " + max);
-        System.out.println("Min   " + min);
+       
 
         lowerB = l;
         upperT = u;

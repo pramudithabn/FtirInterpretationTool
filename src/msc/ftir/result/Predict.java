@@ -6,22 +6,15 @@
 package msc.ftir.result;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.NavigableMap;
-import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 import msc.ftir.main.InputData;
 import msc.ftir.main.Javaconnect;
-import msc.ftir.main.MainWindow;
-import net.proteanit.sql.DbUtils;
 
 /**
  *
@@ -86,41 +79,50 @@ public class Predict {
             f = valleyList.get(r).getWavenumber();
 
 //            if (f.doubleValue() >= 1000) { //exclude fingerprint region
-                String sql = "Select * from bonds where " + f + "  <= start_frq AND " + f + ">= end_frq";
+//            String sql = "Select *, (end_frq - start_frq) as width  from bonds where " + f + "  <= start_frq AND " + f + ">= end_frq";
+            String sql = "Select * from bonds where " + f + "  <= start_frq AND " + f + ">= end_frq";
 //            bond, functional_group
-                try {
-                    pst = conn.prepareStatement(sql);
-                    rs = pst.executeQuery();
-                    Result rst;
+            try {
+                pst = conn.prepareStatement(sql);
+                rs = pst.executeQuery();
+                Result rst;
 
-                    while (rs.next()) {
+                while (rs.next()) {
 
+                    rst = new Result(f, rs.getString("BOND"), rs.getString("FUNCTIONAL_GROUP"));
+//                    BigDecimal w = rs.getBigDecimal("width");
+//                    System.out.println(f+" /  " + w);
+                    resultset.add(rst);
 
-                        rst = new Result(f, rs.getString("BOND"), rs.getString("FUNCTIONAL_GROUP"));
-                        resultset.add(rst);
-
-
-                    }
-                } catch (SQLException ex) {
-                    System.err.println(ex);
-                    Logger.getLogger(Javaconnect.class.getName()).log(Level.SEVERE, null, ex);
-                } finally {
-                    try {
-                        rs.close();
-                        pst.close();
-                    } catch (Exception e) {
-                        System.err.print(e);
-
-                    }
                 }
+            } catch (SQLException ex) {
+                System.err.println(ex);
+                Logger.getLogger(Javaconnect.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                try {
+                    rs.close();
+                    pst.close();
+                } catch (Exception e) {
+                    System.err.print(e);
 
+                }
             }
 
-//        }
+        }
 
     }
 
-//     createDuel(createValleyDataset(v2.getCandidates()), createBaselineDataset(), comPanel);
+    public void find_min() {
+
+        for (int i = 0; i < resultset.size(); i++) {
+
+            Result rst1 = resultset.get(i);
+//            rst1.
+
+        }
+
+    }
+
     public void updateResultsTable() {
 
         clearTable();
