@@ -11,8 +11,6 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -25,9 +23,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import javax.swing.JFileChooser;
 import java.sql.*;
 import java.text.DecimalFormat;
@@ -59,7 +55,6 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import java.util.Properties;
-import javafx.scene.control.MultipleSelectionModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import msc.ftir.library.LibraryFtir;
 import msc.ftir.result.Predict;
@@ -75,6 +70,7 @@ import org.jfree.chart.plot.ValueMarker;
 import org.jfree.data.xy.XYDataItem;
 import org.jfree.ui.RectangleAnchor;
 import org.jfree.ui.TextAnchor;
+import javax.swing.table.*;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -95,7 +91,6 @@ public class MainWindow extends javax.swing.JFrame {
     private boolean dataformatvalidity;
     public Object[][] dataArray = new Object[1000][2];
     private FileType fileType;
-    private int sliderValue;
     private SlidingAvgSmoothSingleton ls = null;
     private TriangularSmoothSingleton tri = null;
     private DefaultSmooth ds = null;
@@ -133,7 +128,7 @@ public class MainWindow extends javax.swing.JFrame {
     private ChartPanel chartPanel_com = null;
     private Crosshair xCrosshair;
     private Crosshair yCrosshair;
-    private CrosshairOverlay crosshairOverlay, crosshairOverlay2;
+    private CrosshairOverlay crosshairOverlay;
 
     public static int getPoints() {
         return points;
@@ -162,6 +157,15 @@ public class MainWindow extends javax.swing.JFrame {
         setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
         JFrame.setDefaultLookAndFeelDecorated(true);
 
+        // Screen size
+//        Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+//
+//// Screen insets
+//        Insets insets = Toolkit.getDefaultToolkit().getScreenInsets(getGraphicsConfiguration());
+//
+//// Get the real width/height
+//        int width = screen.getWidth() - insets.left - insets.right;
+//        int height = screen.getHeight() - insets.top - insets.bottom;
         conn = Javaconnect.ConnecrDb();
         clearAll();
 
@@ -242,6 +246,8 @@ public class MainWindow extends javax.swing.JFrame {
         jLabel11 = new javax.swing.JLabel();
         numBandsText = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
+        jLabel12 = new javax.swing.JLabel();
+        resultsFilter = new javax.swing.JComboBox<>();
         tablePanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         dataTable = new javax.swing.JTable();
@@ -327,7 +333,7 @@ public class MainWindow extends javax.swing.JFrame {
         );
         specPanelLayout.setVerticalGroup(
             specPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 215, Short.MAX_VALUE)
         );
 
         specTabbedPane.addTab("Original", specPanel);
@@ -342,7 +348,7 @@ public class MainWindow extends javax.swing.JFrame {
         );
         smoothPanelLayout.setVerticalGroup(
             smoothPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 215, Short.MAX_VALUE)
         );
 
         specTabbedPane.addTab("Smoothing", smoothPanel);
@@ -357,7 +363,7 @@ public class MainWindow extends javax.swing.JFrame {
         );
         baselinePanelLayout.setVerticalGroup(
             baselinePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 215, Short.MAX_VALUE)
         );
 
         specTabbedPane.addTab("Baseline", baselinePanel);
@@ -374,7 +380,7 @@ public class MainWindow extends javax.swing.JFrame {
         );
         comPanelLayout.setVerticalGroup(
             comPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 703, Short.MAX_VALUE)
+            .addGap(0, 553, Short.MAX_VALUE)
         );
 
         specSplitPane.setRightComponent(comPanel);
@@ -407,6 +413,7 @@ public class MainWindow extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel2.setText("Algorithm");
 
+        smAlgoCombo.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         smAlgoCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "None", "Savitzky-Golay Filter", "Unweighted Sliding Average ", "Triangular Smoothing" }));
         smAlgoCombo.setSelectedIndex(1);
         smAlgoCombo.setToolTipText("");
@@ -561,7 +568,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         settingsTabbedPane.addTab("Smoothing", resultsPanel);
 
-        jLabel9.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel9.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel9.setText("Connect points by");
 
         baselineMethodCombo.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
@@ -574,7 +581,7 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
-        jLabel10.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel10.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel10.setText("Method");
 
         blmethodButtonGroup.add(lineCheckBox);
@@ -734,15 +741,36 @@ public class MainWindow extends javax.swing.JFrame {
 
         settingsTabbedPane.addTab("Bands", jPanel4);
 
+        jLabel12.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        jLabel12.setText("Find :");
+
+        resultsFilter.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        resultsFilter.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "None", "Alkanes", "Alkenes", "Aromatic", " " }));
+        resultsFilter.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resultsFilterActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 541, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(28, 28, 28)
+                .addComponent(jLabel12)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(resultsFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(316, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 246, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(31, 31, 31)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel12)
+                    .addComponent(resultsFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(194, Short.MAX_VALUE))
         );
 
         settingsTabbedPane.addTab("Result     ", jPanel2);
@@ -820,7 +848,7 @@ public class MainWindow extends javax.swing.JFrame {
                 .addComponent(settingsTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 277, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 344, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(372, Short.MAX_VALUE))
+                .addContainerGap(222, Short.MAX_VALUE))
         );
 
         sectionSplitPane.setLeftComponent(jPanel5);
@@ -1232,10 +1260,63 @@ public class MainWindow extends javax.swing.JFrame {
 
     private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearButtonActionPerformed
         int confirmed = JOptionPane.showConfirmDialog(null,
-                "Clear all data?", "Clear",
+                "Clear all?", "Clear",
                 JOptionPane.YES_NO_OPTION);
 
         if (confirmed == JOptionPane.YES_OPTION) {
+            {
+                rs = null;
+                pst = null;
+                fileName = "";
+                errorLine = new ArrayList<>();
+                dataArray = new Object[1000][2];
+                ls = null;
+                tri = null;
+                ds = null;
+                sl = null;
+                ts = null;
+                sgf = null;
+                intpol = null;
+                pr = null;
+                sg = null;
+                pointer = null;
+                pointer2 = null;
+                bc = null;
+                newInstance = false;
+                sliderValuesList = new ArrayList<Integer>();
+                prev = 0;
+                inputvalidity = true;
+                p = new Properties();
+                points = 0;
+                plot = null;
+                thresh = 0;
+                lowerBoundX = 0;
+                upperBoundX = 0;
+                lowerBoundT = 0;
+                upperBoundT = 0;
+                spec = null;
+                chart = null;
+                duelchart = null;
+                smoothedSpec = null;
+                smoothed_chart = null;
+                charts3 = null;
+                input_dataset = null;
+                baseline_dataset = null;
+                smoothed_dataset = null;
+                sliderPreviousValue = 0;
+                sliderCurrentValue = 0;
+                h_current = 0;
+                h_old = 0;
+                threshCurrent = 2;
+                threshPrevious = 0; //threshold values by sliders for valley detection
+                noiseThreshPrevious = 0; //threshold values by sliders for valley detection
+                bltab = false;
+                peakset = null;
+                xyplotT = null;
+                bandstab = false;
+                chartPanel_com = null;
+
+            }
             clearAll();
         } else {
             setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -1513,7 +1594,9 @@ public class MainWindow extends javax.swing.JFrame {
     private void nextButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButton1ActionPerformed
 
         settingsTabbedPane.setSelectedIndex(1);
-//        specTabbedPane.setSelectedIndex(2);
+        specTabbedPane.setSelectedIndex(2);
+        setBaseline();
+
 
     }//GEN-LAST:event_nextButton1ActionPerformed
 
@@ -1754,6 +1837,49 @@ public class MainWindow extends javax.swing.JFrame {
         lb.setLocationRelativeTo(null);
     }//GEN-LAST:event_searchMenuActionPerformed
 
+    private void resultsFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resultsFilterActionPerformed
+        String sql = "";
+
+        Object obj2 = evt.getSource();
+
+        if (obj2 == resultsFilter) {
+            String fil = resultsFilter.getSelectedItem().toString();
+            if (fil.equalsIgnoreCase("None")) {
+
+                sql = "select `WAVENUMBER` AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group', `COMPOUND_CATEGORY` AS 'Compound Category' from result";
+            } else {
+                sql = "select `WAVENUMBER` AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group', `COMPOUND_CATEGORY` AS 'Compound Category' from result where COMPOUND_CATEGORY like \"%" + fil + "%\" ";
+            }
+            try {
+
+                pst = conn.prepareStatement(sql);
+                rs = pst.executeQuery();
+                if (rs.next() == false) {
+
+                    JOptionPane.showMessageDialog(null, "No results found!");
+                } else {
+
+                    do {
+                        resultTable.setModel(DbUtils.resultSetToTableModel(rs));
+                    } while (rs.next());
+
+                }
+
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, e);
+            } finally {
+                try {
+                    rs.close();
+                    pst.close();
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, e);
+                }
+            }
+
+        }
+
+    }//GEN-LAST:event_resultsFilterActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1954,19 +2080,22 @@ public class MainWindow extends javax.swing.JFrame {
 
             //for file type validation
             File dataFile = chooser.getSelectedFile();
-            fileName = dataFile.getAbsolutePath();
-            fileName = dataFile.getAbsolutePath().replace("\\", "/");
-            //end
+            if (dataFile != null) {
+                fileName = dataFile.getAbsolutePath();
+                fileName = dataFile.getAbsolutePath().replace("\\", "/");
+                //end
 
-            //store current directory
-            File dataFile2 = chooser.getCurrentDirectory();
-            String newDirectoryLoc = dataFile2.getAbsolutePath().replace("\\", "/");
+                //store current directory
+                File dataFile2 = chooser.getCurrentDirectory();
+                String newDirectoryLoc = dataFile2.getAbsolutePath().replace("\\", "/");
 
-            FileOutputStream out = new FileOutputStream("src/msc/ftir/util/file.properties");
-            props.setProperty("jfilechooser.browser.filepath", newDirectoryLoc);
-            filePathText.setText(fileName);
-            props.store(out, null);
-            out.close();
+                FileOutputStream out = new FileOutputStream("src/msc/ftir/util/file.properties");
+                props.setProperty("jfilechooser.browser.filepath", newDirectoryLoc);
+                filePathText.setText(fileName);
+                props.store(out, null);
+                out.close();
+            }
+
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -2520,7 +2649,6 @@ public class MainWindow extends javax.swing.JFrame {
             fullarrays = fullarrays.substring(0, fullarrays.length() - 1);
 
             String sql = "insert into input_data (WAVENUMBER , TRANSMITTANCE) values " + fullarrays;
-            System.out.println(sql);
 
             PreparedStatement pst = null;
             pst = conn.prepareStatement(sql);
@@ -2631,13 +2759,10 @@ public class MainWindow extends javax.swing.JFrame {
             pst.executeUpdate();
 
             br.close();
-            
 
         } catch (Exception e) {
             System.err.println(e);
         }
-
-        
 
         /*String value = " ";
 //        validateFileType();
@@ -3865,24 +3990,87 @@ public class MainWindow extends javax.swing.JFrame {
 
     private void updateResult_table() {
 
+//        TableFromDatabase();
         try {
-            String sql = "select `WAVENUMBER` AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group' from result";
+
+            String sql = "select `WAVENUMBER` AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group', `COMPOUND_CATEGORY` AS 'Compound Category' from result";
 
             pst = conn.prepareStatement(sql);
             rs = pst.executeQuery();
             resultTable.setModel(DbUtils.resultSetToTableModel(rs));
 
+//            CheckBoxWrapperTableModel wrapperModel = new CheckBoxWrapperTableModel(DbUtils.resultSetToTableModel(rs), "Select");
+//            resultTable.setModel( wrapperModel );
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, e);
+            System.out.println(e);
         } finally {
             try {
                 rs.close();
                 pst.close();
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, e);
+                System.out.println(e);
             }
         }
 
+    }
+
+    public void TableFromDatabase() {
+        Vector<Object> columnNames = new Vector<Object>();
+        Vector<Object> data = new Vector<Object>();
+
+        try {
+
+            //  Read data from a table
+            String sql = "select `WAVENUMBER` AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group' from result";
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            ResultSetMetaData md = rs.getMetaData();
+            int columns = md.getColumnCount();
+
+            //  Get column names
+            for (int i = 1; i <= columns; i++) {
+                columnNames.addElement(md.getColumnName(i));
+            }
+            columnNames.addElement(" ");
+
+            //  Get row data
+            while (rs.next()) {
+                Vector row = new Vector(columns + 1);
+                for (int i = 1; i <= columns; i++) {
+                    row.addElement(rs.getObject(i));
+                }
+                row.addElement(new JCheckBox("", false));
+                data.addElement(row);
+            }
+
+            rs.close();
+            stmt.close();
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        //  Create table with database data
+        DefaultTableModel model = new DefaultTableModel(data, columnNames) {
+            public Class getColumnClass(int column) {
+                for (int row = 0; row < getRowCount(); row++) {
+                    Object o = getValueAt(row, column);
+
+                    if (o != null) {
+                        return o.getClass();
+                    }
+                }
+
+                return Object.class;
+            }
+        };
+
+        resultTable.setModel(model);
+//        JScrollPane scrollPane = new JScrollPane( resultTable );
+//        getContentPane().add( scrollPane );
+//
+//        JPanel buttonPanel = new JPanel();
+//        getContentPane().add( buttonPanel, BorderLayout.SOUTH );
     }
 
     private void uploadFile() {
@@ -4066,6 +4254,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -4122,6 +4311,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JProgressBar progressBar;
     private javax.swing.JButton resetSmoothButton;
     public javax.swing.JTable resultTable;
+    private javax.swing.JComboBox<String> resultsFilter;
     private javax.swing.JPanel resultsPanel;
     private javax.swing.JMenuItem searchMenu;
     private javax.swing.JSplitPane sectionSplitPane;

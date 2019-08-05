@@ -12,16 +12,36 @@ import java.math.BigDecimal;
  * @author Pramuditha Buddhini
  */
 public class Result {
-    
+
     private BigDecimal wavenumber;
-    private String bond;
+    private String bondVibMode;
+    private String compoundCategory;
+//    private String bond;
     private String functional_group;
-    
-    public Result(BigDecimal w, String b, String f){
+
+    public Result(BigDecimal w, String b, String f, String c) {
         this.wavenumber = w;
-        this.bond = b;
-        this.functional_group =f;
-                
+        this.bondVibMode = b;
+//        this.bond = b;
+        this.functional_group = f;
+        this.compoundCategory = c;
+
+    }
+
+    public String getBondVibMode() {
+        return bondVibMode;
+    }
+
+    public void setBondVibMode(String bondVibMode) {
+        this.bondVibMode = bondVibMode;
+    }
+
+    public String getCompoundCategory() {
+        return compoundCategory;
+    }
+
+    public void setCompoundCategory(String compoundCategory) {
+        this.compoundCategory = compoundCategory;
     }
 
     public BigDecimal getWavenumber() {
@@ -32,14 +52,13 @@ public class Result {
         this.wavenumber = wavenumber;
     }
 
-    public String getBond() {
-        return bond;
-    }
-
-    public void setBond(String bond) {
-        this.bond = bond;
-    }
-
+//    public String getBond() {
+//        return bond;
+//    }
+//
+//    public void setBond(String bond) {
+//        this.bond = bond;
+//    }
     public String getFunctional_group() {
         return functional_group;
     }
@@ -47,10 +66,5 @@ public class Result {
     public void setFunctional_group(String functional_group) {
         this.functional_group = functional_group;
     }
-    
-  
-    
-   
-    
-    
+
 }

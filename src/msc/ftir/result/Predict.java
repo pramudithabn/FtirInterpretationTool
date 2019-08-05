@@ -78,36 +78,39 @@ public class Predict {
 
             f = valleyList.get(r).getWavenumber();
 
-//            if (f.doubleValue() >= 1000) { //exclude fingerprint region
+            if (f.doubleValue() >= 1000) { //exclude fingerprint region
 //            String sql = "Select *, (end_frq - start_frq) as width  from bonds where " + f + "  <= start_frq AND " + f + ">= end_frq";
-            String sql = "Select * from bonds where " + f + "  <= start_frq AND " + f + ">= end_frq";
+//            String sql = "Select * from bonds where " + f + "  <= start_frq AND " + f + ">= end_frq";
+                String sql = "Select * from library where " + f + "  <= start_frq AND " + f + ">= end_frq";
 //            bond, functional_group
-            try {
-                pst = conn.prepareStatement(sql);
-                rs = pst.executeQuery();
-                Result rst;
+                try {
+                    pst = conn.prepareStatement(sql);
+                    rs = pst.executeQuery();
+                    Result rst;
 
-                while (rs.next()) {
+                    while (rs.next()) {
 
-                    rst = new Result(f, rs.getString("BOND"), rs.getString("FUNCTIONAL_GROUP"));
+//                    rst = new Result(f, rs.getString("BOND"), rs.getString("FUNCTIONAL_GROUP"));
+                        rst = new Result(f, rs.getString("BOND_VIBMODE"), rs.getString("FUNCTIONAL_GROUP"), rs.getString("COMPOUND_CATEGORY"));
 //                    BigDecimal w = rs.getBigDecimal("width");
 //                    System.out.println(f+" /  " + w);
-                    resultset.add(rst);
+                        resultset.add(rst);
 
-                }
-            } catch (SQLException ex) {
-                System.err.println(ex);
-                Logger.getLogger(Javaconnect.class.getName()).log(Level.SEVERE, null, ex);
-            } finally {
-                try {
-                    rs.close();
-                    pst.close();
-                } catch (Exception e) {
-                    System.err.print(e);
+                    }
+                } catch (SQLException ex) {
+                    System.err.println(ex);
+                    Logger.getLogger(Javaconnect.class.getName()).log(Level.SEVERE, null, ex);
+                } finally {
+                    try {
+                        rs.close();
+                        pst.close();
+                    } catch (Exception e) {
+                        System.err.print(e);
 
+                    }
                 }
+
             }
-
         }
 
     }
@@ -131,16 +134,18 @@ public class Predict {
         for (int i = 0; i < resultset.size(); i++) {
 
             BigDecimal w = resultset.get(i).getWavenumber();
-            String bond = resultset.get(i).getBond();
+//            String bond = resultset.get(i).getBond();
+            String bond = resultset.get(i).getBondVibMode();
             String fngrp = resultset.get(i).getFunctional_group();
+            String compound = resultset.get(i).getCompoundCategory();
 
-            String twoarrays = "(" + w + " ,\" " + bond + "\" , \"" + fngrp + "\")";
+            String twoarrays = "(" + w + " ,\" " + bond + "\" , \"" + fngrp + "\" , \"" + compound + "\")";
             fullarrays = fullarrays + twoarrays + ",";
         }
 
         fullarrays = fullarrays.substring(0, fullarrays.length() - 1);
 
-        String sql = "INSERT INTO result ( WAVENUMBER,BOND, FUNCTIONAL_GROUP )  VALUES " + fullarrays;
+        String sql = "INSERT INTO result ( WAVENUMBER,BOND, FUNCTIONAL_GROUP, COMPOUND_CATEGORY )  VALUES " + fullarrays;
         ResultSet rs = null;
         PreparedStatement pst = null;
 
