@@ -6,13 +6,21 @@
 package msc.ftir.library;
 
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import javax.swing.JOptionPane;
 import static javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE;
+import msc.ftir.main.Javaconnect;
+import net.proteanit.sql.DbUtils;
 
 /**
  *
@@ -20,42 +28,67 @@ import static javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE;
  */
 public class LibraryFtir extends javax.swing.JFrame {
 
+    private static Connection conn = null;
+    private ResultSet rs = null;
+    private PreparedStatement pst = null;
+
     /**
      * Creates new form LibraryFtir
      */
     public LibraryFtir() {
-        
 
         initComponents();
         setLocationRelativeTo(null);
+        conn = Javaconnect.ConnecrDb();
 //        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 //        this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
-        
+        ArrayList<String> words = new ArrayList<>();
+
         AutoSuggestor autoSuggestor = new AutoSuggestor(searchBox, this, null, Color.WHITE.brighter(), Color.BLUE, Color.RED, 0.75f) {
+
             @Override
             boolean wordTyped(String typedWord) {
+                String wrd = searchBox.getText();
 
-                //create list for dictionary this in your case might be done via calling a method which queries db and returns results as arraylist
-                ArrayList<String> words = new ArrayList<>();
-                words.add("hello");
-                words.add("heritage");
-                words.add("happiness");
-                words.add("goodbye");
-                words.add("cruel");
-                words.add("car");
-                words.add("war");
-                words.add("will");
-                words.add("world");
-                words.add("wall");
+                try {
 
+//                    String sql = "select `BOND_VIBMODE` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group', `COMPOUND_CATEGORY` AS 'Compound Category' from library where COMPOUND_CATEGORY like \"%" + wrd + "%\" ";
+//                    String sql = "select distinct`FUNCTIONAL_GROUP` AS 'Functional Group', `COMPOUND_CATEGORY` AS 'Compound Category' from library where COMPOUND_CATEGORY like \"%" + wrd + "%\" ";
+//                    
+                    String sql = "select `COMPOUND_CATEGORY` AS 'Compound Category', `FUNCTIONAL_GROUP` AS 'Functional Group', `COMPOUND_TYPE` AS 'Compound Type' from library where (COMPOUND_CATEGORY like \"%" + wrd + "%\" OR COMPOUND_TYPE like \"%" + wrd + "%\" )";
+
+                    pst = conn.prepareStatement(sql);
+                    rs = pst.executeQuery();
+
+                    while (rs.next()) {
+
+                        words.add(rs.getString("Compound Category"));
+//                        words.add(rs.getString("Functional Group"));
+                        words.add(rs.getString("Compound Type"));
+
+                    }
+
+                    Set<String> set = new HashSet<>(words);
+                    words.clear();
+                    words.addAll(set);
+
+                } catch (Exception e) {
+                    System.out.println(e);
+                } finally {
+                    try {
+                        rs.close();
+                        pst.close();
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }
+                }
 
                 setDictionary(words);
-                //addToDictionary("bye");//adds a single word
 
-                return super.wordTyped(typedWord);//now call super to check for any matches against newest dictionary
+                return super.wordTyped(typedWord);
             }
         };
-        
+
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 int confirmed = JOptionPane.showConfirmDialog(null,
@@ -83,8 +116,21 @@ public class LibraryFtir extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         searchButton = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        searchResultTable = new javax.swing.JTable();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        bondText = new javax.swing.JTextField();
+        rangeText = new javax.swing.JTextField();
+        compText = new javax.swing.JTextField();
+        funcText = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         searchBox = new javax.swing.JTextField();
+        wavenumberSpinner = new javax.swing.JSpinner();
+        searchByWaveNumberButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -97,21 +143,121 @@ public class LibraryFtir extends javax.swing.JFrame {
             }
         });
 
+        searchResultTable.setBorder(javax.swing.BorderFactory.createEtchedBorder(java.awt.Color.lightGray, java.awt.Color.darkGray));
+        searchResultTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {},
+                {},
+                {},
+                {}
+            },
+            new String [] {
+
+            }
+        ));
+        searchResultTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                searchResultTableMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(searchResultTable);
+
+        jPanel3.setBackground(new java.awt.Color(255, 255, 255));
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel2.setText("Bond / Vibrational Mode");
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel3.setText("Range");
+
+        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel4.setText("Compound Category");
+
+        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel5.setText("Functional Group");
+
+        bondText.setEditable(false);
+        bondText.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+
+        rangeText.setEditable(false);
+        rangeText.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+
+        compText.setEditable(false);
+        compText.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+
+        funcText.setEditable(false);
+        funcText.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel5)
+                    .addComponent(jLabel4))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 118, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(funcText, javax.swing.GroupLayout.DEFAULT_SIZE, 419, Short.MAX_VALUE)
+                    .addComponent(compText)
+                    .addComponent(rangeText)
+                    .addComponent(bondText))
+                .addContainerGap())
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(rangeText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel2)
+                    .addComponent(bondText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel5)
+                    .addComponent(funcText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel4)
+                    .addComponent(compText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 708, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 316, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 358, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel1.setText("Library Search ");
 
         searchBox.setFont(new java.awt.Font("Segoe UI Semibold", 0, 12)); // NOI18N
+
+        wavenumberSpinner.setModel(new javax.swing.SpinnerNumberModel(850, 400, 4200, 1));
+        wavenumberSpinner.setToolTipText("Wavenumber (cm-1)");
+
+        searchByWaveNumberButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/msc/ftir/images/Google Web Search_20px.png"))); // NOI18N
+        searchByWaveNumberButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchByWaveNumberButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -121,33 +267,39 @@ public class LibraryFtir extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 22, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(148, 148, 148))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addGap(18, 18, 18)
-                                .addComponent(searchBox, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(searchButton)
-                                .addGap(140, 140, 140))))
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(148, 148, 148))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())))
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(searchBox, javax.swing.GroupLayout.PREFERRED_SIZE, 271, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(searchButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(wavenumberSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(searchByWaveNumberButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(searchButton)
-                    .addComponent(jLabel1)
-                    .addComponent(searchBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(33, 33, 33)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(searchBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel1)
+                        .addComponent(searchButton))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(searchByWaveNumberButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addComponent(wavenumberSpinner, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(73, 73, 73)
+                .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
@@ -156,8 +308,106 @@ public class LibraryFtir extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
-       
+        searchResultTable.removeAll();
+        if (searchBox.getText().equals("")) {
+            JOptionPane.showMessageDialog(null, "Enter keywords to search!");
+
+        } else {
+
+            try {
+                String str = searchBox.getText();
+//                String strg = str.replaceFirst("\\s++$", "");
+                String strg = str.trim();
+
+                String sql = "select ID, CONCAT(START_FRQ, ' - ', END_FRQ) AS 'Range', `BOND_VIBMODE` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group', `COMPOUND_CATEGORY` AS 'Compound Category' from library where CONCAT(COMPOUND_CATEGORY,COMPOUND_TYPE,FUNCTIONAL_GROUP,BOND_VIBMODE ) like \"%" + strg + "%\" ORDER BY START_FRQ";
+//                String sql = "select ID, CONCAT(START_FRQ, ' - ', END_FRQ) AS 'Range', `BOND_VIBMODE` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group', `COMPOUND_CATEGORY` AS 'Compound Category' from library where CONCAT(COMPOUND_CATEGORY,COMPOUND_TYPE) LIKE  \"%\"" + strg +"\"%\" ORDER BY START_FRQ";
+
+                pst = conn.prepareStatement(sql);
+                rs = pst.executeQuery();
+
+                if (rs.next() == false) {
+
+                    JOptionPane.showMessageDialog(null, "No results found!");
+                } else {
+                    while (rs.next()) {
+                        searchResultTable.setModel(DbUtils.resultSetToTableModel(rs));
+
+                    }
+                }
+
+            } catch (Exception e) {
+                System.out.println(e);
+            } finally {
+                try {
+                    rs.close();
+                    pst.close();
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+            }
+
+        }
     }//GEN-LAST:event_searchButtonActionPerformed
+
+    private void searchResultTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchResultTableMouseClicked
+        try {
+            int sid = searchResultTable.getSelectedRow();
+            String tableclick = searchResultTable.getModel().getValueAt(sid, 0).toString();
+            String sql = "select *, CONCAT(START_FRQ, ' - ', END_FRQ) AS 'Range' from library where ID=" + tableclick;
+            pst = conn.prepareStatement(sql);
+            rs = pst.executeQuery();
+
+            if (rs.next()) {
+
+                if ((rs.getInt("START_FRQ") - rs.getInt("END_FRQ")) != 0) {
+                    rangeText.setText(rs.getString("Range"));
+                } else {
+                    rangeText.setText(String.valueOf(rs.getInt("START_FRQ")));
+                }
+
+                bondText.setText(rs.getString("BOND_VIBMODE"));
+                funcText.setText(rs.getString("FUNCTIONAL_GROUP"));
+                compText.setText(rs.getString("COMPOUND_CATEGORY"));
+            }
+        } catch (Exception e) {
+
+        }
+    }//GEN-LAST:event_searchResultTableMouseClicked
+
+    private void searchByWaveNumberButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchByWaveNumberButtonActionPerformed
+        searchResultTable.removeAll();
+
+        try {
+            int wv = (int) wavenumberSpinner.getValue();
+
+            String sql = "select ID, CONCAT(START_FRQ, ' - ', END_FRQ) AS 'Range', `BOND_VIBMODE` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group', `COMPOUND_CATEGORY` AS 'Compound Category' from library where  " + wv + "  <= start_frq AND " + wv + ">= end_frq  ORDER BY START_FRQ";
+
+            pst = conn.prepareStatement(sql);
+            rs = pst.executeQuery();
+
+            if (rs.next() == false) {
+
+                JOptionPane.showMessageDialog(null, "No results found!");
+            } else {
+                while (rs.next()) {
+                    searchResultTable.setModel(DbUtils.resultSetToTableModel(rs));
+
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+            try {
+                rs.close();
+                pst.close();
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }
+
+
+    }//GEN-LAST:event_searchByWaveNumberButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -195,10 +445,23 @@ public class LibraryFtir extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField bondText;
+    private javax.swing.JTextField compText;
+    private javax.swing.JTextField funcText;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextField rangeText;
     private javax.swing.JTextField searchBox;
     private javax.swing.JButton searchButton;
+    private javax.swing.JButton searchByWaveNumberButton;
+    private javax.swing.JTable searchResultTable;
+    private javax.swing.JSpinner wavenumberSpinner;
     // End of variables declaration//GEN-END:variables
 }

@@ -18,14 +18,24 @@ public class Result {
     private String compoundCategory;
 //    private String bond;
     private String functional_group;
+    private String compound_type;
 
-    public Result(BigDecimal w, String b, String f, String c) {
+    public Result(BigDecimal w, String b, String f, String t ,String c) {
         this.wavenumber = w;
         this.bondVibMode = b;
 //        this.bond = b;
         this.functional_group = f;
         this.compoundCategory = c;
+        this.compound_type = t;
 
+    }
+
+    public String getCompound_type() {
+        return compound_type;
+    }
+
+    public void setCompound_type(String compound_type) {
+        this.compound_type = compound_type;
     }
 
     public String getBondVibMode() {

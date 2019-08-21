@@ -91,7 +91,7 @@ public class Predict {
                     while (rs.next()) {
 
 //                    rst = new Result(f, rs.getString("BOND"), rs.getString("FUNCTIONAL_GROUP"));
-                        rst = new Result(f, rs.getString("BOND_VIBMODE"), rs.getString("FUNCTIONAL_GROUP"), rs.getString("COMPOUND_CATEGORY"));
+                        rst = new Result(f, rs.getString("BOND_VIBMODE"), rs.getString("FUNCTIONAL_GROUP"), rs.getString("COMPOUND_TYPE"), rs.getString("COMPOUND_CATEGORY"));
 //                    BigDecimal w = rs.getBigDecimal("width");
 //                    System.out.println(f+" /  " + w);
                         resultset.add(rst);
@@ -137,15 +137,16 @@ public class Predict {
 //            String bond = resultset.get(i).getBond();
             String bond = resultset.get(i).getBondVibMode();
             String fngrp = resultset.get(i).getFunctional_group();
+            String type = resultset.get(i).getCompound_type();
             String compound = resultset.get(i).getCompoundCategory();
 
-            String twoarrays = "(" + w + " ,\" " + bond + "\" , \"" + fngrp + "\" , \"" + compound + "\")";
+            String twoarrays = "(" + w + " ,\" " + bond + "\" , \"" + fngrp + "\" , \"" + type + "\" , \"" + compound + "\")";
             fullarrays = fullarrays + twoarrays + ",";
         }
 
         fullarrays = fullarrays.substring(0, fullarrays.length() - 1);
 
-        String sql = "INSERT INTO result ( WAVENUMBER,BOND, FUNCTIONAL_GROUP, COMPOUND_CATEGORY )  VALUES " + fullarrays;
+        String sql = "INSERT INTO result ( WAVENUMBER,BOND, FUNCTIONAL_GROUP,   COMPOUND_TYPE,  COMPOUND_CATEGORY )  VALUES " + fullarrays;
         ResultSet rs = null;
         PreparedStatement pst = null;
 
