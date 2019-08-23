@@ -78,6 +78,7 @@ import org.jfree.ui.TextAnchor;
 import javax.swing.table.*;
 import msc.ftir.baseline.EditBaseline;
 import msc.ftir.result.CheckBoxRenderer;
+import msc.ftir.result.CheckList;
 import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.util.ShapeUtilities;
 
@@ -287,7 +288,6 @@ public class MainWindow extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         resultTable = new javax.swing.JTable();
         jPanel14 = new javax.swing.JPanel();
-        okButton = new javax.swing.JButton();
         deselectButton = new javax.swing.JButton();
         jPanel10 = new javax.swing.JPanel();
         jCheckBox1 = new javax.swing.JCheckBox();
@@ -301,7 +301,13 @@ public class MainWindow extends javax.swing.JFrame {
         jCheckBox9 = new javax.swing.JCheckBox();
         jCheckBox10 = new javax.swing.JCheckBox();
         selectAllButton = new javax.swing.JButton();
-        deselectResultButton = new javax.swing.JButton();
+        nextButton6 = new javax.swing.JButton();
+        jPanel15 = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        printTable = new javax.swing.JTable();
+        deselectRowsButton = new javax.swing.JButton();
+        finishButton = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
         jPanel7 = new javax.swing.JPanel();
         jToolBar = new javax.swing.JToolBar();
         smootheSelection = new javax.swing.JButton();
@@ -379,7 +385,7 @@ public class MainWindow extends javax.swing.JFrame {
         specPanel.setLayout(specPanelLayout);
         specPanelLayout.setHorizontalGroup(
             specPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1035, Short.MAX_VALUE)
+            .addGap(0, 1044, Short.MAX_VALUE)
         );
         specPanelLayout.setVerticalGroup(
             specPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -394,7 +400,7 @@ public class MainWindow extends javax.swing.JFrame {
         smoothPanel.setLayout(smoothPanelLayout);
         smoothPanelLayout.setHorizontalGroup(
             smoothPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1035, Short.MAX_VALUE)
+            .addGap(0, 1044, Short.MAX_VALUE)
         );
         smoothPanelLayout.setVerticalGroup(
             smoothPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -409,7 +415,7 @@ public class MainWindow extends javax.swing.JFrame {
         baselinePanel.setLayout(baselinePanelLayout);
         baselinePanelLayout.setHorizontalGroup(
             baselinePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1035, Short.MAX_VALUE)
+            .addGap(0, 1044, Short.MAX_VALUE)
         );
         baselinePanelLayout.setVerticalGroup(
             baselinePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -426,11 +432,11 @@ public class MainWindow extends javax.swing.JFrame {
         comPanel.setLayout(comPanelLayout);
         comPanelLayout.setHorizontalGroup(
             comPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1040, Short.MAX_VALUE)
+            .addGap(0, 1049, Short.MAX_VALUE)
         );
         comPanelLayout.setVerticalGroup(
             comPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 328, Short.MAX_VALUE)
+            .addGap(0, 318, Short.MAX_VALUE)
         );
 
         specSplitPane.setRightComponent(comPanel);
@@ -471,7 +477,7 @@ public class MainWindow extends javax.swing.JFrame {
             .addGroup(tablePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 443, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 451, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tablePanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(nextButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -484,7 +490,7 @@ public class MainWindow extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(nextButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 289, Short.MAX_VALUE))
+                .addGap(0, 278, Short.MAX_VALUE))
         );
 
         settingsTabbedPane.addTab("Data         ", tablePanel);
@@ -519,7 +525,7 @@ public class MainWindow extends javax.swing.JFrame {
         jPanel8Layout.setHorizontalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
-                .addContainerGap(18, Short.MAX_VALUE)
+                .addContainerGap(26, Short.MAX_VALUE)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel8Layout.createSequentialGroup()
                         .addComponent(jLabel1)
@@ -635,7 +641,7 @@ public class MainWindow extends javax.swing.JFrame {
                     .addComponent(fivepoints)
                     .addComponent(sevenpoints)
                     .addComponent(ninepoints))
-                .addContainerGap(152, Short.MAX_VALUE))
+                .addContainerGap(160, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel12Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(resetSmoothButton, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -962,7 +968,7 @@ public class MainWindow extends javax.swing.JFrame {
                         .addComponent(splineCheckBox2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cubicSplineCheckBox2)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
                 .addComponent(nextButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(84, 84, 84))
         );
@@ -1012,7 +1018,7 @@ public class MainWindow extends javax.swing.JFrame {
         jLabel11.setText("Bands Detected");
 
         predictButton.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        predictButton.setText("Finish");
+        predictButton.setText("Next");
         predictButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 predictButtonActionPerformed(evt);
@@ -1029,17 +1035,20 @@ public class MainWindow extends javax.swing.JFrame {
             .addGroup(jPanel13Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel13Layout.createSequentialGroup()
-                        .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(numBandsText, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 288, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(predictButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel13Layout.createSequentialGroup()
+                            .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(numBandsText, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(288, 288, 288))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel13Layout.createSequentialGroup()
+                            .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(threshSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, 347, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addContainerGap()))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel13Layout.createSequentialGroup()
-                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(threshSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, 347, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                        .addComponent(predictButton, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
         );
         jPanel13Layout.setVerticalGroup(
             jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1067,14 +1076,14 @@ public class MainWindow extends javax.swing.JFrame {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(28, 28, 28)
                 .addComponent(jPanel13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(296, Short.MAX_VALUE))
+                .addContainerGap(285, Short.MAX_VALUE))
         );
 
         settingsTabbedPane.addTab("Bands", jPanel4);
@@ -1095,13 +1104,6 @@ public class MainWindow extends javax.swing.JFrame {
         jScrollPane2.setViewportView(resultTable);
 
         jPanel14.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Filter Results", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12), new java.awt.Color(102, 102, 102))); // NOI18N
-
-        okButton.setText("OK");
-        okButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okButtonActionPerformed(evt);
-            }
-        });
 
         deselectButton.setText("Deselect All");
         deselectButton.addActionListener(new java.awt.event.ActionListener() {
@@ -1127,46 +1129,91 @@ public class MainWindow extends javax.swing.JFrame {
         jCheckBox2.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jCheckBox2.setSelected(true);
         jCheckBox2.setText("Unsaturated Hydrocarbons");
+        jCheckBox2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox2ActionPerformed(evt);
+            }
+        });
 
         jCheckBox3.setBackground(new java.awt.Color(255, 255, 255));
         jCheckBox3.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jCheckBox3.setSelected(true);
         jCheckBox3.setText("Unsaturated Cyclic Aromatics");
+        jCheckBox3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox3ActionPerformed(evt);
+            }
+        });
 
         jCheckBox4.setBackground(new java.awt.Color(255, 255, 255));
         jCheckBox4.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jCheckBox4.setSelected(true);
         jCheckBox4.setText("Halogenated Hydrocarbons");
+        jCheckBox4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox4ActionPerformed(evt);
+            }
+        });
 
         jCheckBox5.setBackground(new java.awt.Color(255, 255, 255));
         jCheckBox5.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jCheckBox5.setSelected(true);
         jCheckBox5.setText("Nitrogen Containing Compounds");
+        jCheckBox5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox5ActionPerformed(evt);
+            }
+        });
 
         jCheckBox6.setBackground(new java.awt.Color(255, 255, 255));
         jCheckBox6.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jCheckBox6.setSelected(true);
         jCheckBox6.setText("Silicon Containing Compounds");
+        jCheckBox6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox6ActionPerformed(evt);
+            }
+        });
 
         jCheckBox7.setBackground(new java.awt.Color(255, 255, 255));
         jCheckBox7.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jCheckBox7.setSelected(true);
         jCheckBox7.setText("Phosphorus Containing Compounds");
+        jCheckBox7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox7ActionPerformed(evt);
+            }
+        });
 
         jCheckBox8.setBackground(new java.awt.Color(255, 255, 255));
         jCheckBox8.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jCheckBox8.setSelected(true);
         jCheckBox8.setText("Sulfur Containing Compounds");
+        jCheckBox8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox8ActionPerformed(evt);
+            }
+        });
 
         jCheckBox9.setBackground(new java.awt.Color(255, 255, 255));
         jCheckBox9.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jCheckBox9.setSelected(true);
         jCheckBox9.setText("Oxygen Containing Compounds");
+        jCheckBox9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox9ActionPerformed(evt);
+            }
+        });
 
         jCheckBox10.setBackground(new java.awt.Color(255, 255, 255));
         jCheckBox10.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jCheckBox10.setSelected(true);
         jCheckBox10.setText("Compounds Containing Carbon To Oxygen Double Bonds");
+        jCheckBox10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox10ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
         jPanel10.setLayout(jPanel10Layout);
@@ -1229,7 +1276,6 @@ public class MainWindow extends javax.swing.JFrame {
                 .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(selectAllButton, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(deselectButton))
                 .addContainerGap())
@@ -1241,24 +1287,23 @@ public class MainWindow extends javax.swing.JFrame {
             jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel14Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel14Layout.createSequentialGroup()
                         .addGap(77, 77, 77)
                         .addComponent(selectAllButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(deselectButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(okButton))
+                        .addComponent(deselectButton))
                     .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
         jPanel14Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {deselectButton, selectAllButton});
 
-        deselectResultButton.setText("Deselect");
-        deselectResultButton.addActionListener(new java.awt.event.ActionListener() {
+        nextButton6.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        nextButton6.setText("Next");
+        nextButton6.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                deselectResultButtonActionPerformed(evt);
+                nextButton6ActionPerformed(evt);
             }
         });
 
@@ -1270,12 +1315,11 @@ public class MainWindow extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(jPanel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(nextButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(deselectResultButton)
-                .addGap(187, 187, 187))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1283,13 +1327,77 @@ public class MainWindow extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel14, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 277, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(deselectResultButton)
+                .addComponent(nextButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
         settingsTabbedPane.addTab("Result     ", jPanel2);
+
+        printTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+
+            }
+        ));
+        printTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                printTableMouseClicked(evt);
+            }
+        });
+        jScrollPane3.setViewportView(printTable);
+
+        deselectRowsButton.setText("Deselect");
+        deselectRowsButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deselectRowsButtonActionPerformed(evt);
+            }
+        });
+
+        finishButton.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        finishButton.setText("Finish");
+        finishButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                finishButtonActionPerformed(evt);
+            }
+        });
+
+        jButton2.setText("OK");
+
+        javax.swing.GroupLayout jPanel15Layout = new javax.swing.GroupLayout(jPanel15);
+        jPanel15.setLayout(jPanel15Layout);
+        jPanel15Layout.setHorizontalGroup(
+            jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel15Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 443, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(18, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel15Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(deselectRowsButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(56, 56, 56)
+                .addComponent(finishButton, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel15Layout.setVerticalGroup(
+            jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel15Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(finishButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(deselectRowsButton)
+                    .addComponent(jButton2))
+                .addContainerGap(256, Short.MAX_VALUE))
+        );
+
+        settingsTabbedPane.addTab("Report", jPanel15);
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -1303,8 +1411,8 @@ public class MainWindow extends javax.swing.JFrame {
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
-                .addComponent(settingsTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 635, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addComponent(settingsTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0))
         );
 
         sectionSplitPane.setLeftComponent(jPanel5);
@@ -1414,7 +1522,7 @@ public class MainWindow extends javax.swing.JFrame {
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addComponent(jToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 808, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 557, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 566, Short.MAX_VALUE)
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
                         .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -2080,6 +2188,9 @@ public class MainWindow extends javax.swing.JFrame {
         } else {
             JOptionPane.showMessageDialog(null, "Error!", "Error", JOptionPane.ERROR_MESSAGE);
         }
+
+        specSplitPane.getTopComponent().setMinimumSize(new Dimension());
+        specSplitPane.setDividerLocation(0.0d);
     }//GEN-LAST:event_nextButton2ActionPerformed
 
     private void predictButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_predictButtonActionPerformed
@@ -2087,20 +2198,14 @@ public class MainWindow extends javax.swing.JFrame {
         pr.getResults();
         pr.updateResultsTable();//database
 
-        try {
-            updateTable();
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-//        updateResult_table();//interface result table
+        updateResultjTable();//interface result table
         if (bandstab) {
             settingsTabbedPane.setSelectedIndex(4);
         } else {
             JOptionPane.showMessageDialog(null, "Error!", "Error", JOptionPane.ERROR_MESSAGE);
         }
+
+
     }//GEN-LAST:event_predictButtonActionPerformed
 
     private void fivepointsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fivepointsMouseClicked
@@ -2134,20 +2239,7 @@ public class MainWindow extends javax.swing.JFrame {
         df.setMaximumFractionDigits(3);
         int row = resultTable.getSelectedRow();
 
-        //to select and unselect rows
-        {
-
-            boolean val = (boolean) resultTable.getValueAt(row, 3);
-
-            if (val == true) {
-                resultTable.setValueAt(false, row, 3);
-            } else if (val == false) {
-                resultTable.setValueAt(true, row, 3);
-            }
-
-        }
-
-        double w = Double.parseDouble(String.valueOf(resultTable.getValueAt(row, 0)));
+        double w = Double.parseDouble(String.valueOf(resultTable.getValueAt(row, 1)));
         int wv = (int) Math.round(w);
 
         XYSeriesCollection dataSet0 = (XYSeriesCollection) xyplotT.getDataset(0);
@@ -2317,7 +2409,7 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
-        // TODO add your handling code here:
+        filterResults();
     }//GEN-LAST:event_jCheckBox1ActionPerformed
 
     private void deselectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deselectButtonActionPerformed
@@ -2349,61 +2441,6 @@ public class MainWindow extends javax.swing.JFrame {
 
     }//GEN-LAST:event_selectAllButtonActionPerformed
 
-    private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        List<JCheckBox> buttons = new ArrayList<>();
-        buttons.add(jCheckBox1);
-        buttons.add(jCheckBox2);
-        buttons.add(jCheckBox3);
-        buttons.add(jCheckBox4);
-        buttons.add(jCheckBox5);
-        buttons.add(jCheckBox6);
-        buttons.add(jCheckBox7);
-        buttons.add(jCheckBox8);
-        buttons.add(jCheckBox9);
-        buttons.add(jCheckBox10);
-
-        String selectedItem = "";
-        int selected = 0;
-        for (JCheckBox checkbox : buttons) {
-            if (checkbox.isSelected()) {
-                selectedItem += "\"" + checkbox.getText() + "\",";
-                selected++;
-            }
-        }
-
-        if (selected == 0) {
-            JOptionPane.showMessageDialog(null, "No compund categories selected!");
-        } else if (selected > 0) {
-            selectedItem = selectedItem.substring(0, selectedItem.length() - 1);
-            try {
-                String sql = "SELECT round(`WAVENUMBER`,0) AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group' FROM `result` WHERE COMPOUND_CATEGORY IN (" + selectedItem + ")";
-                pst = conn.prepareStatement(sql);
-                rs = pst.executeQuery();
-                if (rs.next() == false) {
-
-                    JOptionPane.showMessageDialog(null, "No results found!");
-                } else {
-
-                    do {
-                        resultTable.setModel(DbUtils.resultSetToTableModel(rs));
-                    } while (rs.next());
-
-                }
-
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, e);
-            } finally {
-                try {
-                    rs.close();
-                    pst.close();
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(null, e);
-                }
-            }
-        }
-
-    }//GEN-LAST:event_okButtonActionPerformed
-
     private void manualBaselineCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_manualBaselineCheckBoxActionPerformed
         try {
             baselineMethodCombo.setEnabled(false);
@@ -2421,8 +2458,10 @@ public class MainWindow extends javax.swing.JFrame {
 //            eb.setVisible(true);
             baselineCharts(createValleyDataset(v1.getPeaktops()), createSmoothedDataset(), baselinePanel);
 //            baselineCharts(createValleyDataset(v1.getPeaktops()), createSmoothedDataset(), eb.blSpecPanel);
+
         } catch (SQLException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MainWindow.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
 
 
@@ -2452,8 +2491,10 @@ public class MainWindow extends javax.swing.JFrame {
             peaktops = v1.getPeaktops();
             baselineCharts(createValleyDataset(peaktops), createSmoothedDataset(), baselinePanel);
 //            baselineCharts(createValleyDataset(peaktops), createSmoothedDataset(), eb.blSpecPanel);
+
         } catch (SQLException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MainWindow.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_undoButtonActionPerformed
 
@@ -2517,9 +2558,8 @@ public class MainWindow extends javax.swing.JFrame {
 
 //        if (bltab) {
         settingsTabbedPane.setSelectedIndex(3);
-//        } else {
-//            JOptionPane.showMessageDialog(null, "Error!", "Error", JOptionPane.ERROR_MESSAGE);
-//        }
+        specSplitPane.getTopComponent().setMinimumSize(new Dimension());
+        specSplitPane.setDividerLocation(0.0d);
     }//GEN-LAST:event_nextButton4ActionPerformed
 
     private void stopAddingButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stopAddingButtonActionPerformed
@@ -2541,18 +2581,148 @@ public class MainWindow extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void deselectResultButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deselectResultButtonActionPerformed
-        int r = resultTable.getRowCount();
+    private void printTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_printTableMouseClicked
+        performThresh();
+        DecimalFormat df = new DecimalFormat();
+        df.setMaximumFractionDigits(3);
+        int row = printTable.getSelectedRow();
+
+        //to select and unselect rows
+        {
+
+            boolean val = (boolean) printTable.getValueAt(row, 4);
+
+            if (val == true) {
+                printTable.setValueAt(false, row, 4);
+            } else if (val == false) {
+                printTable.setValueAt(true, row, 4);
+            }
+
+        }
+
+        double w = Double.parseDouble(String.valueOf(printTable.getValueAt(row, 1)));
+        int wv = (int) Math.round(w);
+
+        XYSeriesCollection dataSet0 = (XYSeriesCollection) xyplotT.getDataset(0);
+        XYSeries series0 = dataSet0.getSeries(0);
+        XYItemRenderer renderer1 = new MyXYBarRenderer();
+
+        chartPanel_com.removeOverlay(crosshairOverlay);
+        xyplotT.removeAnnotation(pointer);
+        xyplotT.removeAnnotation(pointer2);
+
+        crosshairOverlay = new CrosshairOverlay();
+        xCrosshair = new Crosshair(Double.NaN, Color.GRAY, new BasicStroke(0f));
+        xCrosshair.setLabelVisible(false);
+        yCrosshair = new Crosshair(Double.NaN, Color.GRAY, new BasicStroke(0f));
+        yCrosshair.setLabelVisible(false);
+        crosshairOverlay.addDomainCrosshair(xCrosshair);
+        crosshairOverlay.addRangeCrosshair(yCrosshair);
+        chartPanel_com.addOverlay(crosshairOverlay);
+
+        pointer = new XYPointerAnnotation("", 0, 0, 7.0 * Math.PI / 4.0);
+        pointer.setTipRadius(3.0);
+        pointer.setBaseRadius(15.0);
+        pointer.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        pointer.setPaint(Color.blue);
+        pointer.setTextAnchor(TextAnchor.HALF_ASCENT_LEFT);
+        pointer.setBackgroundPaint(Color.yellow);
+
+        // Shapes only
+        for (Object i : series0.getItems()) {
+            XYDataItem item = (XYDataItem) i;
+            double x = item.getXValue();
+            double y = item.getYValue();
+
+            if (Math.abs(x - wv) < 1) {
+
+                if (y > 0) {
+                    pointer.setX(x);
+                    pointer.setY(y);
+                    pointer.setText("X = " + df.format(x) + " , Y = " + df.format(y));
+                    xyplotT.addAnnotation(pointer);
+                }
+                xCrosshair.setValue(x);
+                yCrosshair.setValue(y);
+
+            }
+        }
+    }//GEN-LAST:event_printTableMouseClicked
+
+    private void nextButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButton6ActionPerformed
+        settingsTabbedPane.setSelectedIndex(5);
+
+        try {
+//            updatePrintTable();
+            createReportSpectrum(createValleyDataset(v2.getCandidates()), createBaselineDataset(), comPanel);
+
+        }  catch (SQLException ex) {
+            Logger.getLogger(MainWindow.class
+                    .getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_nextButton6ActionPerformed
+
+    private void deselectRowsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deselectRowsButtonActionPerformed
+        int r = printTable.getRowCount();
 
         for (int i = 0; i < r; i++) {
 
-            boolean val = (boolean) resultTable.getValueAt(i, 3);
+            boolean val = (boolean) printTable.getValueAt(i, 4);
 
             if (val == true) {
-                resultTable.setValueAt(false, i, 3);
+                printTable.setValueAt(false, i, 4);
             }
         }
-    }//GEN-LAST:event_deselectResultButtonActionPerformed
+    }//GEN-LAST:event_deselectRowsButtonActionPerformed
+
+    private void finishButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_finishButtonActionPerformed
+        int r = printTable.getRowCount();
+
+        for (int i = 0; i < r; i++) {
+
+            boolean val = (boolean) printTable.getValueAt(i, 4);
+
+            if (val == true) {
+
+            }
+        }
+    }//GEN-LAST:event_finishButtonActionPerformed
+
+    private void jCheckBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox2ActionPerformed
+        filterResults();
+    }//GEN-LAST:event_jCheckBox2ActionPerformed
+
+    private void jCheckBox3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox3ActionPerformed
+        filterResults();
+    }//GEN-LAST:event_jCheckBox3ActionPerformed
+
+    private void jCheckBox4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox4ActionPerformed
+        filterResults();
+    }//GEN-LAST:event_jCheckBox4ActionPerformed
+
+    private void jCheckBox5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox5ActionPerformed
+        filterResults();
+    }//GEN-LAST:event_jCheckBox5ActionPerformed
+
+    private void jCheckBox6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox6ActionPerformed
+        filterResults();
+    }//GEN-LAST:event_jCheckBox6ActionPerformed
+
+    private void jCheckBox7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox7ActionPerformed
+        filterResults();
+    }//GEN-LAST:event_jCheckBox7ActionPerformed
+
+    private void jCheckBox8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox8ActionPerformed
+        filterResults();
+    }//GEN-LAST:event_jCheckBox8ActionPerformed
+
+    private void jCheckBox9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox9ActionPerformed
+        filterResults();
+    }//GEN-LAST:event_jCheckBox9ActionPerformed
+
+    private void jCheckBox10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox10ActionPerformed
+        filterResults();
+    }//GEN-LAST:event_jCheckBox10ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -2573,13 +2743,20 @@ public class MainWindow extends javax.swing.JFrame {
             UIManager.getLookAndFeelDefaults().put("ProgressBar[Enabled+Finished].foregroundPainter", painter);
 
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MainWindow.class
+                    .getName()).log(Level.SEVERE, null, ex);
+
         } catch (InstantiationException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MainWindow.class
+                    .getName()).log(Level.SEVERE, null, ex);
+
         } catch (IllegalAccessException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MainWindow.class
+                    .getName()).log(Level.SEVERE, null, ex);
+
         } catch (UnsupportedLookAndFeelException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MainWindow.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
 
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -2589,10 +2766,14 @@ public class MainWindow extends javax.swing.JFrame {
         });
     }
 
-    private void update_table() {
+    private void updateInputDataTable() {
 
         try {
-            String sql = "select ID AS \"Index\", WAVENUMBER AS 'Wavenumber' , TRANSMITTANCE AS 'Transmittance' from input_data";
+            String sql = "SELECT (@row_number:=@row_number + 1) AS 'Index', WAVENUMBER AS 'Wavenumber' , TRANSMITTANCE AS 'Transmittance' from input_data";
+
+            String sql1 = "SET @row_number=0";
+            PreparedStatement pst1 = conn.prepareStatement(sql1);
+            ResultSet rst = pst1.executeQuery();
 
             pst = conn.prepareStatement(sql);
             rs = pst.executeQuery();
@@ -3190,7 +3371,7 @@ public class MainWindow extends javax.swing.JFrame {
                     System.out.println(e);
                 }
             }
-            update_table();
+            updateInputDataTable();
 
         }
     }
@@ -3280,8 +3461,8 @@ public class MainWindow extends javax.swing.JFrame {
             }
         }
 //        System.out.println("All cleared");
-        update_table();
-        updateResult_table();
+        updateInputDataTable();
+        updateResultjTable();
 
     }
 
@@ -3335,7 +3516,7 @@ public class MainWindow extends javax.swing.JFrame {
             System.err.println(e);
         }
 
-        update_table();
+        updateInputDataTable();
 
         /* String value = " ";
         validateFileType();
@@ -3524,7 +3705,7 @@ public class MainWindow extends javax.swing.JFrame {
         panel.validate();
         panel.setPreferredSize(new Dimension(654, 350));
         panel.setVisible(true);
-        
+
         renderer1.setSeriesShape(0, new Ellipse2D.Double(-3, -3, 6, 6));
 
 //        Shape cross = ShapeUtilities.createDiagonalCross(3, 1);
@@ -3532,7 +3713,6 @@ public class MainWindow extends javax.swing.JFrame {
 //        plot = (XYPlot) duelchart.getPlot();
 //        renderer1 = plot.getRenderer();
 //        renderer1.setSeriesShape(0, cross);
-
 //        duelchart.setAutoRangeIncludesZero(false);
         //to retain zoom
 //        chartPanel_com.setMouseWheelEnabled(true);
@@ -3596,7 +3776,7 @@ public class MainWindow extends javax.swing.JFrame {
 
                         for (int i = 0; i < resultTable.getRowCount(); i++) {
 
-                            double d = Double.parseDouble(String.valueOf(resultTable.getValueAt(i, 0)));
+                            double d = Double.parseDouble(String.valueOf(resultTable.getValueAt(i, 1)));
 
                             if (Math.abs(d - x) < 0.0000001) {
 
@@ -3608,7 +3788,7 @@ public class MainWindow extends javax.swing.JFrame {
                         f = Collections.min(indices);
                         l = Collections.max(indices);
                         model.setSelectionInterval(f, l);
-                        resultTable.scrollRectToVisible(resultTable.getCellRect(f, 0, true));
+                        resultTable.scrollRectToVisible(resultTable.getCellRect(f, 1, true));
 
                     } catch (NoSuchElementException e) {
                         System.err.println(e);
@@ -3688,21 +3868,23 @@ public class MainWindow extends javax.swing.JFrame {
         }
         );
 
-        resultTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                if (isSelected) {
-                    c.setBackground(Color.YELLOW);
-                    c.setForeground(Color.BLUE);
-                } else {
-                    c.setBackground(Color.WHITE);
-                    c.setForeground(Color.BLACK);
-                }
+        resultTable
+                .setDefaultRenderer(Object.class,
+                        new DefaultTableCellRenderer() {
+                    @Override
+                    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                        Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                        if (isSelected) {
+                            c.setBackground(Color.YELLOW);
+                            c.setForeground(Color.BLUE);
+                        } else {
+                            c.setBackground(Color.WHITE);
+                            c.setForeground(Color.BLACK);
+                        }
 
-                return c;
-            }
-        });
+                        return c;
+                    }
+                });
     }
 
     public void create3charts(XYDataset set1, XYDataset set2, JPanel panel) {
@@ -3753,6 +3935,173 @@ public class MainWindow extends javax.swing.JFrame {
         panel.setPreferredSize(new Dimension(654, 350));
         panel.setVisible(true);
 
+    }
+
+    //final report spectrum
+    public void createReportSpectrum(XYDataset set1, XYDataset set2, JPanel panel) {
+
+        panel.removeAll();
+        panel.revalidate();
+        panel.repaint();
+
+        XYPlot plot = new XYPlot();
+
+        XYDataset collection1 = set1;
+        peakset = set1;
+        XYItemRenderer renderer1 = new XYLineAndShapeRenderer(false, true);	// Shapes only
+        ValueAxis domain1 = new NumberAxis("Wavenumber (cm-1)");
+        ValueAxis range1 = new NumberAxis("Transmittance %");
+        domain1.setAutoRange(true);
+        domain1.setInverted(true);
+        range1.setAutoRange(true);
+
+        plot.setDataset(0, collection1);
+        plot.setRenderer(0, renderer1);
+        plot.setDomainAxis(0, domain1);
+        plot.setRangeAxis(0, range1);
+
+        XYDataset collection2 = set2;
+        XYItemRenderer renderer2 = new XYLineAndShapeRenderer(true, false);	// Lines only
+        renderer2.setSeriesPaint(0, Color.blue);
+
+        ValueAxis domain2 = new NumberAxis("");
+        ValueAxis range2 = new NumberAxis("");
+
+        plot.setDataset(1, collection2);
+        plot.setRenderer(1, renderer2);
+        plot.setDomainAxis(1, domain2);
+        plot.setRangeAxis(1, range2);
+        xyplotT = plot;
+
+        domain2.setAutoRange(true);
+        domain2.setInverted(true);
+        domain2.setVisible(false);
+        range2.setVisible(false);
+
+        duelchart = new JFreeChart("", JFreeChart.DEFAULT_TITLE_FONT, plot, true);
+        chartPanel_com = new ChartPanel(duelchart);
+        panel.setLayout(new java.awt.BorderLayout());
+        panel.add(chartPanel_com, BorderLayout.CENTER);
+        panel.validate();
+        panel.setPreferredSize(new Dimension(654, 350));
+        panel.setVisible(true);
+
+        renderer1.setSeriesShape(0, new Ellipse2D.Double(-3, -3, 6, 6));
+
+        crosshairOverlay = new CrosshairOverlay();
+        xCrosshair = new Crosshair(Double.NaN, Color.GRAY, new BasicStroke(0f));
+        xCrosshair.setLabelVisible(false);
+        yCrosshair = new Crosshair(Double.NaN, Color.GRAY, new BasicStroke(0f));
+        yCrosshair.setLabelVisible(false);
+        crosshairOverlay.addDomainCrosshair(xCrosshair);
+        crosshairOverlay.addRangeCrosshair(yCrosshair);
+
+        pointer = new XYPointerAnnotation("", 0, 0, 7.0 * Math.PI / 4.0);
+        pointer.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        pointer.setTipRadius(3.0);
+        pointer.setBaseRadius(15.0);
+        pointer.setPaint(Color.blue);
+        pointer.setTextAnchor(TextAnchor.HALF_ASCENT_LEFT);
+        pointer.setBackgroundPaint(Color.yellow);
+
+        pointer2 = new XYPointerAnnotation("", 0, 0, 7.0 * Math.PI / 4.0);
+        pointer2.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        pointer2.setTipRadius(3.0);
+        pointer2.setBaseRadius(15.0);
+        pointer2.setPaint(Color.blue);
+        pointer2.setTextAnchor(TextAnchor.HALF_ASCENT_LEFT);
+        pointer2.setBackgroundPaint(new Color(255, 255, 255));
+
+        DecimalFormat df = new DecimalFormat();
+        df.setMaximumFractionDigits(3);
+
+        chartPanel_com.addChartMouseListener(new ChartMouseListener() {
+
+            @Override
+            public void chartMouseClicked(ChartMouseEvent event) {}
+
+            @Override
+            public void chartMouseMoved(ChartMouseEvent event) {
+
+                xyplotT.removeAnnotation(pointer);
+                xyplotT.removeAnnotation(pointer2);
+
+                ChartEntity chartentity = event.getEntity();
+                Rectangle2D dataArea = chartPanel_com.getScreenDataArea();
+                ValueAxis xAxis = xyplotT.getDomainAxis();
+                ValueAxis yAxis = xyplotT.getRangeAxis();
+
+                if (chartentity != null && chartentity instanceof XYItemEntity) {
+                    XYItemEntity e = (XYItemEntity) chartentity;
+                    try {
+                        int i = e.getItem();
+                        int s = e.getSeriesIndex();
+                        double x = collection1.getXValue(s, i);
+                        double y = collection1.getYValue(s, i);
+
+                        if (y > 0) {
+                            pointer.setX(x);
+                            pointer.setY(y);
+                            pointer.setText("X = " + df.format(x) + " , Y = " + df.format(y));
+
+                            xyplotT.addAnnotation(pointer);
+                        }
+                        xCrosshair.setValue(x);
+                        yCrosshair.setValue(y);
+                        chartPanel_com.addOverlay(crosshairOverlay);
+                        chartPanel_com.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                    } catch (Exception exp) {
+                    }
+
+                }
+                if (!(chartentity instanceof XYItemEntity)) {
+
+                    chartPanel_com.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+
+                    double x = xAxis.java2DToValue(event.getTrigger().getX(), dataArea, xyplotT.getDomainAxisEdge());
+                    double y = yAxis.java2DToValue(event.getTrigger().getY(), dataArea, xyplotT.getRangeAxisEdge());
+
+//                    double x = plot.getDomainAxis().java2DToValue(p.getX(), plotArea, plot.getDomainAxisEdge());
+//                    double y = plot.getRangeAxis().java2DToValue(p.getY(), plotArea, plot.getRangeAxisEdge());
+//                    double y = DatasetUtilities.findYValue(plot.getDataset(), 0, x);
+                    pointer2.setX(x);
+                    pointer2.setY(y);
+                    pointer2.setText("X = " + df.format(x) + " , Y = " + df.format(y));
+                    xyplotT.addAnnotation(pointer2);
+
+                    xCrosshair.setValue(x);
+                    yCrosshair.setValue(y);
+                    chartPanel_com.addOverlay(crosshairOverlay);
+
+                    if (!(x < 4000 || y > 0)) {
+
+                        xyplotT.removeAnnotation(pointer);
+                        xyplotT.removeAnnotation(pointer2);
+                        chartPanel_com.removeOverlay(crosshairOverlay);
+                    }
+
+                }
+
+            }
+
+        }
+        );
+
+        printTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (isSelected) {
+                    c.setBackground(Color.YELLOW);
+                    c.setForeground(Color.BLUE);
+                } else {
+                    c.setBackground(Color.WHITE);
+                    c.setForeground(Color.BLACK);
+                }
+
+                return c;
+            }
+        });
     }
 
     //two charts ftir and smoothed one together
@@ -3942,7 +4291,7 @@ public class MainWindow extends javax.swing.JFrame {
 
             @Override
             public void chartMouseClicked(ChartMouseEvent event) {
-
+            
                 clickcount++;
                 ChartEntity entity = event.getEntity();
                 BigDecimal X = null, Y = null;
@@ -3966,7 +4315,7 @@ public class MainWindow extends javax.swing.JFrame {
 
                         } catch (Exception e) {
                             System.err.println(e);
-                        }
+            }
                         baselineCharts(createValleyDataset(peaktops), createSmoothedDataset(), panel);
 //                        baselineCharts(createValleyDataset(peaktops), createSmoothedDataset(), baselinePanel);
 
@@ -4156,8 +4505,10 @@ public class MainWindow extends javax.swing.JFrame {
             v2.evaluateNeighbourhood();
 
             createDuel(createValleyDataset(v2.getCandidates()), createBaselineDataset(), comPanel);
+
         } catch (SQLException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MainWindow.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
 
     }
@@ -4181,8 +4532,10 @@ public class MainWindow extends javax.swing.JFrame {
 //                                    createSmoothed_spectrum(ls.originalPoints, ls.smoothedPoints);//old
                         try {
                             combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
+
                         } catch (SQLException ex) {
-                            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(MainWindow.class
+                                    .getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 } else if (fivepoints.isSelected()) {
@@ -4192,8 +4545,10 @@ public class MainWindow extends javax.swing.JFrame {
 //                                    createSmoothed_spectrum(ls.originalPoints, ls.smoothedPoints);//old
                         try {
                             combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
+
                         } catch (SQLException ex) {
-                            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(MainWindow.class
+                                    .getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 } else if (sevenpoints.isSelected()) {
@@ -4203,8 +4558,10 @@ public class MainWindow extends javax.swing.JFrame {
 //                                    createSmoothed_spectrum(ls.originalPoints, ls.smoothedPoints);//old
                         try {
                             combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
+
                         } catch (SQLException ex) {
-                            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(MainWindow.class
+                                    .getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 } else if (ninepoints.isSelected()) {
@@ -4214,8 +4571,10 @@ public class MainWindow extends javax.swing.JFrame {
 //                                    createSmoothed_spectrum(ls.originalPoints, ls.smoothedPoints);//old
                         try {
                             combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
+
                         } catch (SQLException ex) {
-                            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(MainWindow.class
+                                    .getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 }
@@ -4229,8 +4588,10 @@ public class MainWindow extends javax.swing.JFrame {
 //                                createSmoothed_spectrum(tri.originalPoints, tri.smoothedPoints);
                     try {
                         combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
+
                     } catch (SQLException ex) {
-                        Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(MainWindow.class
+                                .getName()).log(Level.SEVERE, null, ex);
                     }
                 }
                 filterPassLabel.setText(Integer.toString(ls.count));
@@ -4245,8 +4606,10 @@ public class MainWindow extends javax.swing.JFrame {
 //                                    createSmoothed_spectrum(ls.originalPoints, ls.smoothedPoints);//old
                         try {
                             combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
+
                         } catch (SQLException ex) {
-                            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(MainWindow.class
+                                    .getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 } else if (fivepoints.isSelected()) {
@@ -4256,8 +4619,10 @@ public class MainWindow extends javax.swing.JFrame {
 //                                    createSmoothed_spectrum(ls.originalPoints, ls.smoothedPoints);//old
                         try {
                             combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
+
                         } catch (SQLException ex) {
-                            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(MainWindow.class
+                                    .getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 } else if (sevenpoints.isSelected()) {
@@ -4267,8 +4632,10 @@ public class MainWindow extends javax.swing.JFrame {
 //                                    createSmoothed_spectrum(ls.originalPoints, ls.smoothedPoints);//old
                         try {
                             combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
+
                         } catch (SQLException ex) {
-                            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(MainWindow.class
+                                    .getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 } else if (ninepoints.isSelected()) {
@@ -4278,8 +4645,10 @@ public class MainWindow extends javax.swing.JFrame {
 //                                    createSmoothed_spectrum(ls.originalPoints, ls.smoothedPoints);//old
                         try {
                             combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
+
                         } catch (SQLException ex) {
-                            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(MainWindow.class
+                                    .getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 }
@@ -4305,8 +4674,10 @@ public class MainWindow extends javax.swing.JFrame {
                 }
                 try {
                     combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
+
                 } catch (SQLException ex) {
-                    Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(MainWindow.class
+                            .getName()).log(Level.SEVERE, null, ex);
                 }
                 filterPassLabel.setText(Integer.toString(sliderValue));
             }
@@ -4321,8 +4692,10 @@ public class MainWindow extends javax.swing.JFrame {
 //                                    createSmoothed_spectrum(ls.originalPoints, ls.smoothedPoints);//old
                         try {
                             combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
+
                         } catch (SQLException ex) {
-                            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(MainWindow.class
+                                    .getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 } else if (fivepoints.isSelected()) {
@@ -4332,8 +4705,10 @@ public class MainWindow extends javax.swing.JFrame {
 //                                    createSmoothed_spectrum(ls.originalPoints, ls.smoothedPoints);//old
                         try {
                             combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
+
                         } catch (SQLException ex) {
-                            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(MainWindow.class
+                                    .getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 } else if (sevenpoints.isSelected()) {
@@ -4343,8 +4718,10 @@ public class MainWindow extends javax.swing.JFrame {
 //                                    createSmoothed_spectrum(ls.originalPoints, ls.smoothedPoints);//old
                         try {
                             combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
+
                         } catch (SQLException ex) {
-                            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(MainWindow.class
+                                    .getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 } else if (ninepoints.isSelected()) {
@@ -4354,8 +4731,10 @@ public class MainWindow extends javax.swing.JFrame {
 //                                    createSmoothed_spectrum(ls.originalPoints, ls.smoothedPoints);//old
                         try {
                             combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
+
                         } catch (SQLException ex) {
-                            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(MainWindow.class
+                                    .getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 }
@@ -4370,8 +4749,10 @@ public class MainWindow extends javax.swing.JFrame {
 //                                createSmoothed_spectrum(tri.originalPoints, tri.smoothedPoints);
                     try {
                         combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
+
                     } catch (SQLException ex) {
-                        Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(MainWindow.class
+                                .getName()).log(Level.SEVERE, null, ex);
                     }
                 }
                 filterPassLabel.setText(Integer.toString(ls.count));
@@ -4387,8 +4768,10 @@ public class MainWindow extends javax.swing.JFrame {
 //                                    createSmoothed_spectrum(ls.originalPoints, ls.smoothedPoints);//old
                         try {
                             combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
+
                         } catch (SQLException ex) {
-                            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(MainWindow.class
+                                    .getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 } else if (fivepoints.isSelected()) {
@@ -4398,8 +4781,10 @@ public class MainWindow extends javax.swing.JFrame {
 //                                    createSmoothed_spectrum(ls.originalPoints, ls.smoothedPoints);//old
                         try {
                             combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
+
                         } catch (SQLException ex) {
-                            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(MainWindow.class
+                                    .getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 }
@@ -4428,8 +4813,10 @@ public class MainWindow extends javax.swing.JFrame {
 //                                    createSmoothed_spectrum(ls.originalPoints, ls.smoothedPoints);//old
                 try {
                     combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
+
                 } catch (SQLException ex) {
-                    Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(MainWindow.class
+                            .getName()).log(Level.SEVERE, null, ex);
                 }
 
             } else if (fivepoints.isSelected()) {
@@ -4439,8 +4826,10 @@ public class MainWindow extends javax.swing.JFrame {
 //                                    createSmoothed_spectrum(ls.originalPoints, ls.smoothedPoints);//old
                 try {
                     combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
+
                 } catch (SQLException ex) {
-                    Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(MainWindow.class
+                            .getName()).log(Level.SEVERE, null, ex);
                 }
 
             } else if (sevenpoints.isSelected()) {
@@ -4450,8 +4839,10 @@ public class MainWindow extends javax.swing.JFrame {
 //                                    createSmoothed_spectrum(ls.originalPoints, ls.smoothedPoints);//old
                 try {
                     combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
+
                 } catch (SQLException ex) {
-                    Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(MainWindow.class
+                            .getName()).log(Level.SEVERE, null, ex);
                 }
 
             } else if (ninepoints.isSelected()) {
@@ -4461,8 +4852,10 @@ public class MainWindow extends javax.swing.JFrame {
 //                                    createSmoothed_spectrum(ls.originalPoints, ls.smoothedPoints);//old
                 try {
                     combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
+
                 } catch (SQLException ex) {
-                    Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(MainWindow.class
+                            .getName()).log(Level.SEVERE, null, ex);
                 }
 
             }
@@ -4476,8 +4869,10 @@ public class MainWindow extends javax.swing.JFrame {
 //                                createSmoothed_spectrum(tri.originalPoints, tri.smoothedPoints);
             try {
                 combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
+
             } catch (SQLException ex) {
-                Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(MainWindow.class
+                        .getName()).log(Level.SEVERE, null, ex);
             }
 
         }
@@ -4491,8 +4886,10 @@ public class MainWindow extends javax.swing.JFrame {
 //                                    createSmoothed_spectrum(ls.originalPoints, ls.smoothedPoints);//old
                 try {
                     combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
+
                 } catch (SQLException ex) {
-                    Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(MainWindow.class
+                            .getName()).log(Level.SEVERE, null, ex);
                 }
 
             } else if (fivepoints.isSelected()) {
@@ -4502,8 +4899,10 @@ public class MainWindow extends javax.swing.JFrame {
 //                                    createSmoothed_spectrum(ls.originalPoints, ls.smoothedPoints);//old
                 try {
                     combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
+
                 } catch (SQLException ex) {
-                    Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(MainWindow.class
+                            .getName()).log(Level.SEVERE, null, ex);
                 }
 
             } else if (sevenpoints.isSelected()) {
@@ -4513,8 +4912,10 @@ public class MainWindow extends javax.swing.JFrame {
 //                                    createSmoothed_spectrum(ls.originalPoints, ls.smoothedPoints);//old
                 try {
                     combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
+
                 } catch (SQLException ex) {
-                    Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(MainWindow.class
+                            .getName()).log(Level.SEVERE, null, ex);
                 }
 
             } else if (ninepoints.isSelected()) {
@@ -4524,8 +4925,10 @@ public class MainWindow extends javax.swing.JFrame {
 //                                    createSmoothed_spectrum(ls.originalPoints, ls.smoothedPoints);//old
                 try {
                     combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
+
                 } catch (SQLException ex) {
-                    Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(MainWindow.class
+                            .getName()).log(Level.SEVERE, null, ex);
                 }
 
             }
@@ -4554,7 +4957,8 @@ public class MainWindow extends javax.swing.JFrame {
             updateCandidateTable(v1.getCandidates());
 
         } catch (SQLException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MainWindow.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }//end
 
     }
@@ -4582,7 +4986,8 @@ public class MainWindow extends javax.swing.JFrame {
             updateCandidateTable(v2.getCandidates());
 
         } catch (SQLException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MainWindow.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }//end
     }
 
@@ -4602,7 +5007,8 @@ public class MainWindow extends javax.swing.JFrame {
             createDuel(createValleyDataset(v1.getCandidates()), createSmoothedDataset(), comPanel);
 
         } catch (SQLException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MainWindow.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }//end
 
     }
@@ -4617,7 +5023,8 @@ public class MainWindow extends javax.swing.JFrame {
             createDuel(createValleyDataset(v1.getCandidates()), createSmoothedDataset(), comPanel);
 
         } catch (SQLException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MainWindow.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }//end
     }
 
@@ -4637,7 +5044,8 @@ public class MainWindow extends javax.swing.JFrame {
             createDuel(createValleyDataset(v1.getCandidates()), createSmoothedDataset(), comPanel);
 
         } catch (SQLException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MainWindow.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }//end
     }
 
@@ -4652,7 +5060,8 @@ public class MainWindow extends javax.swing.JFrame {
             createDuel(createValleyDataset(v1.getCandidates()), createSmoothedDataset(), comPanel);
 
         } catch (SQLException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MainWindow.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }//end
     }
 
@@ -4753,9 +5162,11 @@ public class MainWindow extends javax.swing.JFrame {
                 //result
                 combined2Charts(createDataset(intpol.getDifferencewithLine(), "Baseline Corrected"), createSmoothedDataset(), comPanel);
                 showValleys("baseline_data");
+
             }
         } catch (SQLException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MainWindow.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
 
 //        baselineButton.addActionListener(new ActionListener() {
@@ -4805,9 +5216,11 @@ public class MainWindow extends javax.swing.JFrame {
                 //result
                 combined2Charts(createDataset(intpol.getDifferencewithLine(), "Baseline Corrected"), createSmoothedDataset(), comPanel);
                 showValleys("baseline_data");
+
             }
         } catch (SQLException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MainWindow.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
 
 //        baselineButton.addActionListener(new ActionListener() {
@@ -4871,8 +5284,15 @@ public class MainWindow extends javax.swing.JFrame {
 
     }
 
-    public void updateTable() throws ClassNotFoundException, SQLException {
-        String sql = "select round(`WAVENUMBER`,0) AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group' from result";
+    public void updatePrintTable() throws ClassNotFoundException, SQLException {
+
+        filterOutNotSelected();
+
+        String sql1 = "SET @row_number=0";
+        PreparedStatement pst1 = conn.prepareStatement(sql1);
+        ResultSet rst = pst1.executeQuery();
+
+        String sql = "SELECT (@row_number:=@row_number + 1) As 'No.', round(`WAVENUMBER`,0) AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group' from result";
         pst = conn.prepareStatement(sql);
         rs = pst.executeQuery();
 
@@ -4882,13 +5302,20 @@ public class MainWindow extends javax.swing.JFrame {
 
                     case 0:
                         return String.class;
+
                     case 1:
                         return String.class;
+
                     case 2:
                         return String.class;
+
                     case 3:
                         return String.class;
+
                     case 4:
+                        return String.class;
+
+                    case 5:
                         return Boolean.class;
 //                        return JCheckBox.class;
 
@@ -4900,7 +5327,7 @@ public class MainWindow extends javax.swing.JFrame {
 
             @Override
             public boolean isCellEditable(int rowIndex, int columnIndex) {
-                if (columnIndex == 3) {
+                if (columnIndex == 4) {
                     return true;
                 }
                 return false;
@@ -4919,7 +5346,8 @@ public class MainWindow extends javax.swing.JFrame {
 //            }
         };
 
-        resultTable.setModel(model);
+        printTable.setModel(model);
+        model.addColumn("No.");
         model.addColumn("Wavenumber(cm-1)");
         model.addColumn("Bond");
         model.addColumn("Functional Group");
@@ -4928,10 +5356,11 @@ public class MainWindow extends javax.swing.JFrame {
         int i = 0;
         while (rs.next()) {
             model.addRow(new Object[0]);
-            model.setValueAt(rs.getString("Wavenumber"), i, 0);
-            model.setValueAt(rs.getString("Bond"), i, 1);
-            model.setValueAt(rs.getString("Functional Group"), i, 2);
-            model.setValueAt(false, i, 3);
+            model.setValueAt(rs.getString("No."), i, 0);
+            model.setValueAt(rs.getString("Wavenumber"), i, 1);
+            model.setValueAt(rs.getString("Bond"), i, 2);
+            model.setValueAt(rs.getString("Functional Group"), i, 3);
+            model.setValueAt(false, i, 4);
             i++;
         }
 
@@ -4943,18 +5372,19 @@ public class MainWindow extends javax.swing.JFrame {
         redRenderer.setHorizontalAlignment(JLabel.RIGHT);
         redRenderer.setForeground(Color.RED);
 
-        resultTable.setShowGrid(true);
-        resultTable.setGridColor(Color.LIGHT_GRAY);
-        resultTable.setShowHorizontalLines(false);
-        resultTable.getColumnModel().getColumn(0).setPreferredWidth(45);
-        resultTable.getColumnModel().getColumn(1).setPreferredWidth(230);
-        resultTable.getColumnModel().getColumn(2).setPreferredWidth(140);
-        resultTable.getColumnModel().getColumn(3).setPreferredWidth(50);
+        printTable.setShowGrid(true);
+        printTable.setGridColor(Color.LIGHT_GRAY);
+        printTable.setShowHorizontalLines(false);
+        printTable.getColumnModel().getColumn(0).setPreferredWidth(20);
+        printTable.getColumnModel().getColumn(1).setPreferredWidth(40);
+        printTable.getColumnModel().getColumn(2).setPreferredWidth(230);
+        printTable.getColumnModel().getColumn(3).setPreferredWidth(140);
+        printTable.getColumnModel().getColumn(4).setPreferredWidth(50);
 //        resultTable.getColumnModel().getColumn(3).setCellRenderer(new TableCellRenderer());
 //        resultTable.setDefaultRenderer(Class, TableCellRenderer);
         CheckBoxRenderer checkBoxRenderer = new CheckBoxRenderer();
 
-        resultTable.getColumnModel().getColumn(3).setCellRenderer(checkBoxRenderer);
+        printTable.getColumnModel().getColumn(4).setCellRenderer(checkBoxRenderer);
 //        JCheckBox check = new JCheckBox();
 //        resultTable.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(check));
 //        resultTable.getColumnModel().getColumn(4).setPreferredWidth(70);
@@ -4966,7 +5396,7 @@ public class MainWindow extends javax.swing.JFrame {
 
     }
 
-    private void updateResult_table() {
+    private void updateResultjTable() {
 
 //        Vector<Object> columnNames = new Vector<Object>();
 //        Vector<Object> data = new Vector<Object>();
@@ -5040,8 +5470,12 @@ public class MainWindow extends javax.swing.JFrame {
 //        TableFromDatabase();
         try {
 
+            String sql1 = "SET @row_number=0";
+            PreparedStatement pst1 = conn.prepareStatement(sql1);
+            ResultSet rst = pst1.executeQuery();
+
 //            String sql = "select `WAVENUMBER` AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group', `COMPOUND_TYPE` AS 'Compound Type' , `COMPOUND_CATEGORY` AS 'Compound Category' from result";
-            String sql = "select round(`WAVENUMBER`,0) AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group' from result";
+            String sql = "SELECT (@row_number:=@row_number + 1) AS 'Index', round(`WAVENUMBER`,0) AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group' from result";
             pst = conn.prepareStatement(sql);
             rs = pst.executeQuery();
             resultTable.setModel(DbUtils.resultSetToTableModel(rs));
@@ -5105,6 +5539,7 @@ public class MainWindow extends javax.swing.JFrame {
 
                     if (o != null) {
                         return o.getClass();
+
                     }
                 }
 
@@ -5152,7 +5587,7 @@ public class MainWindow extends javax.swing.JFrame {
                     readAbsFile();
                     AbsToTrans ab = new AbsToTrans();
                     reduceMinfromAllY();
-                    update_table();
+                    updateInputDataTable();
                     //create spectrum
                     generate_spectrum(specPanel, "input_data"); //original spectrum
                 }
@@ -5196,9 +5631,12 @@ public class MainWindow extends javax.swing.JFrame {
                 getBaselineEquation();
 
             } catch (IOException ex) {
-                Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(MainWindow.class
+                        .getName()).log(Level.SEVERE, null, ex);
+
             } catch (SQLException ex) {
-                Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(MainWindow.class
+                        .getName()).log(Level.SEVERE, null, ex);
             }
 
         } else {
@@ -5277,6 +5715,109 @@ public class MainWindow extends javax.swing.JFrame {
 
     }
 
+    private void filterResults() {
+
+        List<JCheckBox> buttons = new ArrayList<>();
+        buttons.add(jCheckBox1);
+        buttons.add(jCheckBox2);
+        buttons.add(jCheckBox3);
+        buttons.add(jCheckBox4);
+        buttons.add(jCheckBox5);
+        buttons.add(jCheckBox6);
+        buttons.add(jCheckBox7);
+        buttons.add(jCheckBox8);
+        buttons.add(jCheckBox9);
+        buttons.add(jCheckBox10);
+
+        String selectedItem = "";
+        int selected = 0;
+        for (JCheckBox checkbox : buttons) {
+            if (checkbox.isSelected()) {
+                selectedItem += "\"" + checkbox.getText() + "\",";
+                selected++;
+            }
+        }
+
+        if (selected == 0) {
+            JOptionPane.showMessageDialog(null, "No compund categories selected!");
+        } else if (selected > 0) {
+            selectedItem = selectedItem.substring(0, selectedItem.length() - 1);
+            try {
+
+                String sql1 = "SET @row_number=0";
+                PreparedStatement pst1 = conn.prepareStatement(sql1);
+                ResultSet rst = pst1.executeQuery();
+
+                String sql = "SELECT (@row_number:=@row_number + 1) As 'No.', round(`WAVENUMBER`,0) AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group' FROM `result` WHERE COMPOUND_CATEGORY IN (" + selectedItem + ")";
+                pst = conn.prepareStatement(sql);
+                rs = pst.executeQuery();
+                if (rs.next() == false) {
+
+                    JOptionPane.showMessageDialog(null, "No results found!");
+                } else {
+
+                    do {
+                        resultTable.setModel(DbUtils.resultSetToTableModel(rs));
+                    } while (rs.next());
+
+                }
+
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, e);
+            } finally {
+                try {
+                    rs.close();
+                    pst.close();
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, e);
+                }
+            }
+        }
+    }
+
+    private void filterOutNotSelected() {
+        List<JCheckBox> buttons = new ArrayList<>();
+        buttons.add(jCheckBox1);
+        buttons.add(jCheckBox2);
+        buttons.add(jCheckBox3);
+        buttons.add(jCheckBox4);
+        buttons.add(jCheckBox5);
+        buttons.add(jCheckBox6);
+        buttons.add(jCheckBox7);
+        buttons.add(jCheckBox8);
+        buttons.add(jCheckBox9);
+        buttons.add(jCheckBox10);
+
+        String selectedItem = "";
+        int selected = 0;
+        for (JCheckBox checkbox : buttons) {
+            if (checkbox.isSelected()) {
+                selectedItem += "\"" + checkbox.getText() + "\",";
+                selected++;
+            }
+        }
+
+        if (selected > 0) {
+            selectedItem = selectedItem.substring(0, selectedItem.length() - 1);
+            try {
+
+                String sql = "DELETE FROM `result` WHERE COMPOUND_CATEGORY NOT IN (" + selectedItem + ")";
+                pst = conn.prepareStatement(sql);
+                pst.execute();
+
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, e);
+            } finally {
+                try {
+                    pst.close();
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, e);
+                }
+            }
+        }
+
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup algorithmMenu;
@@ -5294,14 +5835,16 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JCheckBox cubicSplineCheckBox2;
     public static javax.swing.JTable dataTable;
     private javax.swing.JButton deselectButton;
-    private javax.swing.JButton deselectResultButton;
+    private javax.swing.JButton deselectRowsButton;
     private javax.swing.JMenu displayMenu;
     private javax.swing.JMenu editMenu;
     private javax.swing.JTextField filePathText;
     private javax.swing.JLabel filterPassLabel;
+    private javax.swing.JButton finishButton;
     private javax.swing.JRadioButton fivepoints;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox10;
     private javax.swing.JCheckBox jCheckBox2;
@@ -5344,6 +5887,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel13;
     private javax.swing.JPanel jPanel14;
+    private javax.swing.JPanel jPanel15;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -5365,6 +5909,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JRadioButtonMenuItem jRadioButtonMenuItem9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JToolBar jToolBar;
     private javax.swing.JCheckBox lineCheckBox;
     private javax.swing.JCheckBox lineCheckBox2;
@@ -5375,15 +5920,16 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JButton nextButton2;
     private javax.swing.JButton nextButton3;
     private javax.swing.JButton nextButton4;
+    private javax.swing.JButton nextButton6;
     private javax.swing.JRadioButton ninepoints;
     private javax.swing.JTextField numBandsText;
-    private javax.swing.JButton okButton;
     private javax.swing.JButton openButton;
     private javax.swing.JMenu optionsMenu;
     private javax.swing.JButton peakButton;
     private javax.swing.ButtonGroup pointsMenu;
     private javax.swing.ButtonGroup pointsbuttonGroup;
     private javax.swing.JButton predictButton;
+    private javax.swing.JTable printTable;
     private javax.swing.JProgressBar progressBar;
     private javax.swing.JButton removePointsButton;
     private javax.swing.JButton resetSmoothButton;
