@@ -4020,59 +4020,57 @@ public class MainWindow extends javax.swing.JFrame {
             @Override
             public void chartMouseClicked(ChartMouseEvent event) {
                 ChartEntity entity = event.getEntity();
-                
 
                 if (entity != null && entity instanceof XYItemEntity) {
 
                     try {
                         XYItemEntity ent = (XYItemEntity) entity;
-                        
+
                         int sindex = ent.getSeriesIndex();
                         int iindex = ent.getItem();
-                        
+
                         double x = set1.getXValue(sindex, iindex);
-                        System.out.println(x);
+
                         CheckList c = new CheckList();
                         c.setVisible(true);
                         
-                        
+
                         String sql1 = "SET @row_number=0";
                         PreparedStatement pst1 = conn.prepareStatement(sql1);
                         ResultSet rst = pst1.executeQuery();
-                        
-                        String sql = "SELECT (@row_number:=@row_number + 1) As 'No.', round(`WAVENUMBER`,0) AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group' from result where wavenumber = "+x;
+
+                        String sql = "SELECT (@row_number:=@row_number + 1) As 'No.', round(`WAVENUMBER`,0) AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group' from result where wavenumber = " + x;
                         pst = conn.prepareStatement(sql);
                         rs = pst.executeQuery();
-                        
+
                         DefaultTableModel model = new DefaultTableModel() {
                             public Class<?> getColumnClass(int column) {
                                 switch (column) {
-                                    
+
                                     case 0:
                                         return String.class;
-                                        
+
                                     case 1:
                                         return String.class;
-                                        
+
                                     case 2:
                                         return String.class;
-                                        
+
                                     case 3:
                                         return String.class;
-                                        
+
                                     case 4:
                                         return String.class;
-                                        
+
                                     case 5:
                                         return Boolean.class;
-                                        
-                                        
+
                                     default:
                                         return String.class;
                                 }
-                                
+
                             }
-                            
+
                             @Override
                             public boolean isCellEditable(int rowIndex, int columnIndex) {
                                 if (columnIndex == 4) {
@@ -4081,16 +4079,15 @@ public class MainWindow extends javax.swing.JFrame {
                                 return false;
                             }
 
-                            
                         };
-                        
+
                         c.resultListTable.setModel(model);
                         model.addColumn("No.");
                         model.addColumn("Wavenumber(cm-1)");
                         model.addColumn("Bond");
                         model.addColumn("Functional Group");
                         model.addColumn("Select");
-                        
+
                         int i = 0;
                         while (rs.next()) {
                             model.addRow(new Object[0]);
@@ -4101,15 +4098,21 @@ public class MainWindow extends javax.swing.JFrame {
                             model.setValueAt(false, i, 4);
                             i++;
                         }
-                        
+
+//                        if (rs.next() == false) {
+//                            JOptionPane.showMessageDialog(null, "No results found!", "Error!", JOptionPane.WARNING_MESSAGE);
+//                        }else{
+////                            c.setVisible(true);
+//                        }
+
                         DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
                         rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
                         rightRenderer.setForeground(Color.BLUE);
-                        
+
                         DefaultTableCellRenderer redRenderer = new DefaultTableCellRenderer();
                         redRenderer.setHorizontalAlignment(JLabel.RIGHT);
                         redRenderer.setForeground(Color.RED);
-                        
+
                         c.resultListTable.setShowGrid(true);
                         c.resultListTable.setGridColor(Color.LIGHT_GRAY);
                         c.resultListTable.setShowHorizontalLines(false);
@@ -4119,7 +4122,7 @@ public class MainWindow extends javax.swing.JFrame {
                         c.resultListTable.getColumnModel().getColumn(3).setPreferredWidth(140);
                         c.resultListTable.getColumnModel().getColumn(4).setPreferredWidth(50);
                         CheckBoxRenderer checkBoxRenderer = new CheckBoxRenderer();
-                        
+
                         c.resultListTable.getColumnModel().getColumn(4).setCellRenderer(checkBoxRenderer);
                     } catch (SQLException ex) {
                         Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
