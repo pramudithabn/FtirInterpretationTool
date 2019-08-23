@@ -2656,7 +2656,7 @@ public class MainWindow extends javax.swing.JFrame {
 //            updatePrintTable();
             createReportSpectrum(createValleyDataset(v2.getCandidates()), createBaselineDataset(), comPanel);
 
-        }  catch (SQLException ex) {
+        } catch (SQLException ex) {
             Logger.getLogger(MainWindow.class
                     .getName()).log(Level.SEVERE, null, ex);
         }
@@ -4018,7 +4018,116 @@ public class MainWindow extends javax.swing.JFrame {
         chartPanel_com.addChartMouseListener(new ChartMouseListener() {
 
             @Override
-            public void chartMouseClicked(ChartMouseEvent event) {}
+            public void chartMouseClicked(ChartMouseEvent event) {
+                ChartEntity entity = event.getEntity();
+                
+
+                if (entity != null && entity instanceof XYItemEntity) {
+
+                    try {
+                        XYItemEntity ent = (XYItemEntity) entity;
+                        
+                        int sindex = ent.getSeriesIndex();
+                        int iindex = ent.getItem();
+                        
+                        double x = set1.getXValue(sindex, iindex);
+                        System.out.println(x);
+                        CheckList c = new CheckList();
+                        c.setVisible(true);
+                        
+                        
+                        String sql1 = "SET @row_number=0";
+                        PreparedStatement pst1 = conn.prepareStatement(sql1);
+                        ResultSet rst = pst1.executeQuery();
+                        
+                        String sql = "SELECT (@row_number:=@row_number + 1) As 'No.', round(`WAVENUMBER`,0) AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group' from result where wavenumber = "+x;
+                        pst = conn.prepareStatement(sql);
+                        rs = pst.executeQuery();
+                        
+                        DefaultTableModel model = new DefaultTableModel() {
+                            public Class<?> getColumnClass(int column) {
+                                switch (column) {
+                                    
+                                    case 0:
+                                        return String.class;
+                                        
+                                    case 1:
+                                        return String.class;
+                                        
+                                    case 2:
+                                        return String.class;
+                                        
+                                    case 3:
+                                        return String.class;
+                                        
+                                    case 4:
+                                        return String.class;
+                                        
+                                    case 5:
+                                        return Boolean.class;
+                                        
+                                        
+                                    default:
+                                        return String.class;
+                                }
+                                
+                            }
+                            
+                            @Override
+                            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                                if (columnIndex == 4) {
+                                    return true;
+                                }
+                                return false;
+                            }
+
+                            
+                        };
+                        
+                        c.resultListTable.setModel(model);
+                        model.addColumn("No.");
+                        model.addColumn("Wavenumber(cm-1)");
+                        model.addColumn("Bond");
+                        model.addColumn("Functional Group");
+                        model.addColumn("Select");
+                        
+                        int i = 0;
+                        while (rs.next()) {
+                            model.addRow(new Object[0]);
+                            model.setValueAt(rs.getString("No."), i, 0);
+                            model.setValueAt(rs.getString("Wavenumber"), i, 1);
+                            model.setValueAt(rs.getString("Bond"), i, 2);
+                            model.setValueAt(rs.getString("Functional Group"), i, 3);
+                            model.setValueAt(false, i, 4);
+                            i++;
+                        }
+                        
+                        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+                        rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
+                        rightRenderer.setForeground(Color.BLUE);
+                        
+                        DefaultTableCellRenderer redRenderer = new DefaultTableCellRenderer();
+                        redRenderer.setHorizontalAlignment(JLabel.RIGHT);
+                        redRenderer.setForeground(Color.RED);
+                        
+                        c.resultListTable.setShowGrid(true);
+                        c.resultListTable.setGridColor(Color.LIGHT_GRAY);
+                        c.resultListTable.setShowHorizontalLines(false);
+                        c.resultListTable.getColumnModel().getColumn(0).setPreferredWidth(20);
+                        c.resultListTable.getColumnModel().getColumn(1).setPreferredWidth(40);
+                        c.resultListTable.getColumnModel().getColumn(2).setPreferredWidth(230);
+                        c.resultListTable.getColumnModel().getColumn(3).setPreferredWidth(140);
+                        c.resultListTable.getColumnModel().getColumn(4).setPreferredWidth(50);
+                        CheckBoxRenderer checkBoxRenderer = new CheckBoxRenderer();
+                        
+                        c.resultListTable.getColumnModel().getColumn(4).setCellRenderer(checkBoxRenderer);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                }
+
+            }
 
             @Override
             public void chartMouseMoved(ChartMouseEvent event) {
@@ -4291,7 +4400,7 @@ public class MainWindow extends javax.swing.JFrame {
 
             @Override
             public void chartMouseClicked(ChartMouseEvent event) {
-            
+
                 clickcount++;
                 ChartEntity entity = event.getEntity();
                 BigDecimal X = null, Y = null;
@@ -4315,7 +4424,7 @@ public class MainWindow extends javax.swing.JFrame {
 
                         } catch (Exception e) {
                             System.err.println(e);
-            }
+                        }
                         baselineCharts(createValleyDataset(peaktops), createSmoothedDataset(), panel);
 //                        baselineCharts(createValleyDataset(peaktops), createSmoothedDataset(), baselinePanel);
 
