@@ -379,7 +379,7 @@ public class CheckList extends javax.swing.JFrame {
         renderer1.setBaseItemLabelGenerator(new LabelGenerator());
         renderer1.setBaseItemLabelPaint(Color.black.darker());
 //        renderer1.setBasePositiveItemLabelPosition(new ItemLabelPosition(ItemLabelAnchor.CENTER, TextAnchor.CENTER));
-        renderer1.setBasePositiveItemLabelPosition(new ItemLabelPosition(ItemLabelAnchor.CENTER, TextAnchor.CENTER, TextAnchor.CENTER, -Math.PI / 2));
+        renderer1.setBasePositiveItemLabelPosition(new ItemLabelPosition(ItemLabelAnchor.OUTSIDE6, TextAnchor.BASELINE_RIGHT, TextAnchor.BASELINE_RIGHT, -Math.PI / 2));
         renderer1.setBaseItemLabelFont(renderer1.getBaseItemLabelFont().deriveFont(14f));
         renderer1.setBaseItemLabelsVisible(true);
         renderer1.setBaseToolTipGenerator(new StandardXYToolTipGenerator());

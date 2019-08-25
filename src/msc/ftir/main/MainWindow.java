@@ -157,7 +157,7 @@ public class MainWindow extends javax.swing.JFrame {
     public void setLabeled_dataset(LabeledXYDataset labeled_dataset) {
         this.labeled_dataset = labeled_dataset;
     }
-    
+
     public static XYDataset getPeakset() {
         return peakset;
     }
@@ -2442,26 +2442,43 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_selectAllButtonActionPerformed
 
     private void manualBaselineCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_manualBaselineCheckBoxActionPerformed
-        try {
-            baselineMethodCombo.setEnabled(false);
-            lineCheckBox.setEnabled(false);
-            splineCheckBox.setEnabled(false);
-            cubicSplineCheckBox.setEnabled(false);
-            nextButton2.setEnabled(false);
 
-            removePointsButton.setEnabled(true);
-            stopAddingButton.setEnabled(false);
-            undoButton.setEnabled(false);
-            nextButton4.setEnabled(true);
+        if (manualBaselineCheckBox.isSelected()) {
+
+            try {
+                baselineMethodCombo.setEnabled(false);
+                lineCheckBox.setEnabled(false);
+                splineCheckBox.setEnabled(false);
+                cubicSplineCheckBox.setEnabled(false);
+                nextButton2.setEnabled(false);
+
+                removePointsButton.setEnabled(true);
+                stopAddingButton.setEnabled(false);
+                undoButton.setEnabled(false);
+                nextButton4.setEnabled(true);
 
 //            eb = new EditBaseline();
 //            eb.setVisible(true);
-            baselineCharts(createValleyDataset(v1.getPeaktops()), createSmoothedDataset(), baselinePanel);
+                baselineCharts(createValleyDataset(v1.getPeaktops()), createSmoothedDataset(), baselinePanel);
 //            baselineCharts(createValleyDataset(v1.getPeaktops()), createSmoothedDataset(), eb.blSpecPanel);
 
-        } catch (SQLException ex) {
-            Logger.getLogger(MainWindow.class
-                    .getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException ex) {
+                Logger.getLogger(MainWindow.class
+                        .getName()).log(Level.SEVERE, null, ex);
+            }
+
+        } else if (!manualBaselineCheckBox.isSelected()) {
+            baselineMethodCombo.setEnabled(true);
+            lineCheckBox.setEnabled(true);
+            splineCheckBox.setEnabled(true);
+            cubicSplineCheckBox.setEnabled(true);
+            nextButton2.setEnabled(true);
+
+            removePointsButton.setEnabled(false);
+            stopAddingButton.setEnabled(false);
+            undoButton.setEnabled(false);
+            nextButton4.setEnabled(false);
+
         }
 
 
