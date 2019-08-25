@@ -13,46 +13,56 @@ import org.jfree.data.xy.AbstractXYDataset;
  *
  * @author Pramuditha Buddhini
  */
-class LabeledXYDataset extends AbstractXYDataset{
-    
-     private static final int N = 26;
-        private List<Number> x = new ArrayList<Number>(N);
-        private List<Number> y = new ArrayList<Number>(N);
-        private List<String> label = new ArrayList<String>(N);
+public class LabeledXYDataset extends AbstractXYDataset {
 
-        public void add(double x, double y, String label){
-            this.x.add(x);
-            this.y.add(y);
-            this.label.add(label);
-        }
+    private static final int N = 50;
+    private ArrayList<Double> X = new ArrayList<Double>(N);
+    private ArrayList<Double> Y = new ArrayList<Double>(N);
+    private ArrayList<String> LABEL = new ArrayList<String>(N);
 
-        public String getLabel(int series, int item) {
-            return label.get(item);
-        }
+    public void add(double x, double y, String label) {
+        this.X.add(x);
+        this.Y.add(y);
+        this.LABEL.add(label);
+    }
 
-        @Override
-        public int getSeriesCount() {
-            return 1;
-        }
+    public void update(double x, String label) {
 
-        @Override
-        public Comparable getSeriesKey(int series) {
-            return "Unit";
+        int i = this.getItemCount(0);
+        for (int k = 0; k < i; k++) {
+            if ((X.get(k) == x)) {
+                LABEL.set(k, label);
+            }
         }
+    }
 
-        @Override
-        public int getItemCount(int series) {
-            return label.size();
-        }
+    public String getLabel(int series, int item) {
+        return LABEL.get(item);
+    }
 
-        @Override
-        public Number getX(int series, int item) {
-            return x.get(item);
-        }
+    @Override
+    public int getSeriesCount() {
+        return 1;
+    }
 
-        @Override
-        public Number getY(int series, int item) {
-            return y.get(item);
-        }
-    
+    @Override
+    public Comparable getSeriesKey(int series) {
+        return "Unit";
+    }
+
+    @Override
+    public int getItemCount(int series) {
+        return LABEL.size();
+    }
+
+    @Override
+    public Number getX(int series, int item) {
+        return X.get(item);
+    }
+
+    @Override
+    public Number getY(int series, int item) {
+        return Y.get(item);
+    }
+
 }

@@ -79,6 +79,7 @@ import javax.swing.table.*;
 import msc.ftir.baseline.EditBaseline;
 import msc.ftir.result.CheckBoxRenderer;
 import msc.ftir.result.CheckList;
+import msc.ftir.result.LabeledXYDataset;
 import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.util.ShapeUtilities;
 
@@ -133,7 +134,7 @@ public class MainWindow extends javax.swing.JFrame {
     private int noiseThreshCurrent, noiseThreshPrevious = 0; //threshold values by sliders for valley detection
     private boolean bltab = false;
     private ValleysLocator v1, v2;
-    private XYDataset peakset = null;
+    private static XYDataset peakset = null;
     private XYPlot xyplotT = null;
     private boolean bandstab = false;
     private ChartPanel chartPanel_com = null;
@@ -147,6 +148,23 @@ public class MainWindow extends javax.swing.JFrame {
     private NavigableMap<BigDecimal, BigDecimal> temp_peaktops = null;
     private int clickcount = 0;
     private EditBaseline eb = null;
+    private static LabeledXYDataset labeled_dataset = null;
+
+    public static LabeledXYDataset getLabeled_dataset() {
+        return labeled_dataset;
+    }
+
+    public void setLabeled_dataset(LabeledXYDataset labeled_dataset) {
+        this.labeled_dataset = labeled_dataset;
+    }
+    
+    public static XYDataset getPeakset() {
+        return peakset;
+    }
+
+    public void setPeakset(XYDataset peakset) {
+        this.peakset = peakset;
+    }
 
     public static int getPoints() {
         return points;
@@ -2564,71 +2582,71 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void printTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_printTableMouseClicked
-        performThresh();
-        DecimalFormat df = new DecimalFormat();
-        df.setMaximumFractionDigits(3);
-        int row = printTable.getSelectedRow();
-
-        //to select and unselect rows
-        {
-
-            boolean val = (boolean) printTable.getValueAt(row, 4);
-
-            if (val == true) {
-                printTable.setValueAt(false, row, 4);
-            } else if (val == false) {
-                printTable.setValueAt(true, row, 4);
-            }
-
-        }
-
-        double w = Double.parseDouble(String.valueOf(printTable.getValueAt(row, 1)));
-        int wv = (int) Math.round(w);
-
-        XYSeriesCollection dataSet0 = (XYSeriesCollection) xyplotT.getDataset(0);
-        XYSeries series0 = dataSet0.getSeries(0);
-        XYItemRenderer renderer1 = new MyXYBarRenderer();
-
-        chartPanel_com.removeOverlay(crosshairOverlay);
-        xyplotT.removeAnnotation(pointer);
-        xyplotT.removeAnnotation(pointer2);
-
-        crosshairOverlay = new CrosshairOverlay();
-        xCrosshair = new Crosshair(Double.NaN, Color.GRAY, new BasicStroke(0f));
-        xCrosshair.setLabelVisible(false);
-        yCrosshair = new Crosshair(Double.NaN, Color.GRAY, new BasicStroke(0f));
-        yCrosshair.setLabelVisible(false);
-        crosshairOverlay.addDomainCrosshair(xCrosshair);
-        crosshairOverlay.addRangeCrosshair(yCrosshair);
-        chartPanel_com.addOverlay(crosshairOverlay);
-
-        pointer = new XYPointerAnnotation("", 0, 0, 7.0 * Math.PI / 4.0);
-        pointer.setTipRadius(3.0);
-        pointer.setBaseRadius(15.0);
-        pointer.setFont(new Font("SansSerif", Font.PLAIN, 14));
-        pointer.setPaint(Color.blue);
-        pointer.setTextAnchor(TextAnchor.HALF_ASCENT_LEFT);
-        pointer.setBackgroundPaint(Color.yellow);
-
-        // Shapes only
-        for (Object i : series0.getItems()) {
-            XYDataItem item = (XYDataItem) i;
-            double x = item.getXValue();
-            double y = item.getYValue();
-
-            if (Math.abs(x - wv) < 1) {
-
-                if (y > 0) {
-                    pointer.setX(x);
-                    pointer.setY(y);
-                    pointer.setText("X = " + df.format(x) + " , Y = " + df.format(y));
-                    xyplotT.addAnnotation(pointer);
-                }
-                xCrosshair.setValue(x);
-                yCrosshair.setValue(y);
-
-            }
-        }
+//        performThresh();
+//        DecimalFormat df = new DecimalFormat();
+//        df.setMaximumFractionDigits(3);
+//        int row = printTable.getSelectedRow();
+//
+//        //to select and unselect rows
+//        {
+//
+//            boolean val = (boolean) printTable.getValueAt(row, 4);
+//
+//            if (val == true) {
+//                printTable.setValueAt(false, row, 4);
+//            } else if (val == false) {
+//                printTable.setValueAt(true, row, 4);
+//            }
+//
+//        }
+//
+//        double w = Double.parseDouble(String.valueOf(printTable.getValueAt(row, 1)));
+//        int wv = (int) Math.round(w);
+//
+//        XYSeriesCollection dataSet0 = (XYSeriesCollection) xyplotT.getDataset(0);
+//        XYSeries series0 = dataSet0.getSeries(0);
+//        XYItemRenderer renderer1 = new MyXYBarRenderer();
+//
+//        chartPanel_com.removeOverlay(crosshairOverlay);
+//        xyplotT.removeAnnotation(pointer);
+//        xyplotT.removeAnnotation(pointer2);
+//
+//        crosshairOverlay = new CrosshairOverlay();
+//        xCrosshair = new Crosshair(Double.NaN, Color.GRAY, new BasicStroke(0f));
+//        xCrosshair.setLabelVisible(false);
+//        yCrosshair = new Crosshair(Double.NaN, Color.GRAY, new BasicStroke(0f));
+//        yCrosshair.setLabelVisible(false);
+//        crosshairOverlay.addDomainCrosshair(xCrosshair);
+//        crosshairOverlay.addRangeCrosshair(yCrosshair);
+//        chartPanel_com.addOverlay(crosshairOverlay);
+//
+//        pointer = new XYPointerAnnotation("", 0, 0, 7.0 * Math.PI / 4.0);
+//        pointer.setTipRadius(3.0);
+//        pointer.setBaseRadius(15.0);
+//        pointer.setFont(new Font("SansSerif", Font.PLAIN, 14));
+//        pointer.setPaint(Color.blue);
+//        pointer.setTextAnchor(TextAnchor.HALF_ASCENT_LEFT);
+//        pointer.setBackgroundPaint(Color.yellow);
+//
+//        // Shapes only
+//        for (Object i : series0.getItems()) {
+//            XYDataItem item = (XYDataItem) i;
+//            double x = item.getXValue();
+//            double y = item.getYValue();
+//
+//            if (Math.abs(x - wv) < 1) {
+//
+//                if (y > 0) {
+//                    pointer.setX(x);
+//                    pointer.setY(y);
+//                    pointer.setText("X = " + df.format(x) + " , Y = " + df.format(y));
+//                    xyplotT.addAnnotation(pointer);
+//                }
+//                xCrosshair.setValue(x);
+//                yCrosshair.setValue(y);
+//
+//            }
+//        }
     }//GEN-LAST:event_printTableMouseClicked
 
     private void nextButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButton6ActionPerformed
@@ -2641,6 +2659,18 @@ public class MainWindow extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(MainWindow.class
                     .getName()).log(Level.SEVERE, null, ex);
+        }
+
+        XYSeriesCollection dataSet0 = (XYSeriesCollection) getPeakset();
+        XYSeries series0 = dataSet0.getSeries(0);
+        labeled_dataset = new LabeledXYDataset();
+
+        for (Object i : series0.getItems()) {
+            XYDataItem item = (XYDataItem) i;
+            double x = item.getXValue();
+            double y = item.getYValue();
+
+            labeled_dataset.add(x, y, "");
         }
     }//GEN-LAST:event_nextButton6ActionPerformed
 
@@ -5923,7 +5953,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JTextField changeValueText;
     private javax.swing.JButton clearButton;
-    private javax.swing.JPanel comPanel;
+    public static javax.swing.JPanel comPanel;
     private javax.swing.JCheckBox cubicSplineCheckBox;
     private javax.swing.JCheckBox cubicSplineCheckBox2;
     public static javax.swing.JTable dataTable;

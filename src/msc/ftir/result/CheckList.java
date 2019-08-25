@@ -5,31 +5,60 @@
  */
 package msc.ftir.result;
 
+import java.awt.BasicStroke;
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTable;
 import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import msc.ftir.main.Javaconnect;
 import msc.ftir.main.MainWindow;
 import net.proteanit.sql.DbUtils;
+import org.jfree.chart.ChartMouseEvent;
+import org.jfree.chart.ChartMouseListener;
+import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.annotations.XYPointerAnnotation;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.entity.ChartEntity;
+import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.labels.ItemLabelAnchor;
 import org.jfree.chart.labels.ItemLabelPosition;
 import org.jfree.chart.labels.StandardXYToolTipGenerator;
+import org.jfree.chart.panel.CrosshairOverlay;
+import org.jfree.chart.plot.Crosshair;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.jdbc.JDBCXYDataset;
+import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.TextAnchor;
 
 /**
@@ -42,6 +71,10 @@ public class CheckList extends javax.swing.JFrame {
     private ResultSet rs = null;
     private PreparedStatement pst = null;
     private static Vector<Vector<Object>> data = new Vector<Vector<Object>>();
+    private XYPlot xyplotT = null;
+    private LabeledXYDataset ds = null;
+    private XYSeriesCollection dataSet0 = (XYSeriesCollection) MainWindow.getPeakset();
+    private XYSeries series0 = dataSet0.getSeries(0);
 
     /**
      * Creates new form CheckList
@@ -58,6 +91,11 @@ public class CheckList extends javax.swing.JFrame {
 
             }
         });
+        
+        ds = MainWindow.getLabeled_dataset();
+
+        
+       
     }
 
     /**
@@ -138,8 +176,7 @@ public class CheckList extends javax.swing.JFrame {
         String data3 = (String) resultListTable.getValueAt(r, 3);
         int data4 = (int) resultListTable.getValueAt(r, 4);
 
-        //Fill this Vector above with the initial data
-        //Fill this with column names
+        //display labeled point on spectrum
         try {
 
 //            String sql = "select * from library where BOND_VIBMODE = \"" + data2.trim() + "\" AND FUNCTIONAL_GROUP = \"" + data3.trim() + "\" ";
@@ -147,12 +184,77 @@ public class CheckList extends javax.swing.JFrame {
             String sql = "SELECT round(result.wavenumber) as 'Wavenumber', library.BOND_VIBMODE As 'Vib. Mode/ Bond', library.FUNCTIONAL_GROUP As 'Functional Group', library.COMPOUND_TYPE As 'Compound Type', library.COMPOUND_CATEGORY As 'Compound Category'  from library, result where library.ID = " + data4 + " and result.lib_index = " + data4 + " and library.ID = result.lib_index  LIMIT 1";
             pst = conn.prepareStatement(sql);
             rs = pst.executeQuery();
-//            System.out.println(sql);
+
+            double x1 = 0;
+            String s = null;
+            while (rs.next()) {
+                x1 = rs.getDouble("Wavenumber");
+                s = rs.getString("Vib. Mode/ Bond");
+            }
+
+            for (Object i : series0.getItems()) {
+                XYDataItem item = (XYDataItem) i;
+                double x = item.getXValue();
+                double y = item.getYValue();
+
+                if (Math.abs(x - x1) < 1) {
+//                    System.out.println(x + "," + y + "," + s);
+
+                    ds.update(x, s);
+
+                }
+//                else {
+
+//                    System.out.println(x + "," + y + "," + s);
+//                }
+            }
+
+//            int a = ds.getItemCount(0);
+//
+//            System.out.println("-------------------------------");
+//            for (int k = 0; k < a; k++) {
+//
+//                System.out.println(ds.getXValue(0, k) + "," + ds.getYValue(0, k) + "," + ds.getLabel(0, k));
+//            }
+//            System.out.println("-------------------------------");
+
+            createReportSpectrum(ds, createBaselineDataset(), MainWindow.comPanel);
+
+//            JFrame f = new JFrame();
+//            f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//            JFreeChart chart = createChart(ds);
+//            ChartPanel chartPanel = new ChartPanel(chart) {
+//
+//                @Override
+//                public Dimension getPreferredSize() {
+//                    return new Dimension(400, 320);
+//                }
+//            };
+//            f.add(chartPanel);
+//            f.pack();
+//            f.setLocationRelativeTo(null);
+//            f.setVisible(true);
+        } catch (SQLException e) {
+            System.err.println(e);
+        } finally {
+            try {
+                rs.close();
+                pst.close();
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }
+
+        //set selected row to the table
+        try {
+
+            String sql = "SELECT round(result.wavenumber) as 'Wavenumber', library.BOND_VIBMODE As 'Vib. Mode/ Bond', library.FUNCTIONAL_GROUP As 'Functional Group', library.COMPOUND_TYPE As 'Compound Type', library.COMPOUND_CATEGORY As 'Compound Category'  from library, result where library.ID = " + data4 + " and result.lib_index = " + data4 + " and library.ID = result.lib_index  LIMIT 1";
+            pst = conn.prepareStatement(sql);
+            rs = pst.executeQuery();
+
             MainWindow.printTable.setModel(TableModel(rs));
 
-//            addDataToTable(MainWindow.printTable, DbUtils.resultSetToTableModel(rs));
-//            MainWindow.printTable.setModel(DbUtils.resultSetToTableModel(rs));
-        } catch (Exception e) {
+        } catch (SQLException e) {
             System.err.println(e);
         } finally {
             try {
@@ -242,48 +344,324 @@ public class CheckList extends javax.swing.JFrame {
         return new DefaultTableModel(data, columnNames);
     }
 
-    private XYDataset createDataset() {
-        LabeledXYDataset ds = new LabeledXYDataset();
+//    private static JFreeChart createChart(final XYDataset dataset) {
+//        NumberAxis domain = new NumberAxis("Unit");
+//        NumberAxis range = new NumberAxis("Price");
+//
+//        domain.setAutoRangeIncludesZero(false);
+//        XYItemRenderer renderer = new XYLineAndShapeRenderer(true, false);
+//        renderer.setBaseItemLabelGenerator(new LabelGenerator());
+//        renderer.setBaseItemLabelPaint(Color.green.darker());
+//        renderer.setBasePositiveItemLabelPosition(new ItemLabelPosition(ItemLabelAnchor.CENTER, TextAnchor.CENTER));
+//        renderer.setBaseItemLabelFont(renderer.getBaseItemLabelFont().deriveFont(14f));
+//        renderer.setBaseItemLabelsVisible(true);
+//        renderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
+//        XYPlot plot = new XYPlot(dataset, domain, range, renderer);
+//        JFreeChart chart = new JFreeChart("Unit Price", JFreeChart.DEFAULT_TITLE_FONT, plot, false);
+//        return chart;
+//    }
 
-        try {
+    public void createReportSpectrum(XYDataset set1, XYDataset set2, JPanel panel) {
 
-            String sql = "SELECT round(result.wavenumber) as 'Wavenumber', library.BOND_VIBMODE As 'Vib. Mode/ Bond', library.FUNCTIONAL_GROUP As 'Functional Group', library.COMPOUND_TYPE As 'Compound Type', library.COMPOUND_CATEGORY As 'Compound Category'  from library, result where library.ID = " + data4 + " and result.lib_index = " + data4 + " and library.ID = result.lib_index  LIMIT 1";
-            PreparedStatement pst = conn.prepareStatement(sql);
-            ResultSet rs = pst.executeQuery();
-//            System.out.println(sql);
-      
+        panel.removeAll();
+        panel.revalidate();
+        panel.repaint();
 
-//            addDataToTable(MainWindow.printTable, DbUtils.resultSetToTableModel(rs));
-//            MainWindow.printTable.setModel(DbUtils.resultSetToTableModel(rs));
-        } catch (Exception e) {
-            System.err.println(e);
-        } finally {
-            try {
-                rs.close();
-                pst.close();
-            } catch (Exception e) {
-                System.out.println(e);
+        XYPlot plot = new XYPlot();
+
+        XYDataset collection1 = set1;
+        XYItemRenderer renderer1 = new XYLineAndShapeRenderer(false, true);	// Shapes only
+        ValueAxis domain1 = new NumberAxis("Wavenumber (cm-1)");
+        ValueAxis range1 = new NumberAxis("Transmittance %");
+        domain1.setAutoRange(true);
+        domain1.setInverted(true);
+        range1.setAutoRange(true);
+        renderer1.setBaseItemLabelGenerator(new LabelGenerator());
+        renderer1.setBaseItemLabelPaint(Color.black.darker());
+//        renderer1.setBasePositiveItemLabelPosition(new ItemLabelPosition(ItemLabelAnchor.CENTER, TextAnchor.CENTER));
+        renderer1.setBasePositiveItemLabelPosition(new ItemLabelPosition(ItemLabelAnchor.CENTER, TextAnchor.CENTER, TextAnchor.CENTER, -Math.PI / 2));
+        renderer1.setBaseItemLabelFont(renderer1.getBaseItemLabelFont().deriveFont(14f));
+        renderer1.setBaseItemLabelsVisible(true);
+        renderer1.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
+
+        plot.setDataset(0, collection1);
+        plot.setRenderer(0, renderer1);
+        plot.setDomainAxis(0, domain1);
+        plot.setRangeAxis(0, range1);
+        xyplotT = plot;
+
+        XYDataset collection2 = set2;
+        XYItemRenderer renderer2 = new XYLineAndShapeRenderer(true, false);	// Lines only
+        renderer2.setSeriesPaint(0, Color.blue);
+
+        ValueAxis domain2 = new NumberAxis("");
+        ValueAxis range2 = new NumberAxis("");
+
+        plot.setDataset(1, collection2);
+        plot.setRenderer(1, renderer2);
+        plot.setDomainAxis(1, domain2);
+        plot.setRangeAxis(1, range2);
+
+        domain2.setAutoRange(true);
+        domain2.setInverted(true);
+        domain2.setVisible(false);
+        range2.setVisible(false);
+
+        JFreeChart duelchart = new JFreeChart("", JFreeChart.DEFAULT_TITLE_FONT, plot, true);
+        ChartPanel chartPanel_com = new ChartPanel(duelchart);
+        panel.setLayout(new java.awt.BorderLayout());
+        panel.add(chartPanel_com, BorderLayout.CENTER);
+        panel.validate();
+        panel.setPreferredSize(new Dimension(654, 350));
+        panel.setVisible(true);
+
+        renderer1.setSeriesShape(0, new Ellipse2D.Double(-3, -3, 6, 6));
+
+        CrosshairOverlay crosshairOverlay = new CrosshairOverlay();
+        Crosshair xCrosshair = new Crosshair(Double.NaN, Color.GRAY, new BasicStroke(0f));
+        xCrosshair.setLabelVisible(false);
+        Crosshair yCrosshair = new Crosshair(Double.NaN, Color.GRAY, new BasicStroke(0f));
+        yCrosshair.setLabelVisible(false);
+        crosshairOverlay.addDomainCrosshair(xCrosshair);
+        crosshairOverlay.addRangeCrosshair(yCrosshair);
+
+        XYPointerAnnotation pointer = new XYPointerAnnotation("", 0, 0, 7.0 * Math.PI / 4.0);
+        pointer.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        pointer.setTipRadius(3.0);
+        pointer.setBaseRadius(15.0);
+        pointer.setPaint(Color.blue);
+        pointer.setTextAnchor(TextAnchor.HALF_ASCENT_LEFT);
+        pointer.setBackgroundPaint(Color.yellow);
+
+        XYPointerAnnotation pointer2 = new XYPointerAnnotation("", 0, 0, 7.0 * Math.PI / 4.0);
+        pointer2.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        pointer2.setTipRadius(3.0);
+        pointer2.setBaseRadius(15.0);
+        pointer2.setPaint(Color.blue);
+        pointer2.setTextAnchor(TextAnchor.HALF_ASCENT_LEFT);
+        pointer2.setBackgroundPaint(new Color(255, 255, 255));
+
+        DecimalFormat df = new DecimalFormat();
+        df.setMaximumFractionDigits(3);
+
+        chartPanel_com.addChartMouseListener(new ChartMouseListener() {
+
+            @Override
+            public void chartMouseClicked(ChartMouseEvent event) {
+                ChartEntity entity = event.getEntity();
+
+                if (entity != null && entity instanceof XYItemEntity) {
+
+                    try {
+                        XYItemEntity ent = (XYItemEntity) entity;
+
+                        int sindex = ent.getSeriesIndex();
+                        int iindex = ent.getItem();
+
+                        double x = set1.getXValue(sindex, iindex);
+
+                        CheckList c = new CheckList();
+//                        c.setVisible(true);
+
+                        String sql1 = "SET @row_number=0";
+                        PreparedStatement pst1 = conn.prepareStatement(sql1);
+                        ResultSet rst = pst1.executeQuery();
+
+                        String sql = "SELECT (@row_number:=@row_number + 1) As 'No.', round(`WAVENUMBER`,0) AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group',LIB_INDEX AS 'Lib. Index' from result where wavenumber = " + x;
+                        pst = conn.prepareStatement(sql);
+                        rs = pst.executeQuery();
+
+                        DefaultTableModel model = new DefaultTableModel() {
+                            public Class<?> getColumnClass(int column) {
+                                switch (column) {
+
+                                    case 0:
+                                        return String.class;
+
+                                    case 1:
+                                        return String.class;
+
+                                    case 2:
+                                        return String.class;
+
+                                    case 3:
+                                        return String.class;
+
+                                    case 4:
+                                        return String.class;
+
+                                    case 5:
+                                        return String.class;
+
+                                    case 6:
+                                        return Boolean.class;
+
+                                    default:
+                                        return String.class;
+                                }
+
+                            }
+
+                            @Override
+                            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                                if (columnIndex == 5) {
+                                    return true;
+                                }
+                                return false;
+                            }
+
+                        };
+
+                        c.resultListTable.setModel(model);
+                        model.addColumn("No.");
+                        model.addColumn("Wavenumber(cm-1)");
+                        model.addColumn("Bond");
+                        model.addColumn("Functional Group");
+                        model.addColumn("Lib. Index");
+                        model.addColumn("Select");
+
+                        int i = 0;
+
+                        if (rs.next() == false) {
+                            JOptionPane.showMessageDialog(null, "No results found!");
+                        } else {
+                            do {
+                                model.addRow(new Object[0]);
+                                model.setValueAt(rs.getString("No."), i, 0);
+                                model.setValueAt(rs.getString("Wavenumber"), i, 1);
+                                model.setValueAt(rs.getString("Bond"), i, 2);
+                                model.setValueAt(rs.getString("Functional Group"), i, 3);
+                                model.setValueAt(rs.getInt("Lib. Index"), i, 4);
+                                model.setValueAt(false, i, 5);
+                                c.setVisible(true);
+                                i++;
+
+                                DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+                                rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
+                                rightRenderer.setForeground(Color.BLUE);
+
+                                DefaultTableCellRenderer redRenderer = new DefaultTableCellRenderer();
+                                redRenderer.setHorizontalAlignment(JLabel.RIGHT);
+                                redRenderer.setForeground(Color.RED);
+
+                                c.resultListTable.setShowGrid(true);
+                                c.resultListTable.setGridColor(Color.LIGHT_GRAY);
+                                c.resultListTable.setShowHorizontalLines(false);
+                                c.resultListTable.getColumnModel().getColumn(0).setPreferredWidth(20);
+                                c.resultListTable.getColumnModel().getColumn(1).setPreferredWidth(40);
+                                c.resultListTable.getColumnModel().getColumn(2).setPreferredWidth(230);
+                                c.resultListTable.getColumnModel().getColumn(3).setPreferredWidth(140);
+                                c.resultListTable.getColumnModel().getColumn(4).setPreferredWidth(0);
+                                c.resultListTable.getColumnModel().getColumn(5).setPreferredWidth(50);
+                                CheckBoxRenderer checkBoxRenderer = new CheckBoxRenderer();
+
+                                c.resultListTable.getColumnModel().getColumn(5).setCellRenderer(checkBoxRenderer);
+                            } while (rs.next());
+                        }
+
+//                        if (rs.next() == false) {
+//                            JOptionPane.showMessageDialog(null, "No results found!", "Error!", JOptionPane.WARNING_MESSAGE);
+//                        }else{
+//                            c.setVisible(true);
+//                        }
+                    } catch (SQLException ex) {
+                        Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                }
+
             }
+
+            @Override
+            public void chartMouseMoved(ChartMouseEvent event) {
+
+                xyplotT.removeAnnotation(pointer);
+                xyplotT.removeAnnotation(pointer2);
+
+                ChartEntity chartentity = event.getEntity();
+                Rectangle2D dataArea = chartPanel_com.getScreenDataArea();
+                ValueAxis xAxis = xyplotT.getDomainAxis();
+                ValueAxis yAxis = xyplotT.getRangeAxis();
+
+                if (chartentity != null && chartentity instanceof XYItemEntity) {
+                    XYItemEntity e = (XYItemEntity) chartentity;
+                    try {
+                        int i = e.getItem();
+                        int s = e.getSeriesIndex();
+                        double x = collection1.getXValue(s, i);
+                        double y = collection1.getYValue(s, i);
+
+                        if (y > 0) {
+                            pointer.setX(x);
+                            pointer.setY(y);
+                            pointer.setText("X = " + df.format(x) + " , Y = " + df.format(y));
+
+                            xyplotT.addAnnotation(pointer);
+                        }
+                        xCrosshair.setValue(x);
+                        yCrosshair.setValue(y);
+                        chartPanel_com.addOverlay(crosshairOverlay);
+                        chartPanel_com.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                    } catch (Exception exp) {
+                    }
+
+                }
+                if (!(chartentity instanceof XYItemEntity)) {
+
+                    chartPanel_com.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+
+                    double x = xAxis.java2DToValue(event.getTrigger().getX(), dataArea, xyplotT.getDomainAxisEdge());
+                    double y = yAxis.java2DToValue(event.getTrigger().getY(), dataArea, xyplotT.getRangeAxisEdge());
+
+//                    double x = plot.getDomainAxis().java2DToValue(p.getX(), plotArea, plot.getDomainAxisEdge());
+//                    double y = plot.getRangeAxis().java2DToValue(p.getY(), plotArea, plot.getRangeAxisEdge());
+//                    double y = DatasetUtilities.findYValue(plot.getDataset(), 0, x);
+                    pointer2.setX(x);
+                    pointer2.setY(y);
+                    pointer2.setText("X = " + df.format(x) + " , Y = " + df.format(y));
+                    xyplotT.addAnnotation(pointer2);
+
+                    xCrosshair.setValue(x);
+                    yCrosshair.setValue(y);
+                    chartPanel_com.addOverlay(crosshairOverlay);
+
+                    if (!(x < 4000 || y > 0)) {
+
+                        xyplotT.removeAnnotation(pointer);
+                        xyplotT.removeAnnotation(pointer2);
+                        chartPanel_com.removeOverlay(crosshairOverlay);
+                    }
+
+                }
+
+            }
+
         }
-        ds.add(11, 0, "");
-        return null;
+        );
+
+        resultListTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (isSelected) {
+                    c.setBackground(Color.YELLOW);
+                    c.setForeground(Color.BLUE);
+                } else {
+                    c.setBackground(Color.WHITE);
+                    c.setForeground(Color.BLACK);
+                }
+
+                return c;
+            }
+        });
     }
 
-    private static JFreeChart createChart(final XYDataset dataset) {
-        NumberAxis domain = new NumberAxis("Unit");
-        NumberAxis range = new NumberAxis("Price");
+    private XYDataset createBaselineDataset() throws SQLException {
 
-        domain.setAutoRangeIncludesZero(false);
-        XYItemRenderer renderer = new XYLineAndShapeRenderer(true, false);
-        renderer.setBaseItemLabelGenerator(new LabelGenerator());
-        renderer.setBaseItemLabelPaint(Color.green.darker());
-        renderer.setBasePositiveItemLabelPosition(new ItemLabelPosition(ItemLabelAnchor.CENTER, TextAnchor.CENTER));
-        renderer.setBaseItemLabelFont(renderer.getBaseItemLabelFont().deriveFont(14f));
-        renderer.setBaseItemLabelsVisible(true);
-        renderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
-        XYPlot plot = new XYPlot(dataset, domain, range, renderer);
-        JFreeChart chart = new JFreeChart("Unit Price", JFreeChart.DEFAULT_TITLE_FONT, plot, false);
-        return chart;
+        String query1 = "select WAVENUMBER, TRANSMITTANCE AS 'Baseline Corrected Spectrum' from baseline_data";
+        XYDataset baseline_dataset = new JDBCXYDataset(conn, query1);
+        return baseline_dataset;
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
