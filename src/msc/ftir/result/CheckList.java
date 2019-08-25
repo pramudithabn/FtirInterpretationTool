@@ -11,16 +11,26 @@ import java.awt.event.WindowEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
+import java.util.Vector;
+import javax.swing.JTable;
 import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
-import static javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import msc.ftir.main.Javaconnect;
+import msc.ftir.main.MainWindow;
+import net.proteanit.sql.DbUtils;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.labels.ItemLabelAnchor;
+import org.jfree.chart.labels.ItemLabelPosition;
+import org.jfree.chart.labels.StandardXYToolTipGenerator;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.xy.XYDataset;
+import org.jfree.ui.TextAnchor;
 
 /**
  *
@@ -31,6 +41,7 @@ public class CheckList extends javax.swing.JFrame {
     private static Connection conn = null;
     private ResultSet rs = null;
     private PreparedStatement pst = null;
+    private static Vector<Vector<Object>> data = new Vector<Vector<Object>>();
 
     /**
      * Creates new form CheckList
@@ -119,10 +130,41 @@ public class CheckList extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void fixButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fixButtonActionPerformed
-        int row = resultListTable.getSelectedRow();
-        for (int i = 0; i < 5; i++) {
-            resultListTable.getValueAt(row, i);
+
+        int r = resultListTable.getSelectedRow();
+
+        String data1 = (String) resultListTable.getValueAt(r, 1);
+        String data2 = (String) resultListTable.getValueAt(r, 2);
+        String data3 = (String) resultListTable.getValueAt(r, 3);
+        int data4 = (int) resultListTable.getValueAt(r, 4);
+
+        //Fill this Vector above with the initial data
+        //Fill this with column names
+        try {
+
+//            String sql = "select * from library where BOND_VIBMODE = \"" + data2.trim() + "\" AND FUNCTIONAL_GROUP = \"" + data3.trim() + "\" ";
+//            String sql = "SELECT BOND_VIBMODE, FUNCTIONAL_GROUP, COMPOUND_TYPE, COMPOUND_CATEGORY   from library where ID = " + data4;
+            String sql = "SELECT round(result.wavenumber) as 'Wavenumber', library.BOND_VIBMODE As 'Vib. Mode/ Bond', library.FUNCTIONAL_GROUP As 'Functional Group', library.COMPOUND_TYPE As 'Compound Type', library.COMPOUND_CATEGORY As 'Compound Category'  from library, result where library.ID = " + data4 + " and result.lib_index = " + data4 + " and library.ID = result.lib_index  LIMIT 1";
+            pst = conn.prepareStatement(sql);
+            rs = pst.executeQuery();
+//            System.out.println(sql);
+            MainWindow.printTable.setModel(TableModel(rs));
+
+//            addDataToTable(MainWindow.printTable, DbUtils.resultSetToTableModel(rs));
+//            MainWindow.printTable.setModel(DbUtils.resultSetToTableModel(rs));
+        } catch (Exception e) {
+            System.err.println(e);
+        } finally {
+            try {
+                rs.close();
+                pst.close();
+            } catch (Exception e) {
+                System.out.println(e);
+            }
         }
+
+        this.dispose();
+
 
     }//GEN-LAST:event_fixButtonActionPerformed
 
@@ -130,12 +172,12 @@ public class CheckList extends javax.swing.JFrame {
         //to select and unselect rows
         {
             int row = resultListTable.getSelectedRow();
-            boolean val = (boolean) resultListTable.getValueAt(row, 4);
+            boolean val = (boolean) resultListTable.getValueAt(row, 5);
 
             if (val == true) {
-                resultListTable.setValueAt(false, row, 4);
+                resultListTable.setValueAt(false, row, 5);
             } else if (val == false) {
-                resultListTable.setValueAt(true, row, 4);
+                resultListTable.setValueAt(true, row, 5);
             }
         }
 
@@ -175,6 +217,73 @@ public class CheckList extends javax.swing.JFrame {
                 new CheckList().setVisible(true);
             }
         });
+    }
+
+    public static DefaultTableModel TableModel(ResultSet rs)
+            throws SQLException {
+
+        ResultSetMetaData metaData = rs.getMetaData();
+
+        // names of columns
+        Vector<String> columnNames = new Vector<String>();
+        int columnCount = metaData.getColumnCount();
+        for (int column = 1; column <= columnCount; column++) {
+            columnNames.add(metaData.getColumnName(column));
+        }
+
+        // data of the table
+        while (rs.next()) {
+            Vector<Object> vector = new Vector<Object>();
+            for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
+                vector.add(rs.getObject(columnIndex));
+            }
+            data.add(vector);
+        }
+        return new DefaultTableModel(data, columnNames);
+    }
+
+    private XYDataset createDataset() {
+        LabeledXYDataset ds = new LabeledXYDataset();
+
+        try {
+
+            String sql = "SELECT round(result.wavenumber) as 'Wavenumber', library.BOND_VIBMODE As 'Vib. Mode/ Bond', library.FUNCTIONAL_GROUP As 'Functional Group', library.COMPOUND_TYPE As 'Compound Type', library.COMPOUND_CATEGORY As 'Compound Category'  from library, result where library.ID = " + data4 + " and result.lib_index = " + data4 + " and library.ID = result.lib_index  LIMIT 1";
+            PreparedStatement pst = conn.prepareStatement(sql);
+            ResultSet rs = pst.executeQuery();
+//            System.out.println(sql);
+      
+
+//            addDataToTable(MainWindow.printTable, DbUtils.resultSetToTableModel(rs));
+//            MainWindow.printTable.setModel(DbUtils.resultSetToTableModel(rs));
+        } catch (Exception e) {
+            System.err.println(e);
+        } finally {
+            try {
+                rs.close();
+                pst.close();
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }
+        ds.add(11, 0, "");
+        return null;
+    }
+
+    private static JFreeChart createChart(final XYDataset dataset) {
+        NumberAxis domain = new NumberAxis("Unit");
+        NumberAxis range = new NumberAxis("Price");
+
+        domain.setAutoRangeIncludesZero(false);
+        XYItemRenderer renderer = new XYLineAndShapeRenderer(true, false);
+        renderer.setBaseItemLabelGenerator(new LabelGenerator());
+        renderer.setBaseItemLabelPaint(Color.green.darker());
+        renderer.setBasePositiveItemLabelPosition(new ItemLabelPosition(ItemLabelAnchor.CENTER, TextAnchor.CENTER));
+        renderer.setBaseItemLabelFont(renderer.getBaseItemLabelFont().deriveFont(14f));
+        renderer.setBaseItemLabelsVisible(true);
+        renderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
+        XYPlot plot = new XYPlot(dataset, domain, range, renderer);
+        JFreeChart chart = new JFreeChart("Unit Price", JFreeChart.DEFAULT_TITLE_FONT, plot, false);
+        return chart;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

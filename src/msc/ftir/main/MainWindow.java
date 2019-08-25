@@ -305,9 +305,7 @@ public class MainWindow extends javax.swing.JFrame {
         jPanel15 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         printTable = new javax.swing.JTable();
-        deselectRowsButton = new javax.swing.JButton();
         finishButton = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
         jPanel7 = new javax.swing.JPanel();
         jToolBar = new javax.swing.JToolBar();
         smootheSelection = new javax.swing.JButton();
@@ -1350,13 +1348,6 @@ public class MainWindow extends javax.swing.JFrame {
         });
         jScrollPane3.setViewportView(printTable);
 
-        deselectRowsButton.setText("Deselect");
-        deselectRowsButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                deselectRowsButtonActionPerformed(evt);
-            }
-        });
-
         finishButton.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         finishButton.setText("Finish");
         finishButton.addActionListener(new java.awt.event.ActionListener() {
@@ -1364,8 +1355,6 @@ public class MainWindow extends javax.swing.JFrame {
                 finishButtonActionPerformed(evt);
             }
         });
-
-        jButton2.setText("OK");
 
         javax.swing.GroupLayout jPanel15Layout = new javax.swing.GroupLayout(jPanel15);
         jPanel15.setLayout(jPanel15Layout);
@@ -1377,10 +1366,6 @@ public class MainWindow extends javax.swing.JFrame {
                 .addContainerGap(18, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel15Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(deselectRowsButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(56, 56, 56)
                 .addComponent(finishButton, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -1390,10 +1375,7 @@ public class MainWindow extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(finishButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(deselectRowsButton)
-                    .addComponent(jButton2))
+                .addComponent(finishButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(256, Short.MAX_VALUE))
         );
 
@@ -2661,19 +2643,6 @@ public class MainWindow extends javax.swing.JFrame {
                     .getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_nextButton6ActionPerformed
-
-    private void deselectRowsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deselectRowsButtonActionPerformed
-        int r = printTable.getRowCount();
-
-        for (int i = 0; i < r; i++) {
-
-            boolean val = (boolean) printTable.getValueAt(i, 4);
-
-            if (val == true) {
-                printTable.setValueAt(false, i, 4);
-            }
-        }
-    }//GEN-LAST:event_deselectRowsButtonActionPerformed
 
     private void finishButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_finishButtonActionPerformed
         int r = printTable.getRowCount();
@@ -4032,14 +4001,13 @@ public class MainWindow extends javax.swing.JFrame {
                         double x = set1.getXValue(sindex, iindex);
 
                         CheckList c = new CheckList();
-                        c.setVisible(true);
-                        
+//                        c.setVisible(true);
 
                         String sql1 = "SET @row_number=0";
                         PreparedStatement pst1 = conn.prepareStatement(sql1);
                         ResultSet rst = pst1.executeQuery();
 
-                        String sql = "SELECT (@row_number:=@row_number + 1) As 'No.', round(`WAVENUMBER`,0) AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group' from result where wavenumber = " + x;
+                        String sql = "SELECT (@row_number:=@row_number + 1) As 'No.', round(`WAVENUMBER`,0) AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group',LIB_INDEX AS 'Lib. Index' from result where wavenumber = " + x;
                         pst = conn.prepareStatement(sql);
                         rs = pst.executeQuery();
 
@@ -4063,6 +4031,9 @@ public class MainWindow extends javax.swing.JFrame {
                                         return String.class;
 
                                     case 5:
+                                        return String.class;
+
+                                    case 6:
                                         return Boolean.class;
 
                                     default:
@@ -4073,7 +4044,7 @@ public class MainWindow extends javax.swing.JFrame {
 
                             @Override
                             public boolean isCellEditable(int rowIndex, int columnIndex) {
-                                if (columnIndex == 4) {
+                                if (columnIndex == 5) {
                                     return true;
                                 }
                                 return false;
@@ -4086,44 +4057,53 @@ public class MainWindow extends javax.swing.JFrame {
                         model.addColumn("Wavenumber(cm-1)");
                         model.addColumn("Bond");
                         model.addColumn("Functional Group");
+                        model.addColumn("Lib. Index");
                         model.addColumn("Select");
 
                         int i = 0;
-                        while (rs.next()) {
-                            model.addRow(new Object[0]);
-                            model.setValueAt(rs.getString("No."), i, 0);
-                            model.setValueAt(rs.getString("Wavenumber"), i, 1);
-                            model.setValueAt(rs.getString("Bond"), i, 2);
-                            model.setValueAt(rs.getString("Functional Group"), i, 3);
-                            model.setValueAt(false, i, 4);
-                            i++;
+
+                        if (rs.next() == false) {
+                            JOptionPane.showMessageDialog(null, "No results found!");
+                        } else {
+                            do {
+                                model.addRow(new Object[0]);
+                                model.setValueAt(rs.getString("No."), i, 0);
+                                model.setValueAt(rs.getString("Wavenumber"), i, 1);
+                                model.setValueAt(rs.getString("Bond"), i, 2);
+                                model.setValueAt(rs.getString("Functional Group"), i, 3);
+                                model.setValueAt(rs.getInt("Lib. Index"), i, 4);
+                                model.setValueAt(false, i, 5);
+                                c.setVisible(true);
+                                i++;
+
+                                DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+                                rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
+                                rightRenderer.setForeground(Color.BLUE);
+
+                                DefaultTableCellRenderer redRenderer = new DefaultTableCellRenderer();
+                                redRenderer.setHorizontalAlignment(JLabel.RIGHT);
+                                redRenderer.setForeground(Color.RED);
+
+                                c.resultListTable.setShowGrid(true);
+                                c.resultListTable.setGridColor(Color.LIGHT_GRAY);
+                                c.resultListTable.setShowHorizontalLines(false);
+                                c.resultListTable.getColumnModel().getColumn(0).setPreferredWidth(20);
+                                c.resultListTable.getColumnModel().getColumn(1).setPreferredWidth(40);
+                                c.resultListTable.getColumnModel().getColumn(2).setPreferredWidth(230);
+                                c.resultListTable.getColumnModel().getColumn(3).setPreferredWidth(140);
+                                c.resultListTable.getColumnModel().getColumn(4).setPreferredWidth(0);
+                                c.resultListTable.getColumnModel().getColumn(5).setPreferredWidth(50);
+                                CheckBoxRenderer checkBoxRenderer = new CheckBoxRenderer();
+
+                                c.resultListTable.getColumnModel().getColumn(5).setCellRenderer(checkBoxRenderer);
+                            } while (rs.next());
                         }
 
 //                        if (rs.next() == false) {
 //                            JOptionPane.showMessageDialog(null, "No results found!", "Error!", JOptionPane.WARNING_MESSAGE);
 //                        }else{
-////                            c.setVisible(true);
+//                            c.setVisible(true);
 //                        }
-
-                        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
-                        rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
-                        rightRenderer.setForeground(Color.BLUE);
-
-                        DefaultTableCellRenderer redRenderer = new DefaultTableCellRenderer();
-                        redRenderer.setHorizontalAlignment(JLabel.RIGHT);
-                        redRenderer.setForeground(Color.RED);
-
-                        c.resultListTable.setShowGrid(true);
-                        c.resultListTable.setGridColor(Color.LIGHT_GRAY);
-                        c.resultListTable.setShowHorizontalLines(false);
-                        c.resultListTable.getColumnModel().getColumn(0).setPreferredWidth(20);
-                        c.resultListTable.getColumnModel().getColumn(1).setPreferredWidth(40);
-                        c.resultListTable.getColumnModel().getColumn(2).setPreferredWidth(230);
-                        c.resultListTable.getColumnModel().getColumn(3).setPreferredWidth(140);
-                        c.resultListTable.getColumnModel().getColumn(4).setPreferredWidth(50);
-                        CheckBoxRenderer checkBoxRenderer = new CheckBoxRenderer();
-
-                        c.resultListTable.getColumnModel().getColumn(4).setCellRenderer(checkBoxRenderer);
                     } catch (SQLException ex) {
                         Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -5587,7 +5567,7 @@ public class MainWindow extends javax.swing.JFrame {
             ResultSet rst = pst1.executeQuery();
 
 //            String sql = "select `WAVENUMBER` AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group', `COMPOUND_TYPE` AS 'Compound Type' , `COMPOUND_CATEGORY` AS 'Compound Category' from result";
-            String sql = "SELECT (@row_number:=@row_number + 1) AS 'Index', round(`WAVENUMBER`,0) AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group' from result";
+            String sql = "SELECT (@row_number:=@row_number + 1) AS 'Index', round(`WAVENUMBER`,0) AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group', LIB_INDEX AS 'Lib.Index' from result";
             pst = conn.prepareStatement(sql);
             rs = pst.executeQuery();
             resultTable.setModel(DbUtils.resultSetToTableModel(rs));
@@ -5860,9 +5840,10 @@ public class MainWindow extends javax.swing.JFrame {
                 PreparedStatement pst1 = conn.prepareStatement(sql1);
                 ResultSet rst = pst1.executeQuery();
 
-                String sql = "SELECT (@row_number:=@row_number + 1) As 'No.', round(`WAVENUMBER`,0) AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group' FROM `result` WHERE COMPOUND_CATEGORY IN (" + selectedItem + ")";
+                String sql = "SELECT (@row_number:=@row_number + 1) As 'No.', round(`WAVENUMBER`,0) AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group',LIB_INDEX AS 'Lib. Index' FROM `result` WHERE COMPOUND_CATEGORY IN (" + selectedItem + ")";
                 pst = conn.prepareStatement(sql);
                 rs = pst.executeQuery();
+
                 if (rs.next() == false) {
 
                     JOptionPane.showMessageDialog(null, "No results found!");
@@ -5947,7 +5928,6 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JCheckBox cubicSplineCheckBox2;
     public static javax.swing.JTable dataTable;
     private javax.swing.JButton deselectButton;
-    private javax.swing.JButton deselectRowsButton;
     private javax.swing.JMenu displayMenu;
     private javax.swing.JMenu editMenu;
     private javax.swing.JTextField filePathText;
@@ -5956,7 +5936,6 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JRadioButton fivepoints;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox10;
     private javax.swing.JCheckBox jCheckBox2;
@@ -6041,7 +6020,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.ButtonGroup pointsMenu;
     private javax.swing.ButtonGroup pointsbuttonGroup;
     private javax.swing.JButton predictButton;
-    private javax.swing.JTable printTable;
+    public static javax.swing.JTable printTable;
     private javax.swing.JProgressBar progressBar;
     private javax.swing.JButton removePointsButton;
     private javax.swing.JButton resetSmoothButton;

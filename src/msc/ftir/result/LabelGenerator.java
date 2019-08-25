@@ -14,15 +14,12 @@ import org.jfree.data.xy.XYDataset;
  */
 class LabelGenerator implements XYItemLabelGenerator {
 
-//        @Override
-//        public String generateLabel(XYDataset dataset, int series, int item) {
-//            LabeledXYDataset labelSource = (LabeledXYDataset) dataset;
-//            return labelSource.getLabel(series, item);
-//        }
+        @Override
+        public String generateLabel(XYDataset dataset, int series, int item) {
+            LabeledXYDataset labelSource = (LabeledXYDataset) dataset;
+            return labelSource.getLabel(series, item);
+        }
 
-    @Override
-    public String generateLabel(XYDataset xyd, int i, int i1) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+   
 
     }

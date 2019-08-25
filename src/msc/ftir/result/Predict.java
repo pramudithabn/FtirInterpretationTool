@@ -91,7 +91,7 @@ public class Predict {
                     while (rs.next()) {
 
 //                    rst = new Result(f, rs.getString("BOND"), rs.getString("FUNCTIONAL_GROUP"));
-                        rst = new Result(f, rs.getString("BOND_VIBMODE"), rs.getString("FUNCTIONAL_GROUP"), rs.getString("COMPOUND_TYPE"), rs.getString("COMPOUND_CATEGORY"));
+                        rst = new Result(f, rs.getString("BOND_VIBMODE"), rs.getString("FUNCTIONAL_GROUP"), rs.getString("COMPOUND_TYPE"), rs.getString("COMPOUND_CATEGORY"), rs.getInt("ID"));
 //                    BigDecimal w = rs.getBigDecimal("width");
 //                    System.out.println(f+" /  " + w);
                         resultset.add(rst);
@@ -139,14 +139,15 @@ public class Predict {
             String fngrp = resultset.get(i).getFunctional_group();
             String type = resultset.get(i).getCompound_type();
             String compound = resultset.get(i).getCompoundCategory();
+            int libIndex = resultset.get(i).getLibIndex();
 
-            String twoarrays = "(" + w + " ,\" " + bond + "\" , \"" + fngrp + "\" , \"" + type + "\" , \"" + compound + "\")";
+            String twoarrays = "(" + w + " ,\" " + bond + "\" , \"" + fngrp + "\" , \"" + type + "\" , \"" + compound + "\" , \"" + libIndex + "\")";
             fullarrays = fullarrays + twoarrays + ",";
         }
 
         fullarrays = fullarrays.substring(0, fullarrays.length() - 1);
 
-        String sql = "INSERT INTO result ( WAVENUMBER,BOND, FUNCTIONAL_GROUP,   COMPOUND_TYPE,  COMPOUND_CATEGORY )  VALUES " + fullarrays;
+        String sql = "INSERT INTO result ( WAVENUMBER,BOND, FUNCTIONAL_GROUP, COMPOUND_TYPE,  COMPOUND_CATEGORY, LIB_INDEX )  VALUES " + fullarrays;
         ResultSet rs = null;
         PreparedStatement pst = null;
 

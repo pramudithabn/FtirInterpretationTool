@@ -19,15 +19,16 @@ public class Result {
 //    private String bond;
     private String functional_group;
     private String compound_type;
+    private int libIndex;
 
-    public Result(BigDecimal w, String b, String f, String t ,String c) {
+    public Result(BigDecimal w, String b, String f, String t ,String c,int i) {
         this.wavenumber = w;
         this.bondVibMode = b;
 //        this.bond = b;
         this.functional_group = f;
         this.compoundCategory = c;
         this.compound_type = t;
-
+        this.libIndex = i;
     }
 
     public String getCompound_type() {
@@ -60,6 +61,14 @@ public class Result {
 
     public void setWavenumber(BigDecimal wavenumber) {
         this.wavenumber = wavenumber;
+    }
+
+    public int getLibIndex() {
+        return libIndex;
+    }
+
+    public void setLibIndex(int libIndex) {
+        this.libIndex = libIndex;
     }
 
 //    public String getBond() {
