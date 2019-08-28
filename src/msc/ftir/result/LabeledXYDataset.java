@@ -47,7 +47,7 @@ public class LabeledXYDataset extends AbstractXYDataset {
 
     @Override
     public Comparable getSeriesKey(int series) {
-        return "Unit";
+        return "Bands";
     }
 
     @Override

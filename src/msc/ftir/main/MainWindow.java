@@ -12,12 +12,24 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.awt.print.Book;
+import java.awt.print.PageFormat;
+import java.awt.print.Paper;
+import java.awt.print.Printable;
+import static java.awt.print.Printable.NO_SUCH_PAGE;
+import static java.awt.print.Printable.PAGE_EXISTS;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 import net.proteanit.sql.DbUtils;
 import java.io.BufferedReader;
 import java.io.File;
@@ -60,6 +72,11 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import java.util.Properties;
+import javax.print.attribute.HashPrintRequestAttributeSet;
+import javax.print.attribute.standard.MediaPrintableArea;
+import javax.print.attribute.standard.OrientationRequested;
+import javax.print.attribute.standard.Sides;
+import javax.swing.JTable.PrintMode;
 import javax.swing.table.DefaultTableCellRenderer;
 import msc.ftir.library.LibraryFtir;
 import msc.ftir.result.Predict;
@@ -80,8 +97,12 @@ import msc.ftir.baseline.EditBaseline;
 import msc.ftir.result.CheckBoxRenderer;
 import msc.ftir.result.CheckList;
 import msc.ftir.result.LabeledXYDataset;
+import msc.ftir.result.PrintMultiPageUtil;
+import msc.ftir.result.PrintPreview;
+import msc.ftir.result.Printer;
 import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.util.ShapeUtilities;
+import msc.ftir.print.PrintableWrapper;
 
 
 /*
@@ -323,14 +344,22 @@ public class MainWindow extends javax.swing.JFrame {
         jPanel15 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         printTable = new javax.swing.JTable();
-        finishButton = new javax.swing.JButton();
+        jPanel16 = new javax.swing.JPanel();
+        headerBox = new javax.swing.JCheckBox();
+        headerField = new javax.swing.JTextField();
+        footerBox = new javax.swing.JCheckBox();
+        footerField = new javax.swing.JTextField();
+        showPrintDialogBox = new javax.swing.JCheckBox();
+        fitWidthBox = new javax.swing.JCheckBox();
+        interactiveBox = new javax.swing.JCheckBox();
+        printChartButton = new javax.swing.JButton();
+        printTableButton = new javax.swing.JButton();
         jPanel7 = new javax.swing.JPanel();
         jToolBar = new javax.swing.JToolBar();
         smootheSelection = new javax.swing.JButton();
         peakButton = new javax.swing.JButton();
         clearButton = new javax.swing.JButton();
         searchDatabaseButton = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         filePathText = new javax.swing.JTextField();
         openButton = new javax.swing.JButton();
@@ -338,34 +367,20 @@ public class MainWindow extends javax.swing.JFrame {
         loadingText = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         editMenu = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
-        jMenuItem2 = new javax.swing.JMenuItem();
-        jMenuItem4 = new javax.swing.JMenuItem();
-        displayMenu = new javax.swing.JMenu();
-        jMenuItem6 = new javax.swing.JMenuItem();
+        newFileMenuItem = new javax.swing.JMenuItem();
+        saveMenuItem = new javax.swing.JMenuItem();
+        clearMenuItem = new javax.swing.JMenuItem();
         jMenu1 = new javax.swing.JMenu();
-        jMenu2 = new javax.swing.JMenu();
-        jRadioButtonMenuItem1 = new javax.swing.JRadioButtonMenuItem();
-        jRadioButtonMenuItem2 = new javax.swing.JRadioButtonMenuItem();
-        jRadioButtonMenuItem3 = new javax.swing.JRadioButtonMenuItem();
-        jMenu3 = new javax.swing.JMenu();
-        jRadioButtonMenuItem4 = new javax.swing.JRadioButtonMenuItem();
-        jRadioButtonMenuItem5 = new javax.swing.JRadioButtonMenuItem();
-        jRadioButtonMenuItem6 = new javax.swing.JRadioButtonMenuItem();
-        jRadioButtonMenuItem7 = new javax.swing.JRadioButtonMenuItem();
-        jMenu4 = new javax.swing.JMenu();
-        jMenu5 = new javax.swing.JMenu();
-        jRadioButtonMenuItem8 = new javax.swing.JRadioButtonMenuItem();
-        jRadioButtonMenuItem9 = new javax.swing.JRadioButtonMenuItem();
-        jMenu6 = new javax.swing.JMenu();
-        jRadioButtonMenuItem10 = new javax.swing.JRadioButtonMenuItem();
-        jRadioButtonMenuItem11 = new javax.swing.JRadioButtonMenuItem();
+        printTableMenuItem = new javax.swing.JMenuItem();
+        printChartMenuItem = new javax.swing.JMenuItem();
+        displayMenu = new javax.swing.JMenu();
+        originalMenuItem = new javax.swing.JMenuItem();
+        smoothMenuItem = new javax.swing.JMenuItem();
+        bcMenuItem = new javax.swing.JMenuItem();
         optionsMenu = new javax.swing.JMenu();
-        searchMenu = new javax.swing.JMenuItem();
-        jMenuItem5 = new javax.swing.JMenuItem();
-        toolsMenu = new javax.swing.JMenu();
-        jMenuItem3 = new javax.swing.JMenuItem();
+        searchMenuItem = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
 
         javax.swing.GroupLayout jDialog1Layout = new javax.swing.GroupLayout(jDialog1.getContentPane());
         jDialog1.getContentPane().setLayout(jDialog1Layout);
@@ -452,7 +467,7 @@ public class MainWindow extends javax.swing.JFrame {
         );
         comPanelLayout.setVerticalGroup(
             comPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 318, Short.MAX_VALUE)
+            .addGap(0, 346, Short.MAX_VALUE)
         );
 
         specSplitPane.setRightComponent(comPanel);
@@ -493,7 +508,7 @@ public class MainWindow extends javax.swing.JFrame {
             .addGroup(tablePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 451, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tablePanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(nextButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -506,7 +521,7 @@ public class MainWindow extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(nextButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 278, Short.MAX_VALUE))
+                .addGap(0, 307, Short.MAX_VALUE))
         );
 
         settingsTabbedPane.addTab("Data         ", tablePanel);
@@ -541,7 +556,7 @@ public class MainWindow extends javax.swing.JFrame {
         jPanel8Layout.setHorizontalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
-                .addContainerGap(26, Short.MAX_VALUE)
+                .addContainerGap(27, Short.MAX_VALUE)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel8Layout.createSequentialGroup()
                         .addComponent(jLabel1)
@@ -657,7 +672,7 @@ public class MainWindow extends javax.swing.JFrame {
                     .addComponent(fivepoints)
                     .addComponent(sevenpoints)
                     .addComponent(ninepoints))
-                .addContainerGap(160, Short.MAX_VALUE))
+                .addContainerGap(161, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel12Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(resetSmoothButton, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -820,7 +835,7 @@ public class MainWindow extends javax.swing.JFrame {
         jPanel11.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Manual", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12), new java.awt.Color(102, 102, 102))); // NOI18N
 
         removePointsButton.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        removePointsButton.setText("Delete");
+        removePointsButton.setText("Start");
         removePointsButton.setToolTipText("Click on chart to remove points.");
         removePointsButton.setEnabled(false);
         removePointsButton.setFocusable(false);
@@ -905,7 +920,7 @@ public class MainWindow extends javax.swing.JFrame {
         });
 
         stopAddingButton.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        stopAddingButton.setText("Stop");
+        stopAddingButton.setText("End");
         stopAddingButton.setToolTipText("Finish point removal.");
         stopAddingButton.setEnabled(false);
         stopAddingButton.setFocusable(false);
@@ -984,7 +999,7 @@ public class MainWindow extends javax.swing.JFrame {
                         .addComponent(splineCheckBox2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cubicSplineCheckBox2)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
                 .addComponent(nextButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(84, 84, 84))
         );
@@ -1099,7 +1114,7 @@ public class MainWindow extends javax.swing.JFrame {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(28, 28, 28)
                 .addComponent(jPanel13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(285, Short.MAX_VALUE))
+                .addContainerGap(314, Short.MAX_VALUE))
         );
 
         settingsTabbedPane.addTab("Bands", jPanel4);
@@ -1366,13 +1381,129 @@ public class MainWindow extends javax.swing.JFrame {
         });
         jScrollPane3.setViewportView(printTable);
 
-        finishButton.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        finishButton.setText("Finish");
-        finishButton.addActionListener(new java.awt.event.ActionListener() {
+        jPanel16.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Printing", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 11), new java.awt.Color(102, 102, 102))); // NOI18N
+
+        headerBox.setText("Header: ");
+        headerBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                finishButtonActionPerformed(evt);
+                headerBoxActionPerformed(evt);
             }
         });
+
+        headerField.setToolTipText("");
+
+        footerBox.setText("Footer:");
+        footerBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                footerBoxActionPerformed(evt);
+            }
+        });
+
+        footerField.setText("Page {0}");
+        footerField.setToolTipText("Page Header (Use {0} to include page number)");
+        footerField.setEnabled(false);
+
+        showPrintDialogBox.setText("Show print dialog");
+        showPrintDialogBox.setToolTipText("Show the Print Dialog Before Printing");
+        showPrintDialogBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showPrintDialogBoxActionPerformed(evt);
+            }
+        });
+
+        fitWidthBox.setText("Fit width to printed page");
+        fitWidthBox.setToolTipText("Shrink the Table to Fit the Entire Width on a Page");
+
+        interactiveBox.setText("Interactive (Show status dialog)");
+        interactiveBox.setToolTipText("Keep the GUI Responsive and Show a Status Dialog During Printing");
+        interactiveBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                interactiveBoxActionPerformed(evt);
+            }
+        });
+
+        printChartButton.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        printChartButton.setText("Print Chart");
+        printChartButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                printChartButtonActionPerformed(evt);
+            }
+        });
+
+        printTableButton.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        printTableButton.setText("Print Table");
+        printTableButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                printTableButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel16Layout = new javax.swing.GroupLayout(jPanel16);
+        jPanel16.setLayout(jPanel16Layout);
+        jPanel16Layout.setHorizontalGroup(
+            jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel16Layout.createSequentialGroup()
+                .addGap(19, 19, 19)
+                .addGroup(jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel16Layout.createSequentialGroup()
+                        .addGroup(jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(headerBox)
+                            .addComponent(footerBox))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel16Layout.createSequentialGroup()
+                                .addComponent(footerField, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(jPanel16Layout.createSequentialGroup()
+                                .addComponent(headerField, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))))
+                    .addGroup(jPanel16Layout.createSequentialGroup()
+                        .addGroup(jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel16Layout.createSequentialGroup()
+                                .addGroup(jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(fitWidthBox)
+                                    .addComponent(showPrintDialogBox))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(jPanel16Layout.createSequentialGroup()
+                                .addComponent(interactiveBox)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(printChartButton)
+                            .addComponent(printTableButton)))))
+        );
+
+        jPanel16Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {printChartButton, printTableButton});
+
+        jPanel16Layout.setVerticalGroup(
+            jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel16Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(headerBox)
+                    .addComponent(headerField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(footerBox)
+                    .addComponent(footerField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel16Layout.createSequentialGroup()
+                        .addComponent(showPrintDialogBox)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(fitWidthBox)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(interactiveBox)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel16Layout.createSequentialGroup()
+                        .addGap(0, 14, Short.MAX_VALUE)
+                        .addComponent(printChartButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(printTableButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18))))
+        );
+
+        jPanel16Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {printChartButton, printTableButton});
 
         javax.swing.GroupLayout jPanel15Layout = new javax.swing.GroupLayout(jPanel15);
         jPanel15.setLayout(jPanel15Layout);
@@ -1380,21 +1511,19 @@ public class MainWindow extends javax.swing.JFrame {
             jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel15Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 443, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(18, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel15Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(finishButton, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane3)
+                    .addComponent(jPanel16, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel15Layout.setVerticalGroup(
             jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel15Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(finishButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(256, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel16, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0))
         );
 
         settingsTabbedPane.addTab("Report", jPanel15);
@@ -1461,22 +1590,9 @@ public class MainWindow extends javax.swing.JFrame {
         });
         jToolBar.add(searchDatabaseButton);
 
-        jButton1.setText("test");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-        jToolBar.add(jButton1);
-
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
         openButton.setText("Open");
-        openButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                openButtonMouseClicked(evt);
-            }
-        });
         openButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 openButtonActionPerformed(evt);
@@ -1489,7 +1605,7 @@ public class MainWindow extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(filePathText, javax.swing.GroupLayout.DEFAULT_SIZE, 557, Short.MAX_VALUE)
+                .addComponent(filePathText, javax.swing.GroupLayout.DEFAULT_SIZE, 582, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(openButton, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1522,7 +1638,7 @@ public class MainWindow extends javax.swing.JFrame {
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addComponent(jToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 808, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 566, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 575, Short.MAX_VALUE)
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
                         .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1552,248 +1668,110 @@ public class MainWindow extends javax.swing.JFrame {
 
         editMenu.setText("File");
 
-        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem1.setText("Save");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+        newFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
+        newFileMenuItem.setText("New");
+        newFileMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
+                newFileMenuItemActionPerformed(evt);
             }
         });
-        editMenu.add(jMenuItem1);
+        editMenu.add(newFileMenuItem);
 
-        jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem2.setText("Clear");
-        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+        saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        saveMenuItem.setText("Save");
+        saveMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem2ActionPerformed(evt);
+                saveMenuItemActionPerformed(evt);
             }
         });
-        editMenu.add(jMenuItem2);
+        editMenu.add(saveMenuItem);
 
-        jMenuItem4.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem4.setText("Print");
-        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+        clearMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
+        clearMenuItem.setText("Clear");
+        clearMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem4ActionPerformed(evt);
+                clearMenuItemActionPerformed(evt);
             }
         });
-        editMenu.add(jMenuItem4);
+        editMenu.add(clearMenuItem);
+
+        jMenu1.setText("Print");
+
+        printTableMenuItem.setText("Print table");
+        printTableMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                printTableMenuItemActionPerformed(evt);
+            }
+        });
+        jMenu1.add(printTableMenuItem);
+
+        printChartMenuItem.setText("Print chart");
+        printChartMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                printChartMenuItemActionPerformed(evt);
+            }
+        });
+        jMenu1.add(printChartMenuItem);
+
+        editMenu.add(jMenu1);
 
         jMenuBar1.add(editMenu);
 
         displayMenu.setText("Edit");
 
-        jMenuItem6.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Z, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem6.setText("Undo");
-        displayMenu.add(jMenuItem6);
+        originalMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        originalMenuItem.setText("Show Original");
+        originalMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                originalMenuItemActionPerformed(evt);
+            }
+        });
+        displayMenu.add(originalMenuItem);
 
-        jMenu1.setText("Smooth");
+        smoothMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_MASK));
+        smoothMenuItem.setText("Smoothing");
+        smoothMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                smoothMenuItemActionPerformed(evt);
+            }
+        });
+        displayMenu.add(smoothMenuItem);
 
-        jMenu2.setText("Filter");
-
-        algorithmMenu.add(jRadioButtonMenuItem1);
-        jRadioButtonMenuItem1.setSelected(true);
-        jRadioButtonMenuItem1.setText("Savitzky-Golay");
-        jMenu2.add(jRadioButtonMenuItem1);
-
-        algorithmMenu.add(jRadioButtonMenuItem2);
-        jRadioButtonMenuItem2.setText("Sliding Window");
-        jMenu2.add(jRadioButtonMenuItem2);
-
-        algorithmMenu.add(jRadioButtonMenuItem3);
-        jRadioButtonMenuItem3.setText("Triangular Algorithm");
-        jMenu2.add(jRadioButtonMenuItem3);
-
-        jMenu1.add(jMenu2);
-
-        jMenu3.setText("Points");
-
-        pointsMenu.add(jRadioButtonMenuItem4);
-        jRadioButtonMenuItem4.setSelected(true);
-        jRadioButtonMenuItem4.setText("3 - points");
-        jMenu3.add(jRadioButtonMenuItem4);
-
-        pointsMenu.add(jRadioButtonMenuItem5);
-        jRadioButtonMenuItem5.setText("5 - points");
-        jMenu3.add(jRadioButtonMenuItem5);
-
-        pointsMenu.add(jRadioButtonMenuItem6);
-        jRadioButtonMenuItem6.setText("7 - points");
-        jMenu3.add(jRadioButtonMenuItem6);
-
-        pointsMenu.add(jRadioButtonMenuItem7);
-        jRadioButtonMenuItem7.setText("9 - points");
-        jMenu3.add(jRadioButtonMenuItem7);
-
-        jMenu1.add(jMenu3);
-
-        displayMenu.add(jMenu1);
-
-        jMenu4.setText("Baseline");
-
-        jMenu5.setText("Connect by");
-
-        blConnectionMenu.add(jRadioButtonMenuItem8);
-        jRadioButtonMenuItem8.setSelected(true);
-        jRadioButtonMenuItem8.setText("Interpolation");
-        jMenu5.add(jRadioButtonMenuItem8);
-
-        blConnectionMenu.add(jRadioButtonMenuItem9);
-        jRadioButtonMenuItem9.setText("Regression");
-        jMenu5.add(jRadioButtonMenuItem9);
-
-        jMenu4.add(jMenu5);
-
-        jMenu6.setText("Method");
-
-        blMethodMenu.add(jRadioButtonMenuItem10);
-        jRadioButtonMenuItem10.setSelected(true);
-        jRadioButtonMenuItem10.setText("Line");
-        jMenu6.add(jRadioButtonMenuItem10);
-
-        blMethodMenu.add(jRadioButtonMenuItem11);
-        jRadioButtonMenuItem11.setText("Cubic Spline");
-        jMenu6.add(jRadioButtonMenuItem11);
-
-        jMenu4.add(jMenu6);
-
-        displayMenu.add(jMenu4);
+        bcMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_B, java.awt.event.InputEvent.CTRL_MASK));
+        bcMenuItem.setText("Baseline Correction");
+        bcMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bcMenuItemActionPerformed(evt);
+            }
+        });
+        displayMenu.add(bcMenuItem);
 
         jMenuBar1.add(displayMenu);
 
         optionsMenu.setText("Library");
 
-        searchMenu.setText("Search");
-        searchMenu.addActionListener(new java.awt.event.ActionListener() {
+        searchMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.CTRL_MASK));
+        searchMenuItem.setText("Search");
+        searchMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                searchMenuActionPerformed(evt);
+                searchMenuItemActionPerformed(evt);
             }
         });
-        optionsMenu.add(searchMenu);
-
-        jMenuItem5.setText("Save to library");
-        optionsMenu.add(jMenuItem5);
+        optionsMenu.add(searchMenuItem);
 
         jMenuBar1.add(optionsMenu);
 
-        toolsMenu.setText("Tools");
-        toolsMenu.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                toolsMenuMouseClicked(evt);
-            }
-        });
-
-        jMenuItem3.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem3.setText("Original Spectrum");
-        toolsMenu.add(jMenuItem3);
-
-        jMenuBar1.add(toolsMenu);
-
         helpMenu.setText("Help");
+
+        jMenuItem1.setText("About");
+        helpMenu.add(jMenuItem1);
+
         jMenuBar1.add(helpMenu);
 
         setJMenuBar(jMenuBar1);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void openButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openButtonActionPerformed
-//        uploadFile();
-////1. select file and validate 
-//        fileChooser();
-//
-//        if (validateFileType()) {
-//
-//            try {
-//
-//                String[] choices = {"Transmittance", "Absorbance"};
-//                String input = (String) JOptionPane.showInputDialog(null, "Select input type",
-//                        "Input type", JOptionPane.QUESTION_MESSAGE, null, // Use
-//                        // default
-//                        // icon
-//                        choices, // Array of choices
-//                        choices[0]); // Initial choice
-//
-//                if (input.equals("Transmittance")) {
-//
-//                    //2.read file
-//                    readFile();
-//
-//                    //create spectrum
-//                    generate_spectrum(specPanel, "input_data"); //original spectrum
-////                    generate_spectrum_seperateFrame("input_data");
-//                }
-//
-//                if (input.equals("Absorbance")) {
-//
-//                    readAbsFile();
-//                    AbsToTrans ab = new AbsToTrans();
-//                    //create spectrum
-//                    generate_spectrum(specPanel, "input_data"); //original spectrum
-//                }
-//
-//                //3.run default smoothing
-//                {
-//                    sg = new SavitzkyGolayFilter();
-//                    sg.applyFilter_3points();
-//
-//                    combined2Charts(createInputDataset(), createSmoothedDataset(), rsPanel);
-//
-//                }
-//                //4.draw default baseline
-//                {
-//                    v1 = new ValleysLocator("avg_data");
-//                    v1.cal_1storder_derivative(v1.getSmoothedPointList());
-//                    v1.cal_2ndorder_derivative(v1.getSmoothedPointList());
-//                    v1.findCandidateSet();
-//                    v1.evaluateNeighbourhood();
-////                    v1.discardBelowThresh(2, lowerBoundT, upperBoundT);
-////                    numBandsLabel.setText(String.valueOf(v1.getCandidates().size()));
-//
-//                    SortedMap<BigDecimal, BigDecimal> mapi = null;
-//                    intpol = new InterpolatedBL();
-//
-//                    mapi = intpol.linearInterp(createValleyDataset(v1.getPeaktops()), v1.getPeaktops().size());
-//
-//                    combined2Charts(createDataset(mapi, "Interpolated data"), createSmoothedDataset(), baseline_panel);
-////                        combined2Charts(createDataset(intpol.getDifferencewithLine(), "Baseline Corrected"), createSmoothedDataset(), comPanel);
-//                    combined2Charts(createDataset(intpol.getDifferencewithLine(), "Baseline Corrected"), input_dataset, comPanel);
-//                }
-//
-//                //Valleys graph plot
-//                {
-//
-//                    showValleys("avg_data");
-//                }
-//
-//                //get the baseline equation
-//                getBaselineEquation();
-//
-//            } catch (IOException ex) {
-//                Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-//            } catch (SQLException ex) {
-//                Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//
-//        } else {
-//
-//            JOptionPane.showMessageDialog(null, "Invalid file format!", "Error", JOptionPane.ERROR_MESSAGE);
-//
-//        }
-//        //create one dataset for input_table
-//        try {
-//            input_dataset = createInputDataset();
-//        } catch (SQLException ex) {
-//            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-//        }//end
-//        showDefaultTrendLine();
-//        thresholdSlider.setMaximum(upperBoundT);
-//     
-//        thresholdSlider.setMinimum(lowerBoundT);
-//        thresholdSlider.setPaintTicks(true);
-//        thresholdSlider.setPaintLabels(true);
-
-    }//GEN-LAST:event_openButtonActionPerformed
 
     private void peakButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peakButtonActionPerformed
         comPanel.removeAll();
@@ -2191,6 +2169,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         specSplitPane.getTopComponent().setMinimumSize(new Dimension());
         specSplitPane.setDividerLocation(0.0d);
+        chartPanel_com.setSize(859, 425);
     }//GEN-LAST:event_nextButton2ActionPerformed
 
     private void predictButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_predictButtonActionPerformed
@@ -2290,35 +2269,6 @@ public class MainWindow extends javax.swing.JFrame {
 
     }//GEN-LAST:event_resultTableMouseClicked
 
-    private void openButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_openButtonMouseClicked
-
-        //1. select file to upload/ removed this from upload
-        fileChooser();
-
-        class MyWorker extends SwingWorker<String, Void> {
-
-            protected String doInBackground() {
-                progressBar.setVisible(true);
-                loadingText.setVisible(true);
-//                progressBar.setIndeterminate(true);
-                uploadFile();
-//                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-//                Calendar cal = Calendar.getInstance();
-//                
-//                footnoteTextArea.setText("Timestamp: "+dateFormat.format(cal.getTime())+"\n Upload Completed.");
-
-                return "Done";
-            }
-
-            protected void done() {
-                progressBar.setVisible(false);
-                loadingText.setVisible(false);
-            }
-        }
-
-        new MyWorker().execute();
-    }//GEN-LAST:event_openButtonMouseClicked
-
     private void lineCheckBoxMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lineCheckBoxMouseClicked
         setBaseline();
     }//GEN-LAST:event_lineCheckBoxMouseClicked
@@ -2327,86 +2277,89 @@ public class MainWindow extends javax.swing.JFrame {
         setBaseline();
     }//GEN-LAST:event_cubicSplineCheckBoxMouseClicked
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+    private void saveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveMenuItemActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
+    }//GEN-LAST:event_saveMenuItemActionPerformed
 
     private void splineCheckBoxMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_splineCheckBoxMouseClicked
         setBaseline();
     }//GEN-LAST:event_splineCheckBoxMouseClicked
 
-    private void toolsMenuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_toolsMenuMouseClicked
-        generate_spectrum(specPanel, "input_data");
-    }//GEN-LAST:event_toolsMenuMouseClicked
+    private void clearMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearMenuItemActionPerformed
+        int confirmed = JOptionPane.showConfirmDialog(null,
+                "Clear all?", "Clear",
+                JOptionPane.YES_NO_OPTION);
 
-    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        if (confirmed == JOptionPane.YES_OPTION) {
+            {
+                rs = null;
+                pst = null;
+                fileName = "";
+                errorLine = new ArrayList<>();
+                dataArray = new Object[1000][2];
+                ls = null;
+                tri = null;
+                ds = null;
+                sl = null;
+                ts = null;
+                sgf = null;
+                intpol = null;
+                pr = null;
+                sg = null;
+                pointer = null;
+                pointer2 = null;
+                bc = null;
+                newInstance = false;
+                sliderValuesList = new ArrayList<Integer>();
+                prev = 0;
+                inputvalidity = true;
+                p = new Properties();
+                points = 0;
+                plot = null;
+                thresh = 0;
+                lowerBoundX = 0;
+                upperBoundX = 0;
+                lowerBoundT = 0;
+                upperBoundT = 0;
+                spec = null;
+                chart = null;
+                duelchart = null;
+                smoothedSpec = null;
+                smoothed_chart = null;
+                charts3 = null;
+                input_dataset = null;
+                baseline_dataset = null;
+                smoothed_dataset = null;
+                sliderPreviousValue = 0;
+                sliderCurrentValue = 0;
+                h_current = 0;
+                h_old = 0;
+                threshCurrent = 2;
+                threshPrevious = 0; //threshold values by sliders for valley detection
+                noiseThreshPrevious = 0; //threshold values by sliders for valley detection
+                bltab = false;
+                peakset = null;
+                xyplotT = null;
+                bandstab = false;
+                chartPanel_com = null;
+                clicked = false;
+                peaktops = null;
+                temp_peaktops = null;
+                clickcount = 0;
 
-//        jMenuItem2.addActionListener(new ActionListener() {
-//
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//
-//                ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(10);
-//                executor.setContinueExistingPeriodicTasksAfterShutdownPolicy(true);
-//                executor.setExecuteExistingDelayedTasksAfterShutdownPolicy(true);
-//                ScheduledFuture<?> future = executor.schedule(new Runnable() {
-//
-//                    @Override
-//                    public void run() {
-//                        try {
-//                            Process p = Runtime.getRuntime().exec("cmd /c start java -jar D:\\MovieLibrary.jar");
-//                        } catch (IOException ex) {
-//                            ex.printStackTrace();
-//                        }
-//                    }
-//                }, 2, TimeUnit.SECONDS);
-//                executor.shutdown();
-//                try {
-//                    executor.awaitTermination(10, TimeUnit.SECONDS);
-//                } catch (InterruptedException e1) {
-//                    e1.printStackTrace();
-//                }
-//
-//                System.exit(0);
-//            }
-//
-//            ScheduledExecutorService schedulerExecutor = Executors.newScheduledThreadPool(2);
-//            Callable<Process> callable = new Callable<Process>() {
-//
-//                @Override
-//                public Process call() throws Exception {
-//                    Process p = Runtime.getRuntime().exec("cmd /c start /b java -jar D:\\MovieLibrary.jar");
-//                    return p;
-//                }
-//            };
-//
-//            FutureTask<Process> futureTask = new FutureTask<Process>(callable);
-//
-////            schedulerExecutor.submit(futureTask);
-////
-////            schedulerExecutor.shutdown();
-////
-////            System.exit(0);
-//    });
+            }
+            clearAll();
+        } else {
+            setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        }
 
-    }//GEN-LAST:event_jMenuItem2ActionPerformed
+    }//GEN-LAST:event_clearMenuItemActionPerformed
 
-    private void searchMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchMenuActionPerformed
+    private void searchMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchMenuItemActionPerformed
         LibraryFtir lb = new LibraryFtir();
         lb.setVisible(true);
         lb.setLocationRelativeTo(null);
-    }//GEN-LAST:event_searchMenuActionPerformed
-
-    private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
-        try {
-            MessageFormat header = new MessageFormat("Report");
-            MessageFormat footer = new MessageFormat("Page{0,number,integer}");
-
-            resultTable.print(JTable.PrintMode.NORMAL, header, footer);
-        } catch (java.awt.print.PrinterException e) {
-            JOptionPane.showMessageDialog(null, "Print failed!" + e.getMessage());
-        }
-    }//GEN-LAST:event_jMenuItem4ActionPerformed
+    }//GEN-LAST:event_searchMenuItemActionPerformed
 
     private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
         filterResults();
@@ -2577,6 +2530,7 @@ public class MainWindow extends javax.swing.JFrame {
         settingsTabbedPane.setSelectedIndex(3);
         specSplitPane.getTopComponent().setMinimumSize(new Dimension());
         specSplitPane.setDividerLocation(0.0d);
+        chartPanel_com.setSize(859, 425);
     }//GEN-LAST:event_nextButton4ActionPerformed
 
     private void stopAddingButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stopAddingButtonActionPerformed
@@ -2592,11 +2546,6 @@ public class MainWindow extends javax.swing.JFrame {
             nextButton4.setEnabled(true);
         }
     }//GEN-LAST:event_stopAddingButtonActionPerformed
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-//        generate_spectrum_seperateFrame("input_data");
-
-    }//GEN-LAST:event_jButton1ActionPerformed
 
     private void printTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_printTableMouseClicked
 //        performThresh();
@@ -2691,19 +2640,6 @@ public class MainWindow extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_nextButton6ActionPerformed
 
-    private void finishButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_finishButtonActionPerformed
-        int r = printTable.getRowCount();
-
-        for (int i = 0; i < r; i++) {
-
-            boolean val = (boolean) printTable.getValueAt(i, 4);
-
-            if (val == true) {
-
-            }
-        }
-    }//GEN-LAST:event_finishButtonActionPerformed
-
     private void jCheckBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox2ActionPerformed
         filterResults();
     }//GEN-LAST:event_jCheckBox2ActionPerformed
@@ -2739,6 +2675,204 @@ public class MainWindow extends javax.swing.JFrame {
     private void jCheckBox10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox10ActionPerformed
         filterResults();
     }//GEN-LAST:event_jCheckBox10ActionPerformed
+
+    private void printTableButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printTableButtonActionPerformed
+            printTable();
+//        try {
+//            MessageFormat header = new MessageFormat("Report");
+//            MessageFormat footer = new MessageFormat("Page{0,number,integer}");
+//
+//            printTable.print(JTable.PrintMode.NORMAL, header, footer);
+//
+//        } catch (java.awt.print.PrinterException e) {
+//            JOptionPane.showMessageDialog(null, "Print failed!" + e.getMessage());
+//        }
+
+
+
+    }//GEN-LAST:event_printTableButtonActionPerformed
+
+    private void printChartButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printChartButtonActionPerformed
+
+        chartPanel_com.setSize(859, 425);
+
+        PrinterJob job = PrinterJob.getPrinterJob();
+        PageFormat pf = job.defaultPage();
+        PageFormat pf2 = job.pageDialog(pf);
+
+        // define custom paper
+//        Paper paper = new Paper();
+//        paper.setSize(859, 424); // 1/72 inch
+////        paper.setImageableArea(0, 0, paper.getWidth(), paper.getHeight()); // no margins
+////        paper.setSize( width, height );
+//        pf2.setPaper(paper);
+        pf.setOrientation(PageFormat.LANDSCAPE);
+        if (pf2 != pf) {
+            job.setPrintable(chartPanel_com, pf2);
+
+//            Dimension compSize = chartPanel_com.getPreferredSize();
+//     
+//            chartPanel_com.setSize(compSize);
+//            // Get the the print size
+            if (job.printDialog()) {
+                try {
+                    job.print();
+                } catch (PrinterException e) {
+                    JOptionPane.showMessageDialog(this, e);
+                }
+            }
+
+        }
+
+//            chartPanel_com.print(g, header, footer);
+
+    }//GEN-LAST:event_printChartButtonActionPerformed
+
+    private void smoothMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_smoothMenuItemActionPerformed
+        settingsTabbedPane.setSelectedIndex(1);
+        specTabbedPane.setSelectedIndex(1);
+    }//GEN-LAST:event_smoothMenuItemActionPerformed
+
+    private void newFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newFileMenuItemActionPerformed
+        //1. select file to upload/ removed this from upload
+        fileChooser();
+
+        class MyWorker extends SwingWorker<String, Void> {
+
+            protected String doInBackground() {
+                progressBar.setVisible(true);
+                loadingText.setVisible(true);
+//                progressBar.setIndeterminate(true);
+                uploadFile();
+//                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+//                Calendar cal = Calendar.getInstance();
+//                
+//                footnoteTextArea.setText("Timestamp: "+dateFormat.format(cal.getTime())+"\n Upload Completed.");
+
+                return "Done";
+            }
+
+            protected void done() {
+                progressBar.setVisible(false);
+                loadingText.setVisible(false);
+            }
+        }
+
+        new MyWorker().execute();
+    }//GEN-LAST:event_newFileMenuItemActionPerformed
+
+    private void originalMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_originalMenuItemActionPerformed
+        settingsTabbedPane.setSelectedIndex(0);
+        specTabbedPane.setSelectedIndex(0);
+    }//GEN-LAST:event_originalMenuItemActionPerformed
+
+    private void bcMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bcMenuItemActionPerformed
+        settingsTabbedPane.setSelectedIndex(2);
+        specTabbedPane.setSelectedIndex(2);
+    }//GEN-LAST:event_bcMenuItemActionPerformed
+
+    private void printTableMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printTableMenuItemActionPerformed
+        try {
+            MessageFormat header = new MessageFormat("Report");
+            MessageFormat footer = new MessageFormat("Page{0,number,integer}");
+
+            printTable.print(JTable.PrintMode.NORMAL, header, footer);
+
+        } catch (java.awt.print.PrinterException e) {
+            JOptionPane.showMessageDialog(null, "Print failed!" + e.getMessage());
+        }
+    }//GEN-LAST:event_printTableMenuItemActionPerformed
+
+    private void printChartMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printChartMenuItemActionPerformed
+        chartPanel_com.setSize(859, 425);
+
+        PrinterJob job = PrinterJob.getPrinterJob();
+        PageFormat pf = job.defaultPage();
+        PageFormat pf2 = job.pageDialog(pf);
+
+        // define custom paper
+//        Paper paper = new Paper();
+//        paper.setSize(859, 424); // 1/72 inch
+////        paper.setImageableArea(0, 0, paper.getWidth(), paper.getHeight()); // no margins
+////        paper.setSize( width, height );
+//        pf2.setPaper(paper);
+        pf.setOrientation(PageFormat.LANDSCAPE);
+        if (pf2 != pf) {
+            job.setPrintable(chartPanel_com, pf2);
+
+//            Dimension compSize = chartPanel_com.getPreferredSize();
+//     
+//            chartPanel_com.setSize(compSize);
+//            // Get the the print size
+            if (job.printDialog()) {
+                try {
+                    job.print();
+                } catch (PrinterException e) {
+                    JOptionPane.showMessageDialog(this, e);
+                }
+            }
+
+        }
+    }//GEN-LAST:event_printChartMenuItemActionPerformed
+
+    private void headerBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_headerBoxActionPerformed
+        headerField.setEnabled(headerBox.isSelected());
+    }//GEN-LAST:event_headerBoxActionPerformed
+
+    private void footerBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_footerBoxActionPerformed
+        footerField.setEnabled(footerBox.isSelected());
+    }//GEN-LAST:event_footerBoxActionPerformed
+
+    private void showPrintDialogBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showPrintDialogBoxActionPerformed
+        if (!showPrintDialogBox.isSelected()) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "If the Print Dialog is not shown,"
+                    + " the default printer is used.",
+                    "Printing Message",
+                    JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_showPrintDialogBoxActionPerformed
+
+    private void interactiveBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_interactiveBoxActionPerformed
+        if (!interactiveBox.isSelected()) {
+                    JOptionPane.showMessageDialog(
+                        this,
+                        "If non-interactive, the GUI is fully blocked"
+                            + " during printing.",
+                        "Printing Message",
+                        JOptionPane.INFORMATION_MESSAGE);
+                }
+    }//GEN-LAST:event_interactiveBoxActionPerformed
+
+    private void openButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openButtonActionPerformed
+        
+        //1. select file to upload/ removed this from upload
+        fileChooser();
+
+        class MyWorker extends SwingWorker<String, Void> {
+
+            protected String doInBackground() {
+                progressBar.setVisible(true);
+                loadingText.setVisible(true);
+//                progressBar.setIndeterminate(true);
+                uploadFile();
+//                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+//                Calendar cal = Calendar.getInstance();
+//                
+//                footnoteTextArea.setText("Timestamp: "+dateFormat.format(cal.getTime())+"\n Upload Completed.");
+
+                return "Done";
+            }
+
+            protected void done() {
+                progressBar.setVisible(false);
+                loadingText.setVisible(false);
+            }
+        }
+
+        new MyWorker().execute();
+    }//GEN-LAST:event_openButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -3407,8 +3541,8 @@ public class MainWindow extends javax.swing.JFrame {
 
         specTabbedPane.setSelectedIndex(0);
         settingsTabbedPane.setSelectedIndex(0);
-//        pointsTable.removeAll();
 
+//        dataTable.removeAll();
         //clear tables
         String sql1 = "delete from input_data";
         String sql2 = "delete from avg_data";
@@ -4572,7 +4706,7 @@ public class MainWindow extends javax.swing.JFrame {
     }
 
     private XYDataset createValleyDataset(SortedMap<BigDecimal, BigDecimal> pointList) {
-        final XYSeries valleyPoints = new XYSeries("Valley Points");
+        final XYSeries valleyPoints = new XYSeries("Bands");
 
         for (BigDecimal wavelength : pointList.keySet()) {
 
@@ -5958,18 +6092,78 @@ public class MainWindow extends javax.swing.JFrame {
 
     }
 
+    private void printTable() {
+       
+
+        MessageFormat header = null;
+
+        /* if we should print a header */
+        if (headerBox.isSelected()) {
+            /* create a MessageFormat around the header text */
+            header = new MessageFormat(headerField.getText());
+        }
+
+        MessageFormat footer = null;
+
+        /* if we should print a footer */
+        if (footerBox.isSelected()) {
+            /* create a MessageFormat around the footer text */
+            footer = new MessageFormat(footerField.getText());
+        }
+
+        boolean fitWidth = fitWidthBox.isSelected();
+        boolean showPrintDialog = showPrintDialogBox.isSelected();
+        boolean interactive = interactiveBox.isSelected();
+        
+
+        /* determine the print mode */
+        JTable.PrintMode mode = fitWidth ? JTable.PrintMode.FIT_WIDTH
+                : JTable.PrintMode.NORMAL;
+
+        try {
+            /* print the table */
+            boolean complete = printTable.print(mode, header, footer,
+                    showPrintDialog, null,
+                    interactive, null);
+
+            /* if printing completes */
+            if (complete) {
+                /* show a success message */
+                JOptionPane.showMessageDialog(this,
+                        "Printing Complete!",
+                        "Printing Result",
+                        JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                /* show a message indicating that printing was cancelled */
+                JOptionPane.showMessageDialog(this,
+                        "Printing Cancelled!",
+                        "Printing Result",
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (PrinterException pe) {
+            /* Printing failed, report to the user */
+            JOptionPane.showMessageDialog(this,
+                    "Printing Failed!: " + pe.getMessage(),
+                    "Printing Result",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup algorithmMenu;
     private javax.swing.JComboBox<String> baselineMethodCombo;
     private javax.swing.JComboBox<String> baselineMethodCombo2;
     private javax.swing.JPanel baselinePanel;
+    private javax.swing.JMenuItem bcMenuItem;
     private javax.swing.ButtonGroup blConnectionMenu;
     private javax.swing.ButtonGroup blMethodMenu;
     private javax.swing.ButtonGroup blmethodButtonGroup;
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JTextField changeValueText;
     private javax.swing.JButton clearButton;
+    private javax.swing.JMenuItem clearMenuItem;
     public static javax.swing.JPanel comPanel;
     private javax.swing.JCheckBox cubicSplineCheckBox;
     private javax.swing.JCheckBox cubicSplineCheckBox2;
@@ -5979,10 +6173,14 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JMenu editMenu;
     private javax.swing.JTextField filePathText;
     private javax.swing.JLabel filterPassLabel;
-    private javax.swing.JButton finishButton;
+    private javax.swing.JCheckBox fitWidthBox;
     private javax.swing.JRadioButton fivepoints;
+    private javax.swing.JCheckBox footerBox;
+    private javax.swing.JTextField footerField;
+    private javax.swing.JCheckBox headerBox;
+    private javax.swing.JTextField headerField;
     private javax.swing.JMenu helpMenu;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JCheckBox interactiveBox;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox10;
     private javax.swing.JCheckBox jCheckBox2;
@@ -6007,18 +6205,8 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenu jMenu3;
-    private javax.swing.JMenu jMenu4;
-    private javax.swing.JMenu jMenu5;
-    private javax.swing.JMenu jMenu6;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JMenuItem jMenuItem3;
-    private javax.swing.JMenuItem jMenuItem4;
-    private javax.swing.JMenuItem jMenuItem5;
-    private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
@@ -6026,6 +6214,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel13;
     private javax.swing.JPanel jPanel14;
     private javax.swing.JPanel jPanel15;
+    private javax.swing.JPanel jPanel16;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -6034,17 +6223,6 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
-    private javax.swing.JRadioButtonMenuItem jRadioButtonMenuItem1;
-    private javax.swing.JRadioButtonMenuItem jRadioButtonMenuItem10;
-    private javax.swing.JRadioButtonMenuItem jRadioButtonMenuItem11;
-    private javax.swing.JRadioButtonMenuItem jRadioButtonMenuItem2;
-    private javax.swing.JRadioButtonMenuItem jRadioButtonMenuItem3;
-    private javax.swing.JRadioButtonMenuItem jRadioButtonMenuItem4;
-    private javax.swing.JRadioButtonMenuItem jRadioButtonMenuItem5;
-    private javax.swing.JRadioButtonMenuItem jRadioButtonMenuItem6;
-    private javax.swing.JRadioButtonMenuItem jRadioButtonMenuItem7;
-    private javax.swing.JRadioButtonMenuItem jRadioButtonMenuItem8;
-    private javax.swing.JRadioButtonMenuItem jRadioButtonMenuItem9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
@@ -6054,6 +6232,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JLabel loadingText;
     private javax.swing.JSplitPane mainSplitPane;
     private javax.swing.JCheckBox manualBaselineCheckBox;
+    private javax.swing.JMenuItem newFileMenuItem;
     private javax.swing.JButton nextButton1;
     private javax.swing.JButton nextButton2;
     private javax.swing.JButton nextButton3;
@@ -6063,23 +6242,31 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JTextField numBandsText;
     private javax.swing.JButton openButton;
     private javax.swing.JMenu optionsMenu;
+    private javax.swing.JMenuItem originalMenuItem;
     private javax.swing.JButton peakButton;
     private javax.swing.ButtonGroup pointsMenu;
     private javax.swing.ButtonGroup pointsbuttonGroup;
     private javax.swing.JButton predictButton;
+    private javax.swing.JButton printChartButton;
+    private javax.swing.JMenuItem printChartMenuItem;
     public static javax.swing.JTable printTable;
+    private javax.swing.JButton printTableButton;
+    private javax.swing.JMenuItem printTableMenuItem;
     private javax.swing.JProgressBar progressBar;
     private javax.swing.JButton removePointsButton;
     private javax.swing.JButton resetSmoothButton;
     public javax.swing.JTable resultTable;
     private javax.swing.JPanel resultsPanel;
+    private javax.swing.JMenuItem saveMenuItem;
     private javax.swing.JButton searchDatabaseButton;
-    private javax.swing.JMenuItem searchMenu;
+    private javax.swing.JMenuItem searchMenuItem;
     private javax.swing.JSplitPane sectionSplitPane;
     private javax.swing.JButton selectAllButton;
     private javax.swing.JTabbedPane settingsTabbedPane;
     private javax.swing.JRadioButton sevenpoints;
+    private javax.swing.JCheckBox showPrintDialogBox;
     private javax.swing.JComboBox<String> smAlgoCombo;
+    private javax.swing.JMenuItem smoothMenuItem;
     public javax.swing.JPanel smoothPanel;
     private javax.swing.JButton smootheSelection;
     private javax.swing.JSlider smoothningSlider;
@@ -6092,7 +6279,6 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JPanel tablePanel;
     private javax.swing.JRadioButton threepoints;
     private javax.swing.JSlider threshSlider1;
-    private javax.swing.JMenu toolsMenu;
     private javax.swing.JButton undoButton;
     // End of variables declaration//GEN-END:variables
 

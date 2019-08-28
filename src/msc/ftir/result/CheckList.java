@@ -91,11 +91,9 @@ public class CheckList extends javax.swing.JFrame {
 
             }
         });
-        
+
         ds = MainWindow.getLabeled_dataset();
 
-        
-       
     }
 
     /**
@@ -168,9 +166,19 @@ public class CheckList extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void fixButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fixButtonActionPerformed
+        int size = resultListTable.getRowCount();
+        int r = 0;
+        for (int p = 0; p < size; p++) {
 
-        int r = resultListTable.getSelectedRow();
+            boolean v = (boolean) resultListTable.getValueAt(p, 5);
+            if (v == true) {
+                r = p;
 
+            }
+
+        }
+
+//        int r = resultListTable.getSelectedRow();
         String data1 = (String) resultListTable.getValueAt(r, 1);
         String data2 = (String) resultListTable.getValueAt(r, 2);
         String data3 = (String) resultListTable.getValueAt(r, 3);
@@ -217,7 +225,6 @@ public class CheckList extends javax.swing.JFrame {
 //                System.out.println(ds.getXValue(0, k) + "," + ds.getYValue(0, k) + "," + ds.getLabel(0, k));
 //            }
 //            System.out.println("-------------------------------");
-
             createReportSpectrum(ds, createBaselineDataset(), MainWindow.comPanel);
 
 //            JFrame f = new JFrame();
@@ -271,6 +278,8 @@ public class CheckList extends javax.swing.JFrame {
     }//GEN-LAST:event_fixButtonActionPerformed
 
     private void resultListTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_resultListTableMouseClicked
+        
+
         //to select and unselect rows
         {
             int row = resultListTable.getSelectedRow();
@@ -360,7 +369,6 @@ public class CheckList extends javax.swing.JFrame {
 //        JFreeChart chart = new JFreeChart("Unit Price", JFreeChart.DEFAULT_TITLE_FONT, plot, false);
 //        return chart;
 //    }
-
     public void createReportSpectrum(XYDataset set1, XYDataset set2, JPanel panel) {
 
         panel.removeAll();
