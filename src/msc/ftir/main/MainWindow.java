@@ -30,6 +30,7 @@ import static java.awt.print.Printable.NO_SUCH_PAGE;
 import static java.awt.print.Printable.PAGE_EXISTS;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
+import java.io.BufferedOutputStream;
 import net.proteanit.sql.DbUtils;
 import java.io.BufferedReader;
 import java.io.File;
@@ -38,7 +39,11 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import javax.swing.JFileChooser;
 import javax.swing.table.TableCellRenderer;
 import java.sql.*;
@@ -2677,7 +2682,7 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_jCheckBox10ActionPerformed
 
     private void printTableButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printTableButtonActionPerformed
-            printTable();
+        printTable();
 //        try {
 //            MessageFormat header = new MessageFormat("Report");
 //            MessageFormat footer = new MessageFormat("Page{0,number,integer}");
@@ -2687,7 +2692,6 @@ public class MainWindow extends javax.swing.JFrame {
 //        } catch (java.awt.print.PrinterException e) {
 //            JOptionPane.showMessageDialog(null, "Print failed!" + e.getMessage());
 //        }
-
 
 
     }//GEN-LAST:event_printTableButtonActionPerformed
@@ -2836,17 +2840,17 @@ public class MainWindow extends javax.swing.JFrame {
 
     private void interactiveBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_interactiveBoxActionPerformed
         if (!interactiveBox.isSelected()) {
-                    JOptionPane.showMessageDialog(
-                        this,
-                        "If non-interactive, the GUI is fully blocked"
-                            + " during printing.",
-                        "Printing Message",
-                        JOptionPane.INFORMATION_MESSAGE);
-                }
+            JOptionPane.showMessageDialog(
+                    this,
+                    "If non-interactive, the GUI is fully blocked"
+                    + " during printing.",
+                    "Printing Message",
+                    JOptionPane.INFORMATION_MESSAGE);
+        }
     }//GEN-LAST:event_interactiveBoxActionPerformed
 
     private void openButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openButtonActionPerformed
-        
+
         //1. select file to upload/ removed this from upload
         fileChooser();
 
@@ -3074,29 +3078,56 @@ public class MainWindow extends javax.swing.JFrame {
 //        filePathText.setText(fileName);
 //        p.setProperty(fileName, "Last.dir");
         try {
+
+//            System.out.println(new File(".").getAbsolutePath());
             //get previous location
-            FileInputStream in = new FileInputStream("src/msc/ftir/util/file.properties");
+//            FileInputStream in = new FileInputStream("src/msc/ftir/util/file.properties");
+//            Properties props = new Properties();
+//            props.load(in);
+//            String p = props.getProperty("jfilechooser.browser.filepath");
+//            in.close();
+//            JFileChooser chooser = new JFileChooser(p, null);
+//            chooser.showOpenDialog(this);
+//            FileInputStream in = new FileInputStream("src/msc/ftir/util/file.properties");
             Properties props = new Properties();
-            props.load(in);
+            props.load(ClassLoader.class.getResourceAsStream("/msc/ftir/util/file.properties"));
+//            props.load(in);
             String p = props.getProperty("jfilechooser.browser.filepath");
-            in.close();
+//            in.close();
             JFileChooser chooser = new JFileChooser(p, null);
             chooser.showOpenDialog(this);
 
             //for file type validation
             File dataFile = chooser.getSelectedFile();
+
             if (dataFile != null) {
                 fileName = dataFile.getAbsolutePath();
                 fileName = dataFile.getAbsolutePath().replace("\\", "/");
+                filePathText.setText(fileName);
                 //end
 
                 //store current directory
                 File dataFile2 = chooser.getCurrentDirectory();
                 String newDirectoryLoc = dataFile2.getAbsolutePath().replace("\\", "/");
 
-                FileOutputStream out = new FileOutputStream("src/msc/ftir/util/file.properties");
+//                ClassLoader classLoader = ClassLoader.class.getClassLoader();
+//                File f = new File(classLoader.getResource("src/msc/ftir/util/file.properties").getFile());
+////                FileOutputStream out = new FileOutputStream("/msc/ftir/util/file.properties");
+////                BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream("/msc/ftir/util/file.properties", false));    
+                URL url = this.getClass().getResource("/msc/ftir/util/file.properties");
+                String path = url.getPath();
+//                Writer writer = new FileWriter(path);
+
+//                Instead store the 'default' file inside the Jar. If it is changed, 
+//                store the altered file in another place. One common place is a sub-directory 
+//                of user.home. When checking for the file, first check the existence of an altered 
+//                file on the file system, and if it does not exist, load the default file.
+
+
+                
+                OutputStream out = new FileOutputStream(path);
                 props.setProperty("jfilechooser.browser.filepath", newDirectoryLoc);
-                filePathText.setText(fileName);
+
                 props.store(out, null);
                 out.close();
             }
@@ -6093,7 +6124,6 @@ public class MainWindow extends javax.swing.JFrame {
     }
 
     private void printTable() {
-       
 
         MessageFormat header = null;
 
@@ -6114,7 +6144,7 @@ public class MainWindow extends javax.swing.JFrame {
         boolean fitWidth = fitWidthBox.isSelected();
         boolean showPrintDialog = showPrintDialogBox.isSelected();
         boolean interactive = interactiveBox.isSelected();
-        
+
 
         /* determine the print mode */
         JTable.PrintMode mode = fitWidth ? JTable.PrintMode.FIT_WIDTH
@@ -6148,8 +6178,7 @@ public class MainWindow extends javax.swing.JFrame {
                     JOptionPane.ERROR_MESSAGE);
         }
     }
-    
-    
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup algorithmMenu;
