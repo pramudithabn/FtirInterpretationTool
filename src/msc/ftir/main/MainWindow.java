@@ -302,6 +302,8 @@ public class MainWindow extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         changeValueText = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
+        sgfSlider = new javax.swing.JSlider();
+        npoints = new javax.swing.JRadioButton();
         jPanel3 = new javax.swing.JPanel();
         jPanel9 = new javax.swing.JPanel();
         lineCheckBox = new javax.swing.JCheckBox();
@@ -477,7 +479,7 @@ public class MainWindow extends javax.swing.JFrame {
         );
         comPanelLayout.setVerticalGroup(
             comPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 346, Short.MAX_VALUE)
+            .addGap(0, 348, Short.MAX_VALUE)
         );
 
         specSplitPane.setRightComponent(comPanel);
@@ -531,7 +533,7 @@ public class MainWindow extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(nextButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 307, Short.MAX_VALUE))
+                .addGap(0, 309, Short.MAX_VALUE))
         );
 
         settingsTabbedPane.addTab("Data         ", tablePanel);
@@ -594,7 +596,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         jPanel12.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Settings", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12), new java.awt.Color(102, 102, 102))); // NOI18N
 
-        jLabel4.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel4.setText("Delta Change");
 
         nextButton1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
@@ -638,7 +640,7 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
-        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel3.setText("Filter width");
 
         smAlgoCombo.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
@@ -659,7 +661,7 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel2.setText("Algorithm");
 
         changeValueText.setFocusable(false);
@@ -667,33 +669,64 @@ public class MainWindow extends javax.swing.JFrame {
         jLabel6.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel6.setText("%");
 
+        sgfSlider.setMajorTickSpacing(10);
+        sgfSlider.setMaximum(20);
+        sgfSlider.setMinorTickSpacing(1);
+        sgfSlider.setPaintLabels(true);
+        sgfSlider.setPaintTicks(true);
+        sgfSlider.setToolTipText("Select odd values.");
+        sgfSlider.setValue(1);
+        sgfSlider.setEnabled(false);
+        sgfSlider.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                sgfSliderMouseReleased(evt);
+            }
+        });
+
+        pointsbuttonGroup.add(npoints);
+        npoints.setText("N - points");
+        npoints.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                npointsMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel12Layout = new javax.swing.GroupLayout(jPanel12);
         jPanel12.setLayout(jPanel12Layout);
         jPanel12Layout.setHorizontalGroup(
             jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel12Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(24, 24, 24)
                 .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel12Layout.createSequentialGroup()
-                        .addComponent(changeValueText, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel12Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(resetSmoothButton, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel6))
-                    .addComponent(smAlgoCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(threepoints)
-                    .addComponent(fivepoints)
-                    .addComponent(sevenpoints)
-                    .addComponent(ninepoints))
-                .addContainerGap(149, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel12Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(resetSmoothButton, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(nextButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(nextButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel12Layout.createSequentialGroup()
+                        .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel12Layout.createSequentialGroup()
+                                .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel2))
+                                .addGap(24, 24, 24)
+                                .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(smAlgoCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(threepoints)
+                                    .addComponent(fivepoints)
+                                    .addComponent(sevenpoints)
+                                    .addComponent(ninepoints)
+                                    .addGroup(jPanel12Layout.createSequentialGroup()
+                                        .addGap(21, 21, 21)
+                                        .addComponent(sgfSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(npoints)))
+                            .addGroup(jPanel12Layout.createSequentialGroup()
+                                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(changeValueText, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel6)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel12Layout.setVerticalGroup(
@@ -713,12 +746,16 @@ public class MainWindow extends javax.swing.JFrame {
                 .addComponent(sevenpoints)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ninepoints)
-                .addGap(21, 21, 21)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(npoints)
+                .addGap(11, 11, 11)
+                .addComponent(sgfSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
                 .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(changeValueText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6))
-                .addGap(42, 42, 42)
+                .addGap(32, 32, 32)
                 .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(resetSmoothButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(nextButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1016,7 +1053,7 @@ public class MainWindow extends javax.swing.JFrame {
                         .addComponent(splineCheckBox2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cubicSplineCheckBox2)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 47, Short.MAX_VALUE)
                 .addComponent(nextButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(84, 84, 84))
         );
@@ -1131,7 +1168,7 @@ public class MainWindow extends javax.swing.JFrame {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(28, 28, 28)
                 .addComponent(jPanel13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(314, Short.MAX_VALUE))
+                .addContainerGap(316, Short.MAX_VALUE))
         );
 
         settingsTabbedPane.addTab("Bands", jPanel4);
@@ -1983,28 +2020,27 @@ public class MainWindow extends javax.swing.JFrame {
 //                changeValueText.setEnabled(true);
                 pointsbuttonGroup.clearSelection();
                 changeValueText.setEnabled(true);
+                sgfSlider.setEnabled(false);
+                
 
                 while (enumeration.hasMoreElements()) {
                     enumeration.nextElement().setEnabled(true);
 
                 }
+                npoints.setEnabled(false);
 
-            } else if (smAlgoCombo.getSelectedItem().equals("Default")) {
-                algorithm = 1;
-
-                while (enumeration.hasMoreElements()) {
-                    enumeration.nextElement().setEnabled(false);
-
-                }
             } else if (smAlgoCombo.getSelectedItem().equals("Unweighted Sliding Average ")) {
                 algorithm = 2;
                 pointsbuttonGroup.clearSelection();
                 changeValueText.setEnabled(true);
+                sgfSlider.setEnabled(false);
+                npoints.setEnabled(false);
 
                 while (enumeration.hasMoreElements()) {
                     enumeration.nextElement().setEnabled(true);
 
                 }
+                npoints.setEnabled(false);
             } else if (smAlgoCombo.getSelectedItem().equals("Savitzky-Golay Filter")) {
                 algorithm = 4;
 //                threepoints.setSelected(true);
@@ -2014,6 +2050,8 @@ public class MainWindow extends javax.swing.JFrame {
                 sevenpoints.setEnabled(true);
                 ninepoints.setEnabled(true);
                 changeValueText.setEnabled(true);
+                sgfSlider.setEnabled(false);
+                npoints.setEnabled(true);
             } else if (smAlgoCombo.getSelectedItem().equals("None")) {
                 algorithm = 5;
 //                threepoints.setSelected(false);
@@ -2024,6 +2062,8 @@ public class MainWindow extends javax.swing.JFrame {
                 ninepoints.setEnabled(false);
                 changeValueText.setEnabled(false);
                 changeValueText.setText(null);
+                sgfSlider.setEnabled(false);
+                npoints.setEnabled(false);
 
                 String sql2 = "Delete FROM avg_data";
                 String sql1 = "INSERT INTO `avg_data`(`ID`, `WAVENUMBER`, `TRANSMITTANCE`) SELECT  * FROM input_data";
@@ -2226,26 +2266,26 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_predictButtonActionPerformed
 
     private void fivepointsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fivepointsMouseClicked
-
+        sgfSlider.setEnabled(false);
         specTabbedPane.setSelectedIndex(1);
         performSingeTimeSmooth();
     }//GEN-LAST:event_fivepointsMouseClicked
 
     private void threepointsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_threepointsMouseClicked
-
+        sgfSlider.setEnabled(false);
         specTabbedPane.setSelectedIndex(1);
 
         performSingeTimeSmooth();
     }//GEN-LAST:event_threepointsMouseClicked
 
     private void sevenpointsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sevenpointsMouseClicked
-
+        sgfSlider.setEnabled(false);
         specTabbedPane.setSelectedIndex(1);
         performSingeTimeSmooth();
     }//GEN-LAST:event_sevenpointsMouseClicked
 
     private void ninepointsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ninepointsMouseClicked
-
+        sgfSlider.setEnabled(false);
         specTabbedPane.setSelectedIndex(1);
         performSingeTimeSmooth();
     }//GEN-LAST:event_ninepointsMouseClicked
@@ -2926,6 +2966,30 @@ public class MainWindow extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         performNoBandAnalysis();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void sgfSliderMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sgfSliderMouseReleased
+         specTabbedPane.setSelectedIndex(1);
+
+        int n = sgfSlider.getValue() + 1;
+
+            SavitzkyGolayFilter sgf = new SavitzkyGolayFilter();
+            sgf.applyFilter_npoints(n);
+
+                try {
+                    combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
+
+                } catch (SQLException ex) {
+                    Logger.getLogger(MainWindow.class
+                            .getName()).log(Level.SEVERE, null, ex);
+                }
+                measurechange();
+
+    }//GEN-LAST:event_sgfSliderMouseReleased
+
+    private void npointsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_npointsMouseClicked
+        specTabbedPane.setSelectedIndex(1);
+        sgfSlider.setEnabled(true);
+    }//GEN-LAST:event_npointsMouseClicked
 
     /**
      * @param args the command line arguments
@@ -6399,6 +6463,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JButton nextButton4;
     private javax.swing.JButton nextButton6;
     private javax.swing.JRadioButton ninepoints;
+    private javax.swing.JRadioButton npoints;
     private javax.swing.JTextField numBandsText;
     private javax.swing.JButton openButton;
     private javax.swing.JMenu optionsMenu;
@@ -6424,6 +6489,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JButton selectAllButton;
     private javax.swing.JTabbedPane settingsTabbedPane;
     private javax.swing.JRadioButton sevenpoints;
+    private javax.swing.JSlider sgfSlider;
     private javax.swing.JCheckBox showPrintDialogBox;
     private javax.swing.JComboBox<String> smAlgoCombo;
     private javax.swing.JMenuItem smoothMenuItem;

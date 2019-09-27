@@ -201,7 +201,7 @@
     <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
-    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,2,-25,0,0,6,18"/>
+    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,2,-23,0,0,6,18"/>
   </AuxValues>
 
   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
@@ -393,7 +393,7 @@
                         </DimensionLayout>
                         <DimensionLayout dim="1">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <EmptySpace min="0" pref="346" max="32767" attributes="0"/>
+                              <EmptySpace min="0" pref="348" max="32767" attributes="0"/>
                           </Group>
                         </DimensionLayout>
                       </Layout>
@@ -471,7 +471,7 @@
                                   <Component id="jScrollPane1" min="-2" pref="265" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="nextButton3" min="-2" pref="33" max="-2" attributes="0"/>
-                                  <EmptySpace min="0" pref="307" max="32767" attributes="0"/>
+                                  <EmptySpace min="0" pref="309" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
@@ -663,31 +663,45 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                          <Component id="jLabel3" alignment="0" max="32767" attributes="0"/>
-                                          <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="jLabel4" alignment="0" max="32767" attributes="0"/>
-                                      </Group>
-                                      <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Group type="102" attributes="0">
-                                              <Component id="changeValueText" min="-2" pref="43" max="-2" attributes="0"/>
+                                          <Group type="102" alignment="1" attributes="0">
+                                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                              <Component id="resetSmoothButton" min="-2" pref="93" max="-2" attributes="0"/>
                                               <EmptySpace max="-2" attributes="0"/>
-                                              <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
+                                              <Component id="nextButton1" min="-2" pref="89" max="-2" attributes="0"/>
                                           </Group>
-                                          <Component id="smAlgoCombo" min="-2" max="-2" attributes="0"/>
-                                          <Component id="threepoints" min="-2" max="-2" attributes="0"/>
-                                          <Component id="fivepoints" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="sevenpoints" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="ninepoints" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Group type="102" attributes="0">
+                                              <Group type="103" groupAlignment="0" attributes="0">
+                                                  <Group type="102" attributes="0">
+                                                      <Group type="103" groupAlignment="0" attributes="0">
+                                                          <Component id="jLabel3" alignment="0" min="-2" pref="73" max="-2" attributes="0"/>
+                                                          <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
+                                                      </Group>
+                                                      <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
+                                                      <Group type="103" groupAlignment="0" attributes="0">
+                                                          <Component id="smAlgoCombo" min="-2" max="-2" attributes="0"/>
+                                                          <Component id="threepoints" min="-2" max="-2" attributes="0"/>
+                                                          <Component id="fivepoints" alignment="0" min="-2" max="-2" attributes="0"/>
+                                                          <Component id="sevenpoints" alignment="0" min="-2" max="-2" attributes="0"/>
+                                                          <Component id="ninepoints" alignment="0" min="-2" max="-2" attributes="0"/>
+                                                          <Group type="102" attributes="0">
+                                                              <EmptySpace min="21" pref="21" max="-2" attributes="0"/>
+                                                              <Component id="sgfSlider" min="-2" pref="232" max="-2" attributes="0"/>
+                                                          </Group>
+                                                          <Component id="npoints" alignment="0" min="-2" max="-2" attributes="0"/>
+                                                      </Group>
+                                                  </Group>
+                                                  <Group type="102" attributes="0">
+                                                      <Component id="jLabel4" min="-2" pref="87" max="-2" attributes="0"/>
+                                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                                      <Component id="changeValueText" min="-2" pref="43" max="-2" attributes="0"/>
+                                                      <EmptySpace max="-2" attributes="0"/>
+                                                      <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
+                                                  </Group>
+                                              </Group>
+                                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                          </Group>
                                       </Group>
-                                      <EmptySpace pref="149" max="32767" attributes="0"/>
-                                  </Group>
-                                  <Group type="102" alignment="1" attributes="0">
-                                      <EmptySpace max="32767" attributes="0"/>
-                                      <Component id="resetSmoothButton" min="-2" pref="93" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="nextButton1" min="-2" pref="89" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -711,13 +725,17 @@
                                       <Component id="sevenpoints" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="ninepoints" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="npoints" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
+                                      <Component id="sgfSlider" min="-2" pref="40" max="-2" attributes="0"/>
+                                      <EmptySpace pref="20" max="32767" attributes="0"/>
                                       <Group type="103" groupAlignment="3" attributes="0">
                                           <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
                                           <Component id="changeValueText" alignment="3" min="-2" max="-2" attributes="0"/>
                                           <Component id="jLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
                                       </Group>
-                                      <EmptySpace min="-2" pref="42" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="3" attributes="0">
                                           <Component id="resetSmoothButton" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
                                           <Component id="nextButton1" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
@@ -731,7 +749,7 @@
                             <Component class="javax.swing.JLabel" name="jLabel4">
                               <Properties>
                                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                                  <Font name="Tahoma" size="12" style="0"/>
+                                  <Font name="Tahoma" size="12" style="1"/>
                                 </Property>
                                 <Property name="text" type="java.lang.String" value="Delta Change"/>
                               </Properties>
@@ -795,7 +813,7 @@
                             <Component class="javax.swing.JLabel" name="jLabel3">
                               <Properties>
                                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                                  <Font name="Tahoma" size="12" style="0"/>
+                                  <Font name="Tahoma" size="12" style="1"/>
                                 </Property>
                                 <Property name="text" type="java.lang.String" value="Filter width"/>
                               </Properties>
@@ -837,7 +855,7 @@
                             <Component class="javax.swing.JLabel" name="jLabel2">
                               <Properties>
                                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                                  <Font name="Tahoma" size="12" style="0"/>
+                                  <Font name="Tahoma" size="12" style="1"/>
                                 </Property>
                                 <Property name="text" type="java.lang.String" value="Algorithm"/>
                               </Properties>
@@ -854,6 +872,32 @@
                                 </Property>
                                 <Property name="text" type="java.lang.String" value="%"/>
                               </Properties>
+                            </Component>
+                            <Component class="javax.swing.JSlider" name="sgfSlider">
+                              <Properties>
+                                <Property name="majorTickSpacing" type="int" value="10"/>
+                                <Property name="maximum" type="int" value="20"/>
+                                <Property name="minorTickSpacing" type="int" value="1"/>
+                                <Property name="paintLabels" type="boolean" value="true"/>
+                                <Property name="paintTicks" type="boolean" value="true"/>
+                                <Property name="toolTipText" type="java.lang.String" value="Select odd values."/>
+                                <Property name="value" type="int" value="1"/>
+                                <Property name="enabled" type="boolean" value="false"/>
+                              </Properties>
+                              <Events>
+                                <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="sgfSliderMouseReleased"/>
+                              </Events>
+                            </Component>
+                            <Component class="javax.swing.JRadioButton" name="npoints">
+                              <Properties>
+                                <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                                  <ComponentRef name="pointsbuttonGroup"/>
+                                </Property>
+                                <Property name="text" type="java.lang.String" value="N - points"/>
+                              </Properties>
+                              <Events>
+                                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="npointsMouseClicked"/>
+                              </Events>
                             </Component>
                           </SubComponents>
                         </Container>
@@ -1150,7 +1194,7 @@
                                               <Component id="cubicSplineCheckBox2" min="-2" max="-2" attributes="0"/>
                                           </Group>
                                       </Group>
-                                      <EmptySpace pref="45" max="32767" attributes="0"/>
+                                      <EmptySpace pref="47" max="32767" attributes="0"/>
                                       <Component id="nextButton4" min="-2" pref="33" max="-2" attributes="0"/>
                                       <EmptySpace min="-2" pref="84" max="-2" attributes="0"/>
                                   </Group>
@@ -1339,7 +1383,7 @@
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
                                   <Component id="jPanel13" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="314" max="32767" attributes="0"/>
+                                  <EmptySpace pref="316" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
