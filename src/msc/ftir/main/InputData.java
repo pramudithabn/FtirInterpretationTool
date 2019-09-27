@@ -17,28 +17,16 @@ public class InputData {
     private BigDecimal wavenumber;
     private BigDecimal transmittance;
 
-    
-    
- 
-    
-    public InputData(int i, BigDecimal w, BigDecimal t){
-            this.id = i;
-            this.wavenumber = w;
-            this.transmittance = t;
-         
-            
-            }
-    
-     public InputData( BigDecimal w, BigDecimal t){
-           
-            this.wavenumber = w;
-            this.transmittance = t;
-         
-            
-            }
+    public InputData(int i, BigDecimal w, BigDecimal t) {
+        this.id = i;
+        this.wavenumber = w;
+        this.transmittance = t;
+    }
 
-
-    
+    public InputData(BigDecimal w, BigDecimal t) {
+        this.wavenumber = w;
+        this.transmittance = t;
+    }
 
     public int getId() {
         return id;

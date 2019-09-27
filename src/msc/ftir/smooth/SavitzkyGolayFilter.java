@@ -49,6 +49,8 @@ public class SavitzkyGolayFilter {
     private double c1 = 0; //intercept of the regression line
     public static int count = 0;
 
+    private double a0, a1, a2;
+
     public SavitzkyGolayFilter() {
         conn = Javaconnect.ConnecrDb();
         qdata();
@@ -61,7 +63,7 @@ public class SavitzkyGolayFilter {
         qdata();
     }
 
-   public static void main(String[] args) {
+    public static void main(String[] args) {
         SavitzkyGolayFilter sgf = new SavitzkyGolayFilter();
         sgf.applyFilter_3points();
     }
@@ -98,6 +100,70 @@ public class SavitzkyGolayFilter {
 
     }
 
+//    public void applyFilter_3points() {
+//
+//        if (!transmittanceValues.isEmpty()) {
+//            for (int i = 0; i < transmittanceValues.size(); i++) {
+//                originalPoints.get(i).setTransmittance(transmittanceValues.get(i));
+//            }
+//        }
+//        transmittanceValues.clear();
+//
+//        BigDecimal sum = null;
+//        BigDecimal avg = null;
+//        int rindex = 0;
+//        int listSize = originalPoints.size();
+//
+//        BigDecimal firstx = originalPoints.get(0).getWavenumber();
+//        BigDecimal lastx = originalPoints.get(listSize - 1).getWavenumber();
+//        BigDecimal firsty = originalPoints.get(0).getTransmittance();
+//        BigDecimal lasty = originalPoints.get(listSize - 1).getTransmittance();
+//        filteredPointset.put(firstx, firsty);
+//        transmittanceValues.add(firsty); //just to hold altered transmittance values
+//
+//        for (rindex = 1; rindex < listSize - 1; rindex++) {
+//            pointset.clear();
+//            BigDecimal y1 = originalPoints.get(rindex - 1).getTransmittance();
+//            BigDecimal y2 = originalPoints.get(rindex).getTransmittance();
+//            BigDecimal y3 = originalPoints.get(rindex + 1).getTransmittance();
+//
+//            BigDecimal x1 = originalPoints.get(rindex - 1).getWavenumber();
+//            BigDecimal x2 = originalPoints.get(rindex).getWavenumber();
+//            BigDecimal x3 = originalPoints.get(rindex + 1).getWavenumber();
+//
+////            for (int k = rindex - 1; k < rindex + 3; k++) {
+////                BigDecimal Y = originalPoints.get(k).getTransmittance();
+////                BigDecimal X = originalPoints.get(k).getWavenumber();
+////                pointset.put(X, Y);
+////            }
+//
+//            //find y value by regression equation
+//            //step 1 : add 3 successive points to the list and create a dataset 
+//            pointset.put(x1, y1);
+//            pointset.put(x2, y2);
+//            pointset.put(x3, y3);
+//
+//            //step 2 : Get the regression line equation 
+//            calRegressionLine(createDataset(pointset));
+////            calRegressionPolynomial(createDataset(pointset));
+//
+////            calRegressionPolynomial(createDataset(pointset));
+//            //step 3 : Calculate y value for the mid point
+//            double x = x2.doubleValue();
+//            double y = m1 * x + c1;
+////            double y = a2 * Math.pow(x, 2) + a1 * x + a0;
+//
+//            //step 4 : Add calculated point to result treemap
+//            filteredPointset.put(x2, BigDecimal.valueOf(y));
+//            transmittanceValues.add(BigDecimal.valueOf(y)); //just to hold altered transmittance values
+//
+//        }
+//        filteredPointset.put(lastx, lasty);
+//        transmittanceValues.add(lasty); //just to hold altered transmittance values
+//        updateSmoothedValue();
+//        count++;
+//
+//    }
     public void applyFilter_3points() {
 
         if (!transmittanceValues.isEmpty()) {
@@ -112,44 +178,53 @@ public class SavitzkyGolayFilter {
         int rindex = 0;
         int listSize = originalPoints.size();
 
-        BigDecimal firstx = originalPoints.get(0).getWavenumber();
-        BigDecimal lastx = originalPoints.get(listSize - 1).getWavenumber();
-        BigDecimal firsty = originalPoints.get(0).getTransmittance();
-        BigDecimal lasty = originalPoints.get(listSize - 1).getTransmittance();
-        filteredPointset.put(firstx, firsty);
-        transmittanceValues.add(firsty); //just to hold altered transmittance values
+//        BigDecimal firstx = originalPoints.get(0).getWavenumber();
+//        BigDecimal lastx = originalPoints.get(listSize - 1).getWavenumber();
+//        BigDecimal firsty = originalPoints.get(0).getTransmittance();
+//        BigDecimal lasty = originalPoints.get(listSize - 1).getTransmittance();
+//        filteredPointset.put(firstx, firsty);
+//        transmittanceValues.add(firsty); //just to hold altered transmittance values
 
         for (rindex = 1; rindex < listSize - 1; rindex++) {
             pointset.clear();
-            BigDecimal y1 = originalPoints.get(rindex - 1).getTransmittance();
-            BigDecimal y2 = originalPoints.get(rindex).getTransmittance();
-            BigDecimal y3 = originalPoints.get(rindex + 1).getTransmittance();
 
-            BigDecimal x1 = originalPoints.get(rindex - 1).getWavenumber();
             BigDecimal x2 = originalPoints.get(rindex).getWavenumber();
-            BigDecimal x3 = originalPoints.get(rindex + 1).getWavenumber();
+
+            int count = 0;
+            int k = rindex - 1;
+            while (count < 17) {
+
+                BigDecimal Y = originalPoints.get(k).getTransmittance();
+                BigDecimal X = originalPoints.get(k).getWavenumber();
+                pointset.put(X, Y);
+                count++;
+                k++;
+//                System.out.println("Count "+count);
+//                System.out.println("k "+k);
+
+            }
+//            System.out.println("Point set size " + pointset.size());
 
             //find y value by regression equation
             //step 1 : add 3 successive points to the list and create a dataset 
-            pointset.put(x1, y1);
-            pointset.put(x2, y2);
-            pointset.put(x3, y3);
-
             //step 2 : Get the regression line equation 
-            calRegressionLine(createDataset(pointset));
+//            calRegressionLine(createDataset(pointset));
+            calRegressionPolynomial(createDataset(pointset));
 
 //            calRegressionPolynomial(createDataset(pointset));
             //step 3 : Calculate y value for the mid point
             double x = x2.doubleValue();
-            double y = m1 * x + c1;
+//            double y = m1 * x + c1;
+            double y = (a2 * x * x) + (a1 * x) + a0;
+            System.out.println("X = "+x+", Y = "+y);
 
             //step 4 : Add calculated point to result treemap
             filteredPointset.put(x2, BigDecimal.valueOf(y));
             transmittanceValues.add(BigDecimal.valueOf(y)); //just to hold altered transmittance values
 
         }
-        filteredPointset.put(lastx, lasty);
-        transmittanceValues.add(lasty); //just to hold altered transmittance values
+//        filteredPointset.put(lastx, lasty);
+//        transmittanceValues.add(lasty); //just to hold altered transmittance values
         updateSmoothedValue();
         count++;
 
@@ -189,7 +264,7 @@ public class SavitzkyGolayFilter {
             BigDecimal y2 = originalPoints.get(rindex).getTransmittance();
             BigDecimal y3 = originalPoints.get(rindex + 1).getTransmittance();
             BigDecimal y4 = originalPoints.get(rindex + 2).getTransmittance();
-            
+
             BigDecimal x0 = originalPoints.get(rindex - 2).getWavenumber();
             BigDecimal x1 = originalPoints.get(rindex - 1).getWavenumber();
             BigDecimal x2 = originalPoints.get(rindex).getWavenumber();
@@ -203,7 +278,6 @@ public class SavitzkyGolayFilter {
             pointset.put(x2, y2);
             pointset.put(x3, y3);
             pointset.put(x4, y4);
-            
 
             //step 2 : Get the regression line equation 
             calRegressionLine(createDataset(pointset));
@@ -226,7 +300,7 @@ public class SavitzkyGolayFilter {
         count++;
 
     }
-    
+
     public void applyFilter_7points() {
 
         if (!transmittanceValues.isEmpty()) {
@@ -268,7 +342,7 @@ public class SavitzkyGolayFilter {
             BigDecimal y4 = originalPoints.get(rindex + 1).getTransmittance();
             BigDecimal y5 = originalPoints.get(rindex + 2).getTransmittance();
             BigDecimal y6 = originalPoints.get(rindex + 3).getTransmittance();
-            
+
             BigDecimal x0 = originalPoints.get(rindex - 3).getWavenumber();
             BigDecimal x1 = originalPoints.get(rindex - 2).getWavenumber();
             BigDecimal x2 = originalPoints.get(rindex - 1).getWavenumber();
@@ -286,7 +360,6 @@ public class SavitzkyGolayFilter {
             pointset.put(x4, y4);
             pointset.put(x5, y5);
             pointset.put(x6, y6);
-            
 
             //step 2 : Get the regression line equation 
             calRegressionLine(createDataset(pointset));
@@ -311,7 +384,7 @@ public class SavitzkyGolayFilter {
         count++;
 
     }
-    
+
     public void applyFilter_9points() {
 
         if (!transmittanceValues.isEmpty()) {
@@ -350,7 +423,7 @@ public class SavitzkyGolayFilter {
         transmittanceValues.add(t1); //just to hold altered transmittance values
         transmittanceValues.add(t2);
         transmittanceValues.add(t3);
-        
+
         for (rindex = 4; rindex < listSize - 4; rindex++) {
             pointset.clear();
             BigDecimal y0 = originalPoints.get(rindex - 4).getTransmittance();
@@ -362,7 +435,7 @@ public class SavitzkyGolayFilter {
             BigDecimal y6 = originalPoints.get(rindex + 2).getTransmittance();
             BigDecimal y7 = originalPoints.get(rindex + 3).getTransmittance();
             BigDecimal y8 = originalPoints.get(rindex + 4).getTransmittance();
-            
+
             BigDecimal x0 = originalPoints.get(rindex - 4).getWavenumber();
             BigDecimal x1 = originalPoints.get(rindex - 3).getWavenumber();
             BigDecimal x2 = originalPoints.get(rindex - 2).getWavenumber();
@@ -384,7 +457,6 @@ public class SavitzkyGolayFilter {
             pointset.put(x6, y6);
             pointset.put(x7, y7);
             pointset.put(x8, y8);
-            
 
             //step 2 : Get the regression line equation 
             calRegressionLine(createDataset(pointset));
@@ -426,9 +498,9 @@ public class SavitzkyGolayFilter {
         }
 
         fullarrays = fullarrays.substring(0, fullarrays.length() - 1);
-        
+
         String sql = "INSERT INTO avg_data (wavenumber,transmittance)  VALUES " + fullarrays;
-        
+        System.out.println(sql);
         ResultSet rs = null;
         PreparedStatement pst = null;
 
@@ -500,11 +572,12 @@ public class SavitzkyGolayFilter {
         // a - regressionParameters[0], c1 - regressionParameters[1]
         double regressionParameters[] = Regression.getPolynomialRegression(inputData, 0, 2);
 
-        double a0 = regressionParameters[0];
-        double a1 = regressionParameters[1];
-        double a2 = regressionParameters[2];
+        a0 = regressionParameters[0];
+        a1 = regressionParameters[1];
+        a2 = regressionParameters[2];
+        
+//        System.out.println("a0 =" +a0 +"\n a1="+a1+"\n a2="+a2);
 
-        System.out.println("y = " + a2 + "*x^2+ " + a1 + "*x + " + a0);
-
+//        System.out.println("y = " + a2 + "*x^2+ " + a1 + "*x + " + a0);
     }
 }

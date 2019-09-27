@@ -232,7 +232,7 @@ public class SlidingAvgSmooth implements SlidingWindow{
             double n8 = (originalPoints.get(rindex + 3).getTransmittance()).doubleValue();
             double n9 = (originalPoints.get(rindex + 4).getTransmittance()).doubleValue();
 
-            sum = n1 + n2 + n3 + n4 + n5 + n6 + n6 + n7 + n8 + n9;
+            sum = n1 + n2 + n3 + n4 + n5 + n6 + n7 + n8 + n9;
 
 //            avg = sum/5;
             entry = BigDecimal.valueOf(sum).divide(BigDecimal.valueOf(9), 8, RoundingMode.HALF_UP);
@@ -285,7 +285,7 @@ public class SlidingAvgSmooth implements SlidingWindow{
             double n6 = (originalPoints.get(rindex + 2).getTransmittance()).doubleValue();
             double n7 = (originalPoints.get(rindex + 3).getTransmittance()).doubleValue();
 
-            sum = n1 + n2 + n3 + n4 + n5 + n6 + n6 + n7;
+            sum = n1 + n2 + n3 + n4 + n5 + n6 + n7;
 
 //            avg = sum/5;
             entry = BigDecimal.valueOf(sum).divide(BigDecimal.valueOf(7), 8, RoundingMode.HALF_UP);

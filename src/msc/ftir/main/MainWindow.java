@@ -218,6 +218,8 @@ public class MainWindow extends javax.swing.JFrame {
 
         setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
         JFrame.setDefaultLookAndFeelDecorated(true);
+        ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("msc/ftir/images/logoFTIR.png"));
+        setIconImage(icon.getImage());
 
         // Screen size
 //        Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
@@ -299,6 +301,7 @@ public class MainWindow extends javax.swing.JFrame {
         ninepoints = new javax.swing.JRadioButton();
         jLabel2 = new javax.swing.JLabel();
         changeValueText = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jPanel9 = new javax.swing.JPanel();
         lineCheckBox = new javax.swing.JCheckBox();
@@ -365,6 +368,7 @@ public class MainWindow extends javax.swing.JFrame {
         peakButton = new javax.swing.JButton();
         clearButton = new javax.swing.JButton();
         searchDatabaseButton = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         filePathText = new javax.swing.JTextField();
         openButton = new javax.swing.JButton();
@@ -378,6 +382,7 @@ public class MainWindow extends javax.swing.JFrame {
         jMenu1 = new javax.swing.JMenu();
         printTableMenuItem = new javax.swing.JMenuItem();
         printChartMenuItem = new javax.swing.JMenuItem();
+        exitMenuItem = new javax.swing.JMenuItem();
         displayMenu = new javax.swing.JMenu();
         originalMenuItem = new javax.swing.JMenuItem();
         smoothMenuItem = new javax.swing.JMenuItem();
@@ -399,7 +404,7 @@ public class MainWindow extends javax.swing.JFrame {
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("FTIR Interpreter");
+        setTitle("FTIRtechPal v1.0");
 
         mainSplitPane.setBackground(new java.awt.Color(255, 255, 255));
         mainSplitPane.setDividerLocation(50);
@@ -590,7 +595,7 @@ public class MainWindow extends javax.swing.JFrame {
         jPanel12.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Settings", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12), new java.awt.Color(102, 102, 102))); // NOI18N
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        jLabel4.setText("Change");
+        jLabel4.setText("Delta Change");
 
         nextButton1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         nextButton1.setText("Next");
@@ -659,25 +664,31 @@ public class MainWindow extends javax.swing.JFrame {
 
         changeValueText.setFocusable(false);
 
+        jLabel6.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        jLabel6.setText("%");
+
         javax.swing.GroupLayout jPanel12Layout = new javax.swing.GroupLayout(jPanel12);
         jPanel12.setLayout(jPanel12Layout);
         jPanel12Layout.setHorizontalGroup(
             jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel12Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
+                .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel2)
-                    .addComponent(jLabel4))
+                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(24, 24, 24)
                 .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(changeValueText, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel12Layout.createSequentialGroup()
+                        .addComponent(changeValueText, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel6))
                     .addComponent(smAlgoCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(threepoints)
                     .addComponent(fivepoints)
                     .addComponent(sevenpoints)
                     .addComponent(ninepoints))
-                .addContainerGap(161, Short.MAX_VALUE))
+                .addContainerGap(149, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel12Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(resetSmoothButton, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -705,7 +716,8 @@ public class MainWindow extends javax.swing.JFrame {
                 .addGap(21, 21, 21)
                 .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(changeValueText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(changeValueText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6))
                 .addGap(42, 42, 42)
                 .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(resetSmoothButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1369,7 +1381,7 @@ public class MainWindow extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        settingsTabbedPane.addTab("Result     ", jPanel2);
+        settingsTabbedPane.addTab("Analysis", jPanel2);
 
         printTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -1464,15 +1476,10 @@ public class MainWindow extends javax.swing.JFrame {
                                 .addGap(0, 0, Short.MAX_VALUE))))
                     .addGroup(jPanel16Layout.createSequentialGroup()
                         .addGroup(jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel16Layout.createSequentialGroup()
-                                .addGroup(jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(fitWidthBox)
-                                    .addComponent(showPrintDialogBox))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(jPanel16Layout.createSequentialGroup()
-                                .addComponent(interactiveBox)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(fitWidthBox)
+                            .addComponent(showPrintDialogBox)
+                            .addComponent(interactiveBox))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(printChartButton)
                             .addComponent(printTableButton)))))
@@ -1595,6 +1602,17 @@ public class MainWindow extends javax.swing.JFrame {
         });
         jToolBar.add(searchDatabaseButton);
 
+        jButton1.setText("jButton1");
+        jButton1.setFocusable(false);
+        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        jToolBar.add(jButton1);
+
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
         openButton.setText("Open");
@@ -1610,7 +1628,7 @@ public class MainWindow extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(filePathText, javax.swing.GroupLayout.DEFAULT_SIZE, 582, Short.MAX_VALUE)
+                .addComponent(filePathText, javax.swing.GroupLayout.DEFAULT_SIZE, 535, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(openButton, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1719,6 +1737,14 @@ public class MainWindow extends javax.swing.JFrame {
         jMenu1.add(printChartMenuItem);
 
         editMenu.add(jMenu1);
+
+        exitMenuItem.setText("Exit");
+        exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exitMenuItemActionPerformed(evt);
+            }
+        });
+        editMenu.add(exitMenuItem);
 
         jMenuBar1.add(editMenu);
 
@@ -1948,13 +1974,20 @@ public class MainWindow extends javax.swing.JFrame {
             }
             if (smAlgoCombo.getSelectedItem().equals("Triangular Smoothing")) {
                 algorithm = 3;
+//                pointsbuttonGroup.clearSelection();
+//                threepoints.setEnabled(false);
+////                fivepoints.setSelected(true);
+//                fivepoints.setEnabled(true);
+//                sevenpoints.setEnabled(false);
+//                ninepoints.setEnabled(false);
+//                changeValueText.setEnabled(true);
                 pointsbuttonGroup.clearSelection();
-                threepoints.setEnabled(false);
-//                fivepoints.setSelected(true);
-                fivepoints.setEnabled(true);
-                sevenpoints.setEnabled(false);
-                ninepoints.setEnabled(false);
                 changeValueText.setEnabled(true);
+
+                while (enumeration.hasMoreElements()) {
+                    enumeration.nextElement().setEnabled(true);
+
+                }
 
             } else if (smAlgoCombo.getSelectedItem().equals("Default")) {
                 algorithm = 1;
@@ -2878,6 +2911,22 @@ public class MainWindow extends javax.swing.JFrame {
         new MyWorker().execute();
     }//GEN-LAST:event_openButtonActionPerformed
 
+    private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
+        int confirmed = JOptionPane.showConfirmDialog(null,
+                "Are you sure you want to exit?", "Exit",
+                JOptionPane.YES_NO_OPTION);
+
+        if (confirmed == JOptionPane.YES_OPTION) {
+            dispose();
+        } else {
+            setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        }
+    }//GEN-LAST:event_exitMenuItemActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        performNoBandAnalysis();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -3122,9 +3171,6 @@ public class MainWindow extends javax.swing.JFrame {
 //                store the altered file in another place. One common place is a sub-directory 
 //                of user.home. When checking for the file, first check the existence of an altered 
 //                file on the file system, and if it does not exist, load the default file.
-
-
-                
                 OutputStream out = new FileOutputStream(path);
                 props.setProperty("jfilechooser.browser.filepath", newDirectoryLoc);
 
@@ -5169,14 +5215,54 @@ public class MainWindow extends javax.swing.JFrame {
             algorithm = 3;
             TriangularSmooth tri = new TriangularSmooth();
 
-            tri.cal_5point_avg();
-//                                createSmoothed_spectrum(tri.originalPoints, tri.smoothedPoints);
-            try {
-                combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
+            if (threepoints.isSelected()) {
+                points = 3;
+                tri.cal_3point_avg();
 
-            } catch (SQLException ex) {
-                Logger.getLogger(MainWindow.class
-                        .getName()).log(Level.SEVERE, null, ex);
+                try {
+                    combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
+
+                } catch (SQLException ex) {
+                    Logger.getLogger(MainWindow.class
+                            .getName()).log(Level.SEVERE, null, ex);
+                }
+
+            } else if (fivepoints.isSelected()) {
+                points = 5;
+                tri.cal_5point_avg();
+
+                try {
+                    combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
+
+                } catch (SQLException ex) {
+                    Logger.getLogger(MainWindow.class
+                            .getName()).log(Level.SEVERE, null, ex);
+                }
+
+            } else if (sevenpoints.isSelected()) {
+                points = 7;
+                tri.cal_7point_avg();
+
+                try {
+                    combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
+
+                } catch (SQLException ex) {
+                    Logger.getLogger(MainWindow.class
+                            .getName()).log(Level.SEVERE, null, ex);
+                }
+
+            } else if (ninepoints.isSelected()) {
+                points = 9;
+                tri.cal_9point_avg();
+
+                try {
+                    combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
+
+                } catch (SQLException ex) {
+                    Logger.getLogger(MainWindow.class
+                            .getName()).log(Level.SEVERE, null, ex);
+                }
+
             }
 
         }
@@ -5989,7 +6075,8 @@ public class MainWindow extends javax.swing.JFrame {
         BigDecimal result = null;
         ResultSet rs = null;
 
-        String sql1 = "SELECT sum(abs(input_data.TRANSMITTANCE - avg_data.TRANSMITTANCE))/count(input_data.TRANSMITTANCE - avg_data.TRANSMITTANCE) as result FROM input_data INNER JOIN avg_data ON input_data.WAVENUMBER = avg_data.WAVENUMBER ";
+//        String sql1 = "SELECT sum(abs(input_data.TRANSMITTANCE - avg_data.TRANSMITTANCE))/count(input_data.TRANSMITTANCE - avg_data.TRANSMITTANCE) as result FROM input_data INNER JOIN avg_data ON input_data.WAVENUMBER = avg_data.WAVENUMBER ";
+        String sql1 = "SELECT sum(abs(input_data.TRANSMITTANCE - avg_data.TRANSMITTANCE)/(input_data.TRANSMITTANCE *100 )) as result FROM input_data INNER JOIN avg_data ON input_data.WAVENUMBER = avg_data.WAVENUMBER ";
         try {
             pst = conn.prepareStatement(sql1);
             rs = pst.executeQuery(sql1);
@@ -6001,7 +6088,7 @@ public class MainWindow extends javax.swing.JFrame {
 //            System.out.println(c);
 
             DecimalFormat df = new DecimalFormat();
-            df.setMaximumFractionDigits(4);
+            df.setMaximumFractionDigits(2);
 //            System.out.println(df.format(c));
 
             changeValueText.setText(String.valueOf(df.format(c)));
@@ -6179,7 +6266,48 @@ public class MainWindow extends javax.swing.JFrame {
         }
     }
 
+    private void performNoBandAnalysis() {
 
+        try {
+            String sql1 = "SELECT DISTINCT wavenumber FROM result";
+            PreparedStatement pst1 = conn.prepareStatement(sql1);
+            ResultSet rs = pst1.executeQuery();
+
+            ArrayList<BigDecimal> w_list = new ArrayList<BigDecimal>();
+
+            while (rs.next()) {
+                w_list.add(rs.getBigDecimal("WAVENUMBER"));
+            }
+
+            int id = 0;
+            for (id = 1; id <= 50; id++) {
+                int count = 0;
+                for (int i = 0; i < w_list.size(); i++) {
+
+                    BigDecimal w = w_list.get(i);
+                    String sql2 = "SELECT * FROM no_band_info WHERE ID =" + id + " AND " + w + "  <= start_frq AND " + w + ">= end_frq ";
+                    PreparedStatement pst2 = conn.prepareStatement(sql2);
+                    ResultSet rs2 = pst2.executeQuery();
+                    count++;
+
+                    while (rs2.next()) {
+                        count++;
+                    }
+
+                }
+
+                if (count == 0) {
+                    System.out.println("No band analysis for " + id);
+                    String sql = "DELETE FROM `result` WHERE COMPOUND_TYPE IN ( SELECT ABSENT_GROUPS FROM no_band_info WHERE id = " + id + ")";
+                    pst = conn.prepareStatement(sql);
+                    pst.execute();
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup algorithmMenu;
     private javax.swing.JComboBox<String> baselineMethodCombo;
@@ -6200,6 +6328,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JButton deselectButton;
     private javax.swing.JMenu displayMenu;
     private javax.swing.JMenu editMenu;
+    private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JTextField filePathText;
     private javax.swing.JLabel filterPassLabel;
     private javax.swing.JCheckBox fitWidthBox;
@@ -6210,6 +6339,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JTextField headerField;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JCheckBox interactiveBox;
+    private javax.swing.JButton jButton1;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox10;
     private javax.swing.JCheckBox jCheckBox2;
@@ -6231,6 +6361,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JMenu jMenu1;
