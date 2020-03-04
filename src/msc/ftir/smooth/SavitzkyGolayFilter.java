@@ -101,50 +101,49 @@ public class SavitzkyGolayFilter {
 
     }
 
-//    public void applyFilter_3points() {
-//
-//        if (!transmittanceValues.isEmpty()) {
-//            for (int i = 0; i < transmittanceValues.size(); i++) {
-//                originalPoints.get(i).setTransmittance(transmittanceValues.get(i));
+    public void applyFilter_3points() {
+
+        if (!transmittanceValues.isEmpty()) {
+            for (int i = 0; i < transmittanceValues.size(); i++) {
+                originalPoints.get(i).setTransmittance(transmittanceValues.get(i));
+            }
+        }
+        transmittanceValues.clear();
+
+        BigDecimal sum = null;
+        BigDecimal avg = null;
+        int rindex = 0;
+        int listSize = originalPoints.size();
+
+        BigDecimal firstx = originalPoints.get(0).getWavenumber();
+        BigDecimal lastx = originalPoints.get(listSize - 1).getWavenumber();
+        BigDecimal firsty = originalPoints.get(0).getTransmittance();
+        BigDecimal lasty = originalPoints.get(listSize - 1).getTransmittance();
+        filteredPointset.put(firstx, firsty);
+        transmittanceValues.add(firsty); //just to hold altered transmittance values
+
+        for (rindex = 1; rindex < listSize - 1; rindex++) {
+            pointset.clear();
+            BigDecimal y1 = originalPoints.get(rindex - 1).getTransmittance();
+            BigDecimal y2 = originalPoints.get(rindex).getTransmittance();
+            BigDecimal y3 = originalPoints.get(rindex + 1).getTransmittance();
+
+            BigDecimal x1 = originalPoints.get(rindex - 1).getWavenumber();
+            BigDecimal x2 = originalPoints.get(rindex).getWavenumber();
+            BigDecimal x3 = originalPoints.get(rindex + 1).getWavenumber();
+
+//            for (int k = rindex - 1; k < rindex + 3; k++) {
+//                BigDecimal Y = originalPoints.get(k).getTransmittance();
+//                BigDecimal X = originalPoints.get(k).getWavenumber();
+//                pointset.put(X, Y);
 //            }
-//        }
-//        transmittanceValues.clear();
-//
-//        BigDecimal sum = null;
-//        BigDecimal avg = null;
-//        int rindex = 0;
-//        int listSize = originalPoints.size();
-//
-//        BigDecimal firstx = originalPoints.get(0).getWavenumber();
-//        BigDecimal lastx = originalPoints.get(listSize - 1).getWavenumber();
-//        BigDecimal firsty = originalPoints.get(0).getTransmittance();
-//        BigDecimal lasty = originalPoints.get(listSize - 1).getTransmittance();
-//        filteredPointset.put(firstx, firsty);
-//        transmittanceValues.add(firsty); //just to hold altered transmittance values
-//
-//        for (rindex = 1; rindex < listSize - 1; rindex++) {
-//            pointset.clear();
-//            BigDecimal y1 = originalPoints.get(rindex - 1).getTransmittance();
-//            BigDecimal y2 = originalPoints.get(rindex).getTransmittance();
-//            BigDecimal y3 = originalPoints.get(rindex + 1).getTransmittance();
-//
-//            BigDecimal x1 = originalPoints.get(rindex - 1).getWavenumber();
-//            BigDecimal x2 = originalPoints.get(rindex).getWavenumber();
-//            BigDecimal x3 = originalPoints.get(rindex + 1).getWavenumber();
-//
-////            for (int k = rindex - 1; k < rindex + 3; k++) {
-////                BigDecimal Y = originalPoints.get(k).getTransmittance();
-////                BigDecimal X = originalPoints.get(k).getWavenumber();
-////                pointset.put(X, Y);
-////            }
-//
-//            //find y value by regression equation
-//            //step 1 : add 3 successive points to the list and create a dataset 
-//            pointset.put(x1, y1);
-//            pointset.put(x2, y2);
-//            pointset.put(x3, y3);
-//
-//            //step 2 : Get the regression line equation 
+            //find y value by regression equation
+            //step 1 : add 3 successive points to the list and create a dataset 
+            pointset.put(x1, y1);
+            pointset.put(x2, y2);
+            pointset.put(x3, y3);
+
+            //step 2 : Get the regression line equation 
 //            calRegressionLine(createDataset(pointset));
 ////            calRegressionPolynomial(createDataset(pointset));
 //
@@ -157,14 +156,29 @@ public class SavitzkyGolayFilter {
 //            //step 4 : Add calculated point to result treemap
 //            filteredPointset.put(x2, BigDecimal.valueOf(y));
 //            transmittanceValues.add(BigDecimal.valueOf(y)); //just to hold altered transmittance values
-//
-//        }
-//        filteredPointset.put(lastx, lasty);
-//        transmittanceValues.add(lasty); //just to hold altered transmittance values
-//        updateSmoothedValue();
-//        count++;
-//
-//    }
+            //step 2 : Get the regression line equation 
+//            calRegressionLine(createDataset(pointset));
+            calRegressionPolynomial(createDataset(pointset));
+
+            //step 3 : Calculate y value for the mid point
+            double x = x2.doubleValue();
+//            double y = m1 * x + c1;
+            double y = (a2 * x * x) + (a1 * x) + a0;
+
+            BigDecimal bigDecimaly = BigDecimal.valueOf(y).setScale(4, RoundingMode.HALF_UP);
+
+            //step 4 : Add calculated point to result treemap
+            filteredPointset.put(x2, bigDecimaly);
+            transmittanceValues.add(bigDecimaly); //just to hold altered transmittance values
+
+        }
+        filteredPointset.put(lastx, lasty);
+        transmittanceValues.add(lasty); //just to hold altered transmittance values
+        updateSmoothedValue();
+        count++;
+
+    }
+
     public void applyFilter_npoints(int n) {
 
         if (!transmittanceValues.isEmpty()) {
@@ -205,8 +219,8 @@ public class SavitzkyGolayFilter {
             }
 
             //find y value by regression equation
-            //step 1 : add 3 successive points to the list and create a dataset 
-            //step 2 : Get the regression line equation 
+            //step 1 : add n successive points to the list and create a dataset 
+            //step 2 : Get the regression line/polynomial equation 
 //            calRegressionLine(createDataset(pointset));
             calRegressionPolynomial(createDataset(pointset));
 
@@ -236,77 +250,76 @@ public class SavitzkyGolayFilter {
 
     }
 
-    public void applyFilter_3points() {
-
-        if (!transmittanceValues.isEmpty()) {
-            for (int i = 0; i < transmittanceValues.size(); i++) {
-                originalPoints.get(i).setTransmittance(transmittanceValues.get(i));
-            }
-        }
-        transmittanceValues.clear();
-
-        BigDecimal sum = null;
-        BigDecimal avg = null;
-        int rindex = 0;
-        int listSize = originalPoints.size();
-
-        for (int i = 0; i < 18; i++) {
-
-            BigDecimal firstx = originalPoints.get(i).getWavenumber();
-            BigDecimal firsty = originalPoints.get(i).getTransmittance();
-            filteredPointset.put(firstx, firsty);
-            transmittanceValues.add(firsty); //just to hold altered transmittance values
-        }
-
-        for (rindex = 1; rindex < listSize - 18; rindex++) {
-            pointset.clear();
-
-            BigDecimal x2 = originalPoints.get(rindex).getWavenumber();
-
-            int count = 0;
-            int k = rindex - 1;
-            while (count < 17) {
-
-                BigDecimal Y = originalPoints.get(k).getTransmittance();
-                BigDecimal X = originalPoints.get(k).getWavenumber();
-                pointset.put(X, Y);
-                count++;
-                k++;
-
-            }
-
-            //find y value by regression equation
-            //step 1 : add 3 successive points to the list and create a dataset 
-            //step 2 : Get the regression line equation 
-//            calRegressionLine(createDataset(pointset));
-            calRegressionPolynomial(createDataset(pointset));
-
-            //step 3 : Calculate y value for the mid point
-            double x = x2.doubleValue();
-//            double y = m1 * x + c1;
-            double y = (a2 * x * x) + (a1 * x) + a0;
-
-            BigDecimal bigDecimaly = BigDecimal.valueOf(y).setScale(4, RoundingMode.HALF_UP);
-
-            //step 4 : Add calculated point to result treemap
-            filteredPointset.put(x2, bigDecimaly);
-            transmittanceValues.add(bigDecimaly); //just to hold altered transmittance values
-
-        }
-
-        for (int i = listSize - 18; i < listSize - 1; i++) {
-
-            BigDecimal lastx = originalPoints.get(i).getWavenumber();
-            BigDecimal lasty = originalPoints.get(i).getTransmittance();
-            filteredPointset.put(lastx, lasty);
-            transmittanceValues.add(lasty);
-        }
-
-        updateSmoothedValue();
-        count++;
-
-    }
-
+//    public void applyFilter_3points() {
+//
+//        if (!transmittanceValues.isEmpty()) {
+//            for (int i = 0; i < transmittanceValues.size(); i++) {
+//                originalPoints.get(i).setTransmittance(transmittanceValues.get(i));
+//            }
+//        }
+//        transmittanceValues.clear();
+//
+//        BigDecimal sum = null;
+//        BigDecimal avg = null;
+//        int rindex = 0;
+//        int listSize = originalPoints.size();
+//
+//        for (int i = 0; i < 18; i++) {
+//
+//            BigDecimal firstx = originalPoints.get(i).getWavenumber();
+//            BigDecimal firsty = originalPoints.get(i).getTransmittance();
+//            filteredPointset.put(firstx, firsty);
+//            transmittanceValues.add(firsty); //just to hold altered transmittance values
+//        }
+//
+//        for (rindex = 1; rindex < listSize - 18; rindex++) {
+//            pointset.clear();
+//
+//            BigDecimal x2 = originalPoints.get(rindex).getWavenumber();
+//
+//            int count = 0;
+//            int k = rindex - 1;
+//            while (count < 17) {
+//
+//                BigDecimal Y = originalPoints.get(k).getTransmittance();
+//                BigDecimal X = originalPoints.get(k).getWavenumber();
+//                pointset.put(X, Y);
+//                count++;
+//                k++;
+//
+//            }
+//
+//            //find y value by regression equation
+//            //step 1 : add 3 successive points to the list and create a dataset 
+//            //step 2 : Get the regression line equation 
+////            calRegressionLine(createDataset(pointset));
+//            calRegressionPolynomial(createDataset(pointset));
+//
+//            //step 3 : Calculate y value for the mid point
+//            double x = x2.doubleValue();
+////            double y = m1 * x + c1;
+//            double y = (a2 * x * x) + (a1 * x) + a0;
+//
+//            BigDecimal bigDecimaly = BigDecimal.valueOf(y).setScale(4, RoundingMode.HALF_UP);
+//
+//            //step 4 : Add calculated point to result treemap
+//            filteredPointset.put(x2, bigDecimaly);
+//            transmittanceValues.add(bigDecimaly); //just to hold altered transmittance values
+//
+//        }
+//
+//        for (int i = listSize - 18; i < listSize - 1; i++) {
+//
+//            BigDecimal lastx = originalPoints.get(i).getWavenumber();
+//            BigDecimal lasty = originalPoints.get(i).getTransmittance();
+//            filteredPointset.put(lastx, lasty);
+//            transmittanceValues.add(lasty);
+//        }
+//
+//        updateSmoothedValue();
+//        count++;
+//
+//    }
     public void applyFilter_5points() {
 
         if (!transmittanceValues.isEmpty()) {
@@ -357,16 +370,30 @@ public class SavitzkyGolayFilter {
             pointset.put(x4, y4);
 
             //step 2 : Get the regression line equation 
-            calRegressionLine(createDataset(pointset));
+//            calRegressionLine(createDataset(pointset));
+//
+////            calRegressionPolynomial(createDataset(pointset));
+//            //step 3 : Calculate y value for the mid point
+//            double x = x2.doubleValue();
+//            double y = m1 * x + c1;
+//
+//            //step 4 : Add calculated point to result treemap
+//            filteredPointset.put(x2, BigDecimal.valueOf(y));
+//            transmittanceValues.add(BigDecimal.valueOf(y)); //just to hold altered transmittance values
+            //step 2 : Get the regression line equation 
+//            calRegressionLine(createDataset(pointset));
+            calRegressionPolynomial(createDataset(pointset));
 
-//            calRegressionPolynomial(createDataset(pointset));
             //step 3 : Calculate y value for the mid point
             double x = x2.doubleValue();
-            double y = m1 * x + c1;
+//            double y = m1 * x + c1;
+            double y = (a2 * x * x) + (a1 * x) + a0;
+
+            BigDecimal bigDecimaly = BigDecimal.valueOf(y).setScale(4, RoundingMode.HALF_UP);
 
             //step 4 : Add calculated point to result treemap
-            filteredPointset.put(x2, BigDecimal.valueOf(y));
-            transmittanceValues.add(BigDecimal.valueOf(y)); //just to hold altered transmittance values
+            filteredPointset.put(x2, bigDecimaly);
+            transmittanceValues.add(bigDecimaly); //just to hold altered transmittance values
 
         }
         filteredPointset.put(wm, tm);
@@ -439,16 +466,30 @@ public class SavitzkyGolayFilter {
             pointset.put(x6, y6);
 
             //step 2 : Get the regression line equation 
-            calRegressionLine(createDataset(pointset));
+//            calRegressionLine(createDataset(pointset));
+//
+////            calRegressionPolynomial(createDataset(pointset));
+//            //step 3 : Calculate y value for the mid point
+//            double x = x3.doubleValue();
+//            double y = m1 * x + c1;
+//
+//            //step 4 : Add calculated point to result treemap
+//            filteredPointset.put(x3, BigDecimal.valueOf(y));
+//            transmittanceValues.add(BigDecimal.valueOf(y)); //just to hold altered transmittance values
+//step 2 : Get the regression line equation 
+//            calRegressionLine(createDataset(pointset));
+            calRegressionPolynomial(createDataset(pointset));
 
-//            calRegressionPolynomial(createDataset(pointset));
             //step 3 : Calculate y value for the mid point
             double x = x3.doubleValue();
-            double y = m1 * x + c1;
+//            double y = m1 * x + c1;
+            double y = (a2 * x * x) + (a1 * x) + a0;
+
+            BigDecimal bigDecimaly = BigDecimal.valueOf(y).setScale(4, RoundingMode.HALF_UP);
 
             //step 4 : Add calculated point to result treemap
-            filteredPointset.put(x3, BigDecimal.valueOf(y));
-            transmittanceValues.add(BigDecimal.valueOf(y)); //just to hold altered transmittance values
+            filteredPointset.put(x3, bigDecimaly);
+            transmittanceValues.add(bigDecimaly); //just to hold altered transmittance values
 
         }
         filteredPointset.put(wm, tm);
@@ -536,16 +577,30 @@ public class SavitzkyGolayFilter {
             pointset.put(x8, y8);
 
             //step 2 : Get the regression line equation 
-            calRegressionLine(createDataset(pointset));
+//            calRegressionLine(createDataset(pointset));
+//
+////            calRegressionPolynomial(createDataset(pointset));
+//            //step 3 : Calculate y value for the mid point
+//            double x = x4.doubleValue();
+//            double y = m1 * x + c1;
+//
+//            //step 4 : Add calculated point to result treemap
+//            filteredPointset.put(x4, BigDecimal.valueOf(y));
+//            transmittanceValues.add(BigDecimal.valueOf(y)); //just to hold altered transmittance values
+//step 2 : Get the regression line equation 
+//            calRegressionLine(createDataset(pointset));
+            calRegressionPolynomial(createDataset(pointset));
 
-//            calRegressionPolynomial(createDataset(pointset));
             //step 3 : Calculate y value for the mid point
             double x = x4.doubleValue();
-            double y = m1 * x + c1;
+//            double y = m1 * x + c1;
+            double y = (a2 * x * x) + (a1 * x) + a0;
+
+            BigDecimal bigDecimaly = BigDecimal.valueOf(y).setScale(4, RoundingMode.HALF_UP);
 
             //step 4 : Add calculated point to result treemap
-            filteredPointset.put(x4, BigDecimal.valueOf(y));
-            transmittanceValues.add(BigDecimal.valueOf(y)); //just to hold altered transmittance values
+            filteredPointset.put(x4, bigDecimaly);
+            transmittanceValues.add(bigDecimaly); //just to hold altered transmittance values
 
         }
         filteredPointset.put(wm, tm);
@@ -577,7 +632,7 @@ public class SavitzkyGolayFilter {
         fullarrays = fullarrays.substring(0, fullarrays.length() - 1);
 
         String sql = "INSERT INTO avg_data (wavenumber,transmittance)  VALUES " + fullarrays;
-        
+
         ResultSet rs = null;
         PreparedStatement pst = null;
 

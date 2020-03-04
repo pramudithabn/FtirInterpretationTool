@@ -875,8 +875,8 @@
                             </Component>
                             <Component class="javax.swing.JSlider" name="sgfSlider">
                               <Properties>
-                                <Property name="majorTickSpacing" type="int" value="10"/>
-                                <Property name="maximum" type="int" value="20"/>
+                                <Property name="majorTickSpacing" type="int" value="1"/>
+                                <Property name="maximum" type="int" value="10"/>
                                 <Property name="minorTickSpacing" type="int" value="1"/>
                                 <Property name="paintLabels" type="boolean" value="true"/>
                                 <Property name="paintTicks" type="boolean" value="true"/>
@@ -2208,7 +2208,7 @@
                 </Component>
                 <Component class="javax.swing.JButton" name="jButton1">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="jButton1"/>
+                    <Property name="text" type="java.lang.String" value="No Band Analysis"/>
                     <Property name="focusable" type="boolean" value="false"/>
                     <Property name="horizontalTextPosition" type="int" value="0"/>
                     <Property name="verticalTextPosition" type="int" value="3"/>
@@ -2231,7 +2231,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="filePathText" pref="535" max="32767" attributes="0"/>
+                              <Component id="filePathText" pref="493" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="openButton" min="-2" pref="75" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>

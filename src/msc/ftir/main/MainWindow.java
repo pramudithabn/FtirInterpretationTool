@@ -108,6 +108,7 @@ import msc.ftir.result.Printer;
 import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.util.ShapeUtilities;
 import msc.ftir.print.PrintableWrapper;
+import org.jfree.chart.ChartUtilities;
 
 
 /*
@@ -669,8 +670,8 @@ public class MainWindow extends javax.swing.JFrame {
         jLabel6.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel6.setText("%");
 
-        sgfSlider.setMajorTickSpacing(10);
-        sgfSlider.setMaximum(20);
+        sgfSlider.setMajorTickSpacing(1);
+        sgfSlider.setMaximum(10);
         sgfSlider.setMinorTickSpacing(1);
         sgfSlider.setPaintLabels(true);
         sgfSlider.setPaintTicks(true);
@@ -1639,7 +1640,7 @@ public class MainWindow extends javax.swing.JFrame {
         });
         jToolBar.add(searchDatabaseButton);
 
-        jButton1.setText("jButton1");
+        jButton1.setText("No Band Analysis");
         jButton1.setFocusable(false);
         jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -1665,7 +1666,7 @@ public class MainWindow extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(filePathText, javax.swing.GroupLayout.DEFAULT_SIZE, 535, Short.MAX_VALUE)
+                .addComponent(filePathText, javax.swing.GroupLayout.DEFAULT_SIZE, 493, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(openButton, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -2021,7 +2022,6 @@ public class MainWindow extends javax.swing.JFrame {
                 pointsbuttonGroup.clearSelection();
                 changeValueText.setEnabled(true);
                 sgfSlider.setEnabled(false);
-                
 
                 while (enumeration.hasMoreElements()) {
                     enumeration.nextElement().setEnabled(true);
@@ -2033,7 +2033,7 @@ public class MainWindow extends javax.swing.JFrame {
                 algorithm = 2;
                 pointsbuttonGroup.clearSelection();
                 changeValueText.setEnabled(true);
-                sgfSlider.setEnabled(false);
+                sgfSlider.setEnabled(true);
                 npoints.setEnabled(false);
 
                 while (enumeration.hasMoreElements()) {
@@ -2045,10 +2045,10 @@ public class MainWindow extends javax.swing.JFrame {
                 algorithm = 4;
 //                threepoints.setSelected(true);
                 pointsbuttonGroup.clearSelection();
-                threepoints.setEnabled(true);
-                fivepoints.setEnabled(true);
-                sevenpoints.setEnabled(true);
-                ninepoints.setEnabled(true);
+                threepoints.setEnabled(false);
+                fivepoints.setEnabled(false);
+                sevenpoints.setEnabled(false);
+                ninepoints.setEnabled(false);
                 changeValueText.setEnabled(true);
                 sgfSlider.setEnabled(false);
                 npoints.setEnabled(true);
@@ -2239,11 +2239,7 @@ public class MainWindow extends javax.swing.JFrame {
         performThresh();
         bandstab = true;
 
-        if (bltab) {
-            settingsTabbedPane.setSelectedIndex(3);
-        } else {
-            JOptionPane.showMessageDialog(null, "Error!", "Error", JOptionPane.ERROR_MESSAGE);
-        }
+        settingsTabbedPane.setSelectedIndex(3);
 
         specSplitPane.getTopComponent().setMinimumSize(new Dimension());
         specSplitPane.setDividerLocation(0.0d);
@@ -2964,25 +2960,38 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_exitMenuItemActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        performNoBandAnalysis();
+        //performNoBandAnalysis();
+
+        try {
+
+            OutputStream out = new FileOutputStream("pic.png");
+            ChartUtilities.writeChartAsPNG(out,
+                    duelchart,
+                    comPanel.getWidth(),
+                    comPanel.getHeight());
+
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, ex);
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void sgfSliderMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sgfSliderMouseReleased
-         specTabbedPane.setSelectedIndex(1);
+        specTabbedPane.setSelectedIndex(1);
 
-        int n = sgfSlider.getValue() + 1;
+        int n = (2 * sgfSlider.getValue()) + 1;
 
-            SavitzkyGolayFilter sgf = new SavitzkyGolayFilter();
-            sgf.applyFilter_npoints(n);
+        SavitzkyGolayFilter sgf = new SavitzkyGolayFilter();
+        sgf.applyFilter_npoints(n);
 
-                try {
-                    combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
+        try {
+            combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
 
-                } catch (SQLException ex) {
-                    Logger.getLogger(MainWindow.class
-                            .getName()).log(Level.SEVERE, null, ex);
-                }
-                measurechange();
+        } catch (SQLException ex) {
+            Logger.getLogger(MainWindow.class
+                    .getName()).log(Level.SEVERE, null, ex);
+        }
+        measurechange();
+        showValleys("avg_data");
 
     }//GEN-LAST:event_sgfSliderMouseReleased
 
