@@ -79,10 +79,10 @@ public class Predict {
             f = valleyList.get(r).getWavenumber();
 
             if (f.doubleValue() >= 1000) { //exclude fingerprint region
-//            String sql = "Select *, (end_frq - start_frq) as width  from bonds where " + f + "  <= start_frq AND " + f + ">= end_frq";
-//            String sql = "Select * from bonds where " + f + "  <= start_frq AND " + f + ">= end_frq";
-                String sql = "Select * from library where " + f + "  <= start_frq AND " + f + ">= end_frq";
-//            bond, functional_group
+                //get results from library
+//                String sql = "Select * from library where " + f + "  <= start_frq AND " + f + ">= end_frq";
+                //update 09/03/2020
+                String sql = "Select * from library2 where " + f + "  <= start_frq AND " + f + ">= end_frq";
                 try {
                     pst = conn.prepareStatement(sql);
                     rs = pst.executeQuery();
@@ -91,7 +91,7 @@ public class Predict {
                     while (rs.next()) {
 
 //                    rst = new Result(f, rs.getString("BOND"), rs.getString("FUNCTIONAL_GROUP"));
-                        rst = new Result(f, rs.getString("BOND_VIBMODE"), rs.getString("FUNCTIONAL_GROUP"), rs.getString("COMPOUND_TYPE"), rs.getString("COMPOUND_CATEGORY"), rs.getInt("ID"));
+                        rst = new Result(f, rs.getString("BOND_VIBMODE"), rs.getString("FUNCTIONAL_GROUP"), rs.getString("COMPOUND_TYPE"), rs.getString("COMPOUND_CATEGORY"),rs.getString("LABEL") ,rs.getInt("ID"));
 //                    BigDecimal w = rs.getBigDecimal("width");
 //                    System.out.println(f+" /  " + w);
                         resultset.add(rst);
@@ -140,7 +140,9 @@ public class Predict {
             String type = resultset.get(i).getCompound_type();
             String compound = resultset.get(i).getCompoundCategory();
             int libIndex = resultset.get(i).getLibIndex();
-
+            
+            //update 09/03/2020
+//            String twoarrays = "(" + w + " ,\" " + bond + "\" , \"" + fngrp + "\" , \"" + type + "\" , \"" + compound + "\" , \"" + libIndex + "\")";
             String twoarrays = "(" + w + " ,\" " + bond + "\" , \"" + fngrp + "\" , \"" + type + "\" , \"" + compound + "\" , \"" + libIndex + "\")";
             fullarrays = fullarrays + twoarrays + ",";
         }

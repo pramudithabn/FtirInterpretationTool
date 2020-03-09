@@ -16,21 +16,30 @@ public class Result {
     private BigDecimal wavenumber;
     private String bondVibMode;
     private String compoundCategory;
-//    private String bond;
     private String functional_group;
     private String compound_type;
+    // update 09/03/2020 start>>>>>
+    private String label;
     private int libIndex;
 
-    public Result(BigDecimal w, String b, String f, String t ,String c,int i) {
+    public Result(BigDecimal w, String b, String f, String t ,String c,String l, int i) {
         this.wavenumber = w;
         this.bondVibMode = b;
-//        this.bond = b;
         this.functional_group = f;
         this.compoundCategory = c;
         this.compound_type = t;
+        this.label =l;
         this.libIndex = i;
     }
+    // update 09/03/2020 start>>>>>
+    public String getLabel() {
+        return label;
+    }
 
+    public void setLabel(String label) {
+        this.label = label;
+    }
+    // update 09/03/2020 end<<<<<
     public String getCompound_type() {
         return compound_type;
     }

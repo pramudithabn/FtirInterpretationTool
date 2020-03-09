@@ -4316,7 +4316,7 @@ public class MainWindow extends javax.swing.JFrame {
         df.setMaximumFractionDigits(3);
 
         chartPanel_com.addChartMouseListener(new ChartMouseListener() {
-
+            //Popup table when band is clikced on result chart 
             @Override
             public void chartMouseClicked(ChartMouseEvent event) {
                 ChartEntity entity = event.getEntity();
@@ -4332,12 +4332,10 @@ public class MainWindow extends javax.swing.JFrame {
                         double x = set1.getXValue(sindex, iindex);
 
                         CheckList c = new CheckList();
-//                        c.setVisible(true);
-
                         String sql1 = "SET @row_number=0";
                         PreparedStatement pst1 = conn.prepareStatement(sql1);
                         ResultSet rst = pst1.executeQuery();
-
+                        
                         String sql = "SELECT (@row_number:=@row_number + 1) As 'No.', round(`WAVENUMBER`,0) AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group',LIB_INDEX AS 'Lib. Index' from result where wavenumber = " + x;
                         pst = conn.prepareStatement(sql);
                         rs = pst.executeQuery();
@@ -4429,12 +4427,6 @@ public class MainWindow extends javax.swing.JFrame {
                                 c.resultListTable.getColumnModel().getColumn(5).setCellRenderer(checkBoxRenderer);
                             } while (rs.next());
                         }
-
-//                        if (rs.next() == false) {
-//                            JOptionPane.showMessageDialog(null, "No results found!", "Error!", JOptionPane.WARNING_MESSAGE);
-//                        }else{
-//                            c.setVisible(true);
-//                        }
                     } catch (SQLException ex) {
                         Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -5795,18 +5787,6 @@ public class MainWindow extends javax.swing.JFrame {
                 }
                 return false;
             }
-
-//            @Override
-//            public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-//                if (columnIndex == 3) {
-//                    if (aValue instanceof Boolean) {
-//                        super.setValueAt((Boolean)aValue, rowIndex, columnIndex);
-//                        fireTableCellUpdated(rowIndex, columnIndex);
-//                    }
-//                }
-//                else
-//                    super.setValueAt(aValue, rowIndex, columnIndex);
-//            }
         };
 
         printTable.setModel(model);

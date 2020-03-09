@@ -178,7 +178,6 @@ public class CheckList extends javax.swing.JFrame {
 
         }
 
-//        int r = resultListTable.getSelectedRow();
         String data1 = (String) resultListTable.getValueAt(r, 1);
         String data2 = (String) resultListTable.getValueAt(r, 2);
         String data3 = (String) resultListTable.getValueAt(r, 3);
@@ -189,7 +188,9 @@ public class CheckList extends javax.swing.JFrame {
 
 //            String sql = "select * from library where BOND_VIBMODE = \"" + data2.trim() + "\" AND FUNCTIONAL_GROUP = \"" + data3.trim() + "\" ";
 //            String sql = "SELECT BOND_VIBMODE, FUNCTIONAL_GROUP, COMPOUND_TYPE, COMPOUND_CATEGORY   from library where ID = " + data4;
-            String sql = "SELECT round(result.wavenumber) as 'Wavenumber', library.BOND_VIBMODE As 'Vib. Mode/ Bond', library.FUNCTIONAL_GROUP As 'Functional Group', library.COMPOUND_TYPE As 'Compound Type', library.COMPOUND_CATEGORY As 'Compound Category'  from library, result where library.ID = " + data4 + " and result.lib_index = " + data4 + " and library.ID = result.lib_index  LIMIT 1";
+//            String sql = "SELECT round(result.wavenumber) as 'Wavenumber', library.BOND_VIBMODE As 'Vib. Mode/ Bond', library.FUNCTIONAL_GROUP As 'Functional Group', library.COMPOUND_TYPE As 'Compound Type', library.COMPOUND_CATEGORY As 'Compound Category'  from library, result where library.ID = " + data4 + " and result.lib_index = " + data4 + " and library.ID = result.lib_index  LIMIT 1";
+            //update 09.03.2020
+            String sql = "SELECT round(result.wavenumber) as 'Wavenumber', library2.BOND_VIBMODE As 'Vib. Mode/ Bond', library2.FUNCTIONAL_GROUP As 'Functional Group', library2.COMPOUND_TYPE As 'Compound Type', library2.COMPOUND_CATEGORY As 'Compound Category', library2.LABEL, library2.bond from library2, result where library2.ID = " + data4 + " and result.lib_index = " + data4 + " and library2.ID = result.lib_index  LIMIT 1";
             pst = conn.prepareStatement(sql);
             rs = pst.executeQuery();
 
@@ -197,7 +198,13 @@ public class CheckList extends javax.swing.JFrame {
             String s = null;
             while (rs.next()) {
                 x1 = rs.getDouble("Wavenumber");
-                s = rs.getString("Vib. Mode/ Bond");
+                //update 09.03.2020
+                String s1,s2,mu;
+                   s1 = rs.getString("Bond");
+                   s2 = rs.getString("Label");
+                   mu = "\u03C5";
+                   s = mu +" "+s1 +" "+s2;
+                
             }
 
             for (Object i : series0.getItems()) {
@@ -206,41 +213,10 @@ public class CheckList extends javax.swing.JFrame {
                 double y = item.getYValue();
 
                 if (Math.abs(x - x1) < 1) {
-//                    System.out.println(x + "," + y + "," + s);
-
                     ds.update(x, s);
-
                 }
-//                else {
-
-//                    System.out.println(x + "," + y + "," + s);
-//                }
             }
-
-//            int a = ds.getItemCount(0);
-//
-//            System.out.println("-------------------------------");
-//            for (int k = 0; k < a; k++) {
-//
-//                System.out.println(ds.getXValue(0, k) + "," + ds.getYValue(0, k) + "," + ds.getLabel(0, k));
-//            }
-//            System.out.println("-------------------------------");
             createReportSpectrum(ds, createBaselineDataset(), MainWindow.comPanel);
-
-//            JFrame f = new JFrame();
-//            f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//            JFreeChart chart = createChart(ds);
-//            ChartPanel chartPanel = new ChartPanel(chart) {
-//
-//                @Override
-//                public Dimension getPreferredSize() {
-//                    return new Dimension(400, 320);
-//                }
-//            };
-//            f.add(chartPanel);
-//            f.pack();
-//            f.setLocationRelativeTo(null);
-//            f.setVisible(true);
         } catch (SQLException e) {
             System.err.println(e);
         } finally {
@@ -254,8 +230,8 @@ public class CheckList extends javax.swing.JFrame {
 
         //set selected row to the table
         try {
-
-            String sql = "SELECT round(result.wavenumber) as 'Wavenumber', library.BOND_VIBMODE As 'Vib. Mode/ Bond', library.FUNCTIONAL_GROUP As 'Functional Group', library.COMPOUND_TYPE As 'Compound Type', library.COMPOUND_CATEGORY As 'Compound Category'  from library, result where library.ID = " + data4 + " and result.lib_index = " + data4 + " and library.ID = result.lib_index  LIMIT 1";
+            //update 09.03.2020
+            String sql = "SELECT round(result.wavenumber) as 'Wavenumber', library2.BOND_VIBMODE As 'Vib. Mode/ Bond', library2.FUNCTIONAL_GROUP As 'Functional Group', library2.COMPOUND_TYPE As 'Compound Type', library2.COMPOUND_CATEGORY As 'Compound Category'  from library2, result where library2.ID = " + data4 + " and result.lib_index = " + data4 + " and library2.ID = result.lib_index  LIMIT 1";
             pst = conn.prepareStatement(sql);
             rs = pst.executeQuery();
 
@@ -279,7 +255,6 @@ public class CheckList extends javax.swing.JFrame {
 
     private void resultListTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_resultListTableMouseClicked
         
-
         //to select and unselect rows
         {
             int row = resultListTable.getSelectedRow();
@@ -353,22 +328,6 @@ public class CheckList extends javax.swing.JFrame {
         return new DefaultTableModel(data, columnNames);
     }
 
-//    private static JFreeChart createChart(final XYDataset dataset) {
-//        NumberAxis domain = new NumberAxis("Unit");
-//        NumberAxis range = new NumberAxis("Price");
-//
-//        domain.setAutoRangeIncludesZero(false);
-//        XYItemRenderer renderer = new XYLineAndShapeRenderer(true, false);
-//        renderer.setBaseItemLabelGenerator(new LabelGenerator());
-//        renderer.setBaseItemLabelPaint(Color.green.darker());
-//        renderer.setBasePositiveItemLabelPosition(new ItemLabelPosition(ItemLabelAnchor.CENTER, TextAnchor.CENTER));
-//        renderer.setBaseItemLabelFont(renderer.getBaseItemLabelFont().deriveFont(14f));
-//        renderer.setBaseItemLabelsVisible(true);
-//        renderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
-//        XYPlot plot = new XYPlot(dataset, domain, range, renderer);
-//        JFreeChart chart = new JFreeChart("Unit Price", JFreeChart.DEFAULT_TITLE_FONT, plot, false);
-//        return chart;
-//    }
     public void createReportSpectrum(XYDataset set1, XYDataset set2, JPanel panel) {
 
         panel.removeAll();
@@ -387,7 +346,7 @@ public class CheckList extends javax.swing.JFrame {
         renderer1.setBaseItemLabelGenerator(new LabelGenerator());
         renderer1.setBaseItemLabelPaint(Color.black.darker());
 //        renderer1.setBasePositiveItemLabelPosition(new ItemLabelPosition(ItemLabelAnchor.CENTER, TextAnchor.CENTER));
-        renderer1.setBasePositiveItemLabelPosition(new ItemLabelPosition(ItemLabelAnchor.OUTSIDE6, TextAnchor.BASELINE_RIGHT, TextAnchor.BASELINE_RIGHT, -Math.PI / 2));
+//        renderer1.setBasePositiveItemLabelPosition(new ItemLabelPosition(ItemLabelAnchor.OUTSIDE6, TextAnchor.BASELINE_RIGHT, TextAnchor.BASELINE_RIGHT, -Math.PI / 2));
         renderer1.setBaseItemLabelFont(renderer1.getBaseItemLabelFont().deriveFont(14f));
         renderer1.setBaseItemLabelsVisible(true);
         renderer1.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
@@ -469,7 +428,6 @@ public class CheckList extends javax.swing.JFrame {
                         double x = set1.getXValue(sindex, iindex);
 
                         CheckList c = new CheckList();
-//                        c.setVisible(true);
 
                         String sql1 = "SET @row_number=0";
                         PreparedStatement pst1 = conn.prepareStatement(sql1);
@@ -567,17 +525,10 @@ public class CheckList extends javax.swing.JFrame {
                             } while (rs.next());
                         }
 
-//                        if (rs.next() == false) {
-//                            JOptionPane.showMessageDialog(null, "No results found!", "Error!", JOptionPane.WARNING_MESSAGE);
-//                        }else{
-//                            c.setVisible(true);
-//                        }
-                    } catch (SQLException ex) {
+         } catch (SQLException ex) {
                         Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
                     }
-
                 }
-
             }
 
             @Override
