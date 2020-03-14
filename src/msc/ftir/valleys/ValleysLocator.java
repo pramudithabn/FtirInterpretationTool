@@ -138,7 +138,6 @@ public class ValleysLocator {
         }
 
         listSize = smoothedPointList.size();
-        System.out.println("list size " + listSize);
         return smoothedPointList;
 
     }
@@ -175,7 +174,6 @@ public class ValleysLocator {
         }
 
         listSize = baselineCorrectedPointList.size();
-//        System.out.println("list size " + listSize);
         return baselineCorrectedPointList;
 
     }
@@ -1267,7 +1265,6 @@ public class ValleysLocator {
             }
 
         }
-        System.out.println("Candidate size " + peaktops.size());
         //print all
 //        for (BigDecimal name : candidates.keySet()) {
 //
@@ -1295,7 +1292,7 @@ public class ValleysLocator {
 
     public void cal_d_w_lenghts() {
 
-        System.out.println("Candidate point list size ===== " + candidates.size());
+//        System.out.println("Candidate point list size ===== " + candidates.size());
         //1. get m,c of baseline equation
         double a = MainWindow.getM();
         double b = -1;

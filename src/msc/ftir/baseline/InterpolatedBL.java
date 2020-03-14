@@ -76,7 +76,6 @@ public class InterpolatedBL {
         }
 
         listSize = originalList.size();
-        System.out.println("original size " + listSize);
         return originalList;
 
     }
@@ -110,7 +109,6 @@ public class InterpolatedBL {
 //            }
         }
 
-        System.out.println("Wavelengths size " + wavelenths.size());
         LinearInterpolator li = new LinearInterpolator(); // or other interpolator
         PolynomialSplineFunction psf = li.interpolate(x, y);
 
@@ -145,7 +143,6 @@ public class InterpolatedBL {
 
 //            }
         }
-        System.out.println("Wavelengths size " + wavelenths.size());
 
         SplineInterpolator li = new SplineInterpolator(); // or other interpolator
         PolynomialSplineFunction psf = li.interpolate(x, y);

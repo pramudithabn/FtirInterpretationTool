@@ -371,7 +371,6 @@ public class MainWindow extends javax.swing.JFrame {
         peakButton = new javax.swing.JButton();
         clearButton = new javax.swing.JButton();
         searchDatabaseButton = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         filePathText = new javax.swing.JTextField();
         openButton = new javax.swing.JButton();
@@ -1640,17 +1639,6 @@ public class MainWindow extends javax.swing.JFrame {
         });
         jToolBar.add(searchDatabaseButton);
 
-        jButton1.setText("No Band Analysis");
-        jButton1.setFocusable(false);
-        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-        jToolBar.add(jButton1);
-
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
         openButton.setText("Open");
@@ -1666,7 +1654,7 @@ public class MainWindow extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(filePathText, javax.swing.GroupLayout.DEFAULT_SIZE, 493, Short.MAX_VALUE)
+                .addComponent(filePathText, javax.swing.GroupLayout.DEFAULT_SIZE, 582, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(openButton, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -2257,8 +2245,7 @@ public class MainWindow extends javax.swing.JFrame {
         } else {
             JOptionPane.showMessageDialog(null, "Error!", "Error", JOptionPane.ERROR_MESSAGE);
         }
-
-
+        performNoBandAnalysis();
     }//GEN-LAST:event_predictButtonActionPerformed
 
     private void fivepointsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fivepointsMouseClicked
@@ -2958,22 +2945,6 @@ public class MainWindow extends javax.swing.JFrame {
             setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         }
     }//GEN-LAST:event_exitMenuItemActionPerformed
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        //performNoBandAnalysis();
-
-        try {
-
-            OutputStream out = new FileOutputStream("pic.png");
-            ChartUtilities.writeChartAsPNG(out,
-                    duelchart,
-                    comPanel.getWidth(),
-                    comPanel.getHeight());
-
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(null, ex);
-        }
-    }//GEN-LAST:event_jButton1ActionPerformed
 
     private void sgfSliderMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sgfSliderMouseReleased
         specTabbedPane.setSelectedIndex(1);
@@ -5549,9 +5520,9 @@ public class MainWindow extends javax.swing.JFrame {
             JDBCXYDataset dataset = new JDBCXYDataset(conn, query1);
 
             RegressionBL bc1 = new RegressionBL();
-            System.out.println("===== Baseline Equation =====");
+//            System.out.println("===== Baseline Equation =====");
             bc1.drawRegressionLine(duelchart, dataset, lowerBoundX, upperBoundX);
-            System.out.println("=============================");
+//            System.out.println("=============================");
             c = bc1.getC1();
             m = bc1.getM1();
 
@@ -6392,7 +6363,6 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JTextField headerField;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JCheckBox interactiveBox;
-    private javax.swing.JButton jButton1;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox10;
     private javax.swing.JCheckBox jCheckBox2;

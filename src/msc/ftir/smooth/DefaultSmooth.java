@@ -118,7 +118,6 @@ public class DefaultSmooth {
         }
 
         listSize = rowDataList.size();
-//        System.out.println("Original size = "+listSize);
         return rowDataList;
 
     }
@@ -146,9 +145,6 @@ public class DefaultSmooth {
 
         }
         avgPointList.add(last);
-//        System.out.println("Avg list size = "+avgPointList.size());
-//        System.out.println("Point avg calculated ");
-
     }
 
     public void loadAvgDataTable() throws SQLException {

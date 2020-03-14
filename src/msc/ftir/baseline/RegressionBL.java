@@ -290,7 +290,7 @@ public class RegressionBL {
         // fitted to the inputData using ordinary least squares regression.
         // a - regressionParameters[0], c1 - regressionParameters[1]
         double regressionParameters[] = Regression.getOLSRegression(inputData, 0);
-        System.out.println("y = " + regressionParameters[1] + "*x + " + regressionParameters[0]);
+//        System.out.println("y = " + regressionParameters[1] + "*x + " + regressionParameters[0]);
         m1 = regressionParameters[1];
         c1 = regressionParameters[0];
         // Prepare a line function using the found parameters

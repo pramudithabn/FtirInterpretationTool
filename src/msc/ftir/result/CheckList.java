@@ -202,8 +202,9 @@ public class CheckList extends javax.swing.JFrame {
                 String s1,s2,mu;
                    s1 = rs.getString("Bond");
                    s2 = rs.getString("Label");
-                   mu = "\u03C5";
-                   s = mu +" "+s1 +" "+s2;
+                   mu = "V";
+//                   s = rs.getString("Vib. Mode/ Bond");
+                   s = mu +"-"+s1 +"-"+s2;
                 
             }
 
@@ -346,8 +347,9 @@ public class CheckList extends javax.swing.JFrame {
         renderer1.setBaseItemLabelGenerator(new LabelGenerator());
         renderer1.setBaseItemLabelPaint(Color.black.darker());
 //        renderer1.setBasePositiveItemLabelPosition(new ItemLabelPosition(ItemLabelAnchor.CENTER, TextAnchor.CENTER));
-//        renderer1.setBasePositiveItemLabelPosition(new ItemLabelPosition(ItemLabelAnchor.OUTSIDE6, TextAnchor.BASELINE_RIGHT, TextAnchor.BASELINE_RIGHT, -Math.PI / 2));
-        renderer1.setBaseItemLabelFont(renderer1.getBaseItemLabelFont().deriveFont(14f));
+        renderer1.setBasePositiveItemLabelPosition(new ItemLabelPosition(ItemLabelAnchor.OUTSIDE6, TextAnchor.BASELINE_RIGHT, TextAnchor.BASELINE_RIGHT, -Math.PI / 2));
+//        renderer1.setBaseItemLabelFont(renderer1.getBaseItemLabelFont().deriveFont(14f));
+        renderer1.setBaseItemLabelFont(new Font("Palatino Linotype",Font.PLAIN,14));
         renderer1.setBaseItemLabelsVisible(true);
         renderer1.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
 
