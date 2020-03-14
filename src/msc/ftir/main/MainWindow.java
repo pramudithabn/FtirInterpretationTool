@@ -168,7 +168,6 @@ public class MainWindow extends javax.swing.JFrame {
     private Crosshair xCrosshair;
     private Crosshair yCrosshair;
     private CrosshairOverlay crosshairOverlay;
-//    private int row = 1;
 
     private boolean clicked = false;
     private NavigableMap<BigDecimal, BigDecimal> peaktops = null;
@@ -210,9 +209,6 @@ public class MainWindow extends javax.swing.JFrame {
         this.algorithm = algorithm;
     }
 
-    /**
-     * Creates new form HelloWorld
-     */
     public MainWindow() {
 
         initComponents();
@@ -222,15 +218,6 @@ public class MainWindow extends javax.swing.JFrame {
         ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("msc/ftir/images/logoFTIR.png"));
         setIconImage(icon.getImage());
 
-        // Screen size
-//        Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-//
-//// Screen insets
-//        Insets insets = Toolkit.getDefaultToolkit().getScreenInsets(getGraphicsConfiguration());
-//
-//// Get the real width/height
-//        int width = screen.getWidth() - insets.left - insets.right;
-//        int height = screen.getHeight() - insets.top - insets.bottom;
         conn = Javaconnect.ConnecrDb();
         clearAll();
 
@@ -2000,13 +1987,6 @@ public class MainWindow extends javax.swing.JFrame {
             }
             if (smAlgoCombo.getSelectedItem().equals("Triangular Smoothing")) {
                 algorithm = 3;
-//                pointsbuttonGroup.clearSelection();
-//                threepoints.setEnabled(false);
-////                fivepoints.setSelected(true);
-//                fivepoints.setEnabled(true);
-//                sevenpoints.setEnabled(false);
-//                ninepoints.setEnabled(false);
-//                changeValueText.setEnabled(true);
                 pointsbuttonGroup.clearSelection();
                 changeValueText.setEnabled(true);
                 sgfSlider.setEnabled(false);
@@ -2095,13 +2075,6 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_smAlgoComboActionPerformed
 
     private void resetSmoothButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetSmoothButtonActionPerformed
-//        if (smAlgoCombo.getSelectedItem().toString().equalsIgnoreCase("Unweighted Sliding Average ")) {
-//            filterPassLabel.setText(null);
-//            ls = SlidingAvgSmoothSingleton.getInstance();
-//            ls.reverse();
-//            createSmoothed_spectrum(ls.originalPoints, ls.smoothedPoints);
-//            smoothningSlider.setValue(1);
-
         filterPassLabel.setText(null);
         smoothningSlider.setValue(1);
         sliderValuesList.clear();
@@ -2126,25 +2099,6 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_resetSmoothButtonActionPerformed
 
     private void searchDatabaseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchDatabaseButtonActionPerformed
-//        try {
-//
-//            System.out.println(" intpol.getY()  " + intpol.getY());
-//            //select only zero transmittance data
-//            String query1 = "select WAVENUMBER, TRANSMITTANCE from baseline_data where transmittance = " + intpol.getY();
-//            JDBCXYDataset dataset = new JDBCXYDataset(conn, query1);
-//
-//            RegressionBL bc1 = new RegressionBL();
-//            bc1.drawRegressionLine(duelchart, dataset, lowerBoundX, upperBoundX);
-////            System.out.println("Flat Line   y = " + bc1.getM1() + "*x + " + bc1.getC1());
-//
-//        } catch (Exception e) {
-//            System.err.println(e);
-//        }
-
-//        v2.cal_d_w_lenghts();
-//        reduceMinfromAllY();
-//        measurechange();
-//        combined2Charts(createDataset(bc.getDifferencewithLine(), "Baseline Corrected"), createSmoothedDataset(), comPanel);
         LibraryFtir lb = new LibraryFtir();
         lb.setVisible(true);
         lb.setLocationRelativeTo(null);
@@ -2470,9 +2424,6 @@ public class MainWindow extends javax.swing.JFrame {
                 stopAddingButton.setEnabled(false);
                 undoButton.setEnabled(false);
                 nextButton4.setEnabled(true);
-
-//            eb = new EditBaseline();
-//            eb.setVisible(true);
                 baselineCharts(createValleyDataset(v1.getPeaktops()), createSmoothedDataset(), baselinePanel);
 //            baselineCharts(createValleyDataset(v1.getPeaktops()), createSmoothedDataset(), eb.blSpecPanel);
 
@@ -2609,78 +2560,12 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_stopAddingButtonActionPerformed
 
     private void printTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_printTableMouseClicked
-//        performThresh();
-//        DecimalFormat df = new DecimalFormat();
-//        df.setMaximumFractionDigits(3);
-//        int row = printTable.getSelectedRow();
-//
-//        //to select and unselect rows
-//        {
-//
-//            boolean val = (boolean) printTable.getValueAt(row, 4);
-//
-//            if (val == true) {
-//                printTable.setValueAt(false, row, 4);
-//            } else if (val == false) {
-//                printTable.setValueAt(true, row, 4);
-//            }
-//
-//        }
-//
-//        double w = Double.parseDouble(String.valueOf(printTable.getValueAt(row, 1)));
-//        int wv = (int) Math.round(w);
-//
-//        XYSeriesCollection dataSet0 = (XYSeriesCollection) xyplotT.getDataset(0);
-//        XYSeries series0 = dataSet0.getSeries(0);
-//        XYItemRenderer renderer1 = new MyXYBarRenderer();
-//
-//        chartPanel_com.removeOverlay(crosshairOverlay);
-//        xyplotT.removeAnnotation(pointer);
-//        xyplotT.removeAnnotation(pointer2);
-//
-//        crosshairOverlay = new CrosshairOverlay();
-//        xCrosshair = new Crosshair(Double.NaN, Color.GRAY, new BasicStroke(0f));
-//        xCrosshair.setLabelVisible(false);
-//        yCrosshair = new Crosshair(Double.NaN, Color.GRAY, new BasicStroke(0f));
-//        yCrosshair.setLabelVisible(false);
-//        crosshairOverlay.addDomainCrosshair(xCrosshair);
-//        crosshairOverlay.addRangeCrosshair(yCrosshair);
-//        chartPanel_com.addOverlay(crosshairOverlay);
-//
-//        pointer = new XYPointerAnnotation("", 0, 0, 7.0 * Math.PI / 4.0);
-//        pointer.setTipRadius(3.0);
-//        pointer.setBaseRadius(15.0);
-//        pointer.setFont(new Font("SansSerif", Font.PLAIN, 14));
-//        pointer.setPaint(Color.blue);
-//        pointer.setTextAnchor(TextAnchor.HALF_ASCENT_LEFT);
-//        pointer.setBackgroundPaint(Color.yellow);
-//
-//        // Shapes only
-//        for (Object i : series0.getItems()) {
-//            XYDataItem item = (XYDataItem) i;
-//            double x = item.getXValue();
-//            double y = item.getYValue();
-//
-//            if (Math.abs(x - wv) < 1) {
-//
-//                if (y > 0) {
-//                    pointer.setX(x);
-//                    pointer.setY(y);
-//                    pointer.setText("X = " + df.format(x) + " , Y = " + df.format(y));
-//                    xyplotT.addAnnotation(pointer);
-//                }
-//                xCrosshair.setValue(x);
-//                yCrosshair.setValue(y);
-//
-//            }
-//        }
     }//GEN-LAST:event_printTableMouseClicked
 
     private void nextButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButton6ActionPerformed
         settingsTabbedPane.setSelectedIndex(5);
 
         try {
-//            updatePrintTable();
             createReportSpectrum(createValleyDataset(v2.getCandidates()), createBaselineDataset(), comPanel);
 
         } catch (SQLException ex) {
@@ -2739,17 +2624,6 @@ public class MainWindow extends javax.swing.JFrame {
 
     private void printTableButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printTableButtonActionPerformed
         printTable();
-//        try {
-//            MessageFormat header = new MessageFormat("Report");
-//            MessageFormat footer = new MessageFormat("Page{0,number,integer}");
-//
-//            printTable.print(JTable.PrintMode.NORMAL, header, footer);
-//
-//        } catch (java.awt.print.PrinterException e) {
-//            JOptionPane.showMessageDialog(null, "Print failed!" + e.getMessage());
-//        }
-
-
     }//GEN-LAST:event_printTableButtonActionPerformed
 
     private void printChartButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printChartButtonActionPerformed
@@ -3152,41 +3026,10 @@ public class MainWindow extends javax.swing.JFrame {
     }
 
     private void fileChooser() {
-
-////        JFileChooser chooser = new MyFileChooser();
-//        JFileChooser chooser = Utils.getFileChooser();
-//        int returnVal = chooser.showOpenDialog(this);
-//        if (returnVal == JFileChooser.APPROVE_OPTION) {
-//            Utils.setLastDir(chooser.getSelectedFile());
-//
-//        }
-////        File workingDirectory = new File(System.getProperty("user.home"));
-////        chooser.setCurrentDirectory(workingDirectory);
-//
-////        chooser.setSelectedFile(workingDirectory);
-////        chooser.showOpenDialog(null);
-//        File dataFile = chooser.getSelectedFile();
-////        fileName = dataFile.getAbsolutePath();
-//        fileName = dataFile.getAbsolutePath().replace("\\", "/");
-//        filePathText.setText(fileName);
-//        p.setProperty(fileName, "Last.dir");
         try {
-
-//            System.out.println(new File(".").getAbsolutePath());
-            //get previous location
-//            FileInputStream in = new FileInputStream("src/msc/ftir/util/file.properties");
-//            Properties props = new Properties();
-//            props.load(in);
-//            String p = props.getProperty("jfilechooser.browser.filepath");
-//            in.close();
-//            JFileChooser chooser = new JFileChooser(p, null);
-//            chooser.showOpenDialog(this);
-//            FileInputStream in = new FileInputStream("src/msc/ftir/util/file.properties");
             Properties props = new Properties();
             props.load(ClassLoader.class.getResourceAsStream("/msc/ftir/util/file.properties"));
-//            props.load(in);
             String p = props.getProperty("jfilechooser.browser.filepath");
-//            in.close();
             JFileChooser chooser = new JFileChooser(p, null);
             chooser.showOpenDialog(this);
 
@@ -3202,19 +3045,8 @@ public class MainWindow extends javax.swing.JFrame {
                 //store current directory
                 File dataFile2 = chooser.getCurrentDirectory();
                 String newDirectoryLoc = dataFile2.getAbsolutePath().replace("\\", "/");
-
-//                ClassLoader classLoader = ClassLoader.class.getClassLoader();
-//                File f = new File(classLoader.getResource("src/msc/ftir/util/file.properties").getFile());
-////                FileOutputStream out = new FileOutputStream("/msc/ftir/util/file.properties");
-////                BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream("/msc/ftir/util/file.properties", false));    
                 URL url = this.getClass().getResource("/msc/ftir/util/file.properties");
                 String path = url.getPath();
-//                Writer writer = new FileWriter(path);
-
-//                Instead store the 'default' file inside the Jar. If it is changed, 
-//                store the altered file in another place. One common place is a sub-directory 
-//                of user.home. When checking for the file, first check the existence of an altered 
-//                file on the file system, and if it does not exist, load the default file.
                 OutputStream out = new FileOutputStream(path);
                 props.setProperty("jfilechooser.browser.filepath", newDirectoryLoc);
 
@@ -3229,10 +3061,6 @@ public class MainWindow extends javax.swing.JFrame {
     }
 
     private void vaidateDataFormat() {
-        //##YUNITS=%T starting line
-        //397.336096 9.683705 start point
-        //3842.201472 0.566372 end point
-
         Matcher regrexMatch = null;
 //        String point = "\\d{3,4}\\.\\d{6}\\s\\d{1,2}\\.\\d{6}\\s"; //[0-9]{3,4}\\.[0-9]{6}\\s[0-9]{1,2}\\.[0-9]{6}
 //       String point = "\\d{3,4}\\.\\d{5,6}[ \\t]\\d{1,2}\\.\\d{5,6}[ \\t]*"; //for DPT,txt as well
@@ -3310,20 +3138,6 @@ public class MainWindow extends javax.swing.JFrame {
 
             return false;
         }
-        /*
-        String filetype = "(?:[\\w]\\:|\\\\)(\\\\[a-zA-Z_\\-\\s0-9\\.]+)+\\.(txt|CSV|csv|dpt|xls|xlsx)";
-        Pattern fileExtPattern = Pattern.compile(filetype);
-
-        Matcher mtch = fileExtPattern.matcher(fileName);
-        if (mtch.matches()) {
-
-            System.out.println(fileName);
-            System.out.println(mtch.matches());
-            return true;
-
-        } else {
-            return false;
-        }*/
     }
 
     private void upload() {
@@ -3396,43 +3210,6 @@ public class MainWindow extends javax.swing.JFrame {
                 pst.executeUpdate();
                 numLines++;
 
-                /*
-                //Make sure the line is not null, not empty, and contains valid data format
-                if (!line.equals("") && line.matches("\\d{3,4}\\.\\d{5,6}(\\,|[ \\t])\\d{1,2}\\.\\d{5,6}(\\,|[ \\t]*)")) {
-
-                    String cvsfiletype = "(?:[\\w]\\:|\\\\)(\\\\[a-zA-Z_\\-\\s0-9\\.]+)+\\.(csv)";
-                    String txtfiletype = "(?:[\\w]\\:|\\\\)(\\\\[a-zA-Z_\\-\\s0-9\\.]+)+\\.(txt)";
-                    String xlsfiletype = "(?:[\\w]\\:|\\\\)(\\\\[a-zA-Z_\\-\\s0-9\\.]+)+\\.(xls|xlsx)";
-                    String docfiletype = "(?:[\\w]\\:|\\\\)(\\\\[a-zA-Z_\\-\\s0-9\\.]+)+\\.(doc|docx)";
-                    String dptfiletype = "(?:[\\w]\\:|\\\\)(\\\\[a-zA-Z_\\-\\s0-9\\.]+)+\\.(dpt)";
-
-                    Pattern fileExtPatternCVS = Pattern.compile(cvsfiletype);
-                    Pattern fileExtPatternTXT = Pattern.compile(txtfiletype);
-                    Pattern fileExtPatternXLS = Pattern.compile(xlsfiletype);
-                    Pattern fileExtPatternDOC = Pattern.compile(docfiletype);
-                    Pattern fileExtPatternDPT = Pattern.compile(dptfiletype);
-
-                    Matcher mtch1 = fileExtPatternCVS.matcher(fileName);
-                    Matcher mtch2 = fileExtPatternTXT.matcher(fileName);
-                    Matcher mtch3 = fileExtPatternXLS.matcher(fileName);
-                    Matcher mtch4 = fileExtPatternDOC.matcher(fileName);
-                    Matcher mtch5 = fileExtPatternDPT.matcher(fileName);
-
-                    //if the file is CVS
-                    if (mtch1.matches()) {
-                        value = line.split(","); //if the file is CVS
-                    } //if the file is text
-                    else if (mtch2.matches()) {
-                        value = line.split("\\s+"); //whitespace regex TXT
-                    } else if (mtch5.matches()) {
-                        value = line.split("\\s+"); //whitespace regex DPT
-                    } 
-
-                    String sql = "insert into input_data (WAVENUMBER , TRANSMITTANCE)" + "values ('" + value[0] + "','" + value[1] + "')";
-                    pst = conn.prepareStatement(sql);
-                    pst.executeUpdate();
-                }
-                 */
             }
             System.out.print("Uploaded\t");
             System.out.println(numLines + " lines");
@@ -3712,9 +3489,6 @@ public class MainWindow extends javax.swing.JFrame {
             comPanel.revalidate();
             comPanel.repaint();
 
-//            specTabbedPane.removeAll();
-//            specTabbedPane.revalidate();
-//            specTabbedPane.repaint();
         } catch (Exception e) {
             System.out.println(e);
         } finally {
@@ -3789,51 +3563,6 @@ public class MainWindow extends javax.swing.JFrame {
 
         updateInputDataTable();
 
-        /* String value = " ";
-        validateFileType();
-
-        try {
-
-            switch (fileType) {
-                case CSV:
-                    value = ",";//for cvs
-                    break;
-                case TXT:
-
-//                    uploadTxt();
-//                    value = " ";//for txt    
-//                    value = "\\s+";//for txt
-//                    value = "[:space:]";
-                    break;
-                case DPT:
-                    value = "\t"; //for DPT
-                }
-
-            String qry = "LOAD DATA LOCAL INFILE '" + fileName + "' INTO TABLE input_data FIELDS TERMINATED BY '" + value + "' LINES TERMINATED BY '\\r\\n' (wavenumber, transmittance)";
-
-            pst = conn.prepareStatement(qry);
-            pst.executeUpdate();
-
-            update_table();
-        } catch (Exception e) {
-            System.out.println(e);
-        } finally {
-
-            pst.close();
-        }
-
-        //Delete out of range data 0
-        try {
-            String qrydel = "DELETE FROM input_data WHERE wavenumber < 399 ";
-            pst = conn.prepareStatement(qrydel);
-            pst.executeUpdate();
-            update_table();
-        } catch (Exception e) {
-            System.err.println(e);
-        } finally {
-
-            pst.close();
-        }*/
     }
 
     public void readAbsFile() throws FileNotFoundException, IOException, SQLException {
@@ -3890,40 +3619,6 @@ public class MainWindow extends javax.swing.JFrame {
         } catch (Exception e) {
             System.err.println(e);
         }
-
-        /*String value = " ";
-//        validateFileType();
-
-        try {
-
-            switch (fileType) {
-                case CSV:
-                    value = ",";//for cvs
-                    break;
-                case TXT:
-                    value = " ";//for txt
-                    break;
-                case DPT:
-                    value = "\t"; //for DPT
-                }
-
-            String qry = "LOAD DATA LOCAL INFILE '" + fileName + "' INTO TABLE abs_data FIELDS TERMINATED BY '" + value + "' LINES TERMINATED BY '\\r\\n' (wavenumber, transmittance)";
-
-//            String qrydel = "DELETE FROM input_data WHERE wavenumber = 0.00000000";
-//            System.out.println(qry);
-            pst = conn.prepareStatement(qry);
-            pst.executeUpdate();
-
-//            pst = conn.prepareStatement(qrydel);
-//            pst.executeUpdate();
-            update_table();
-
-        } catch (Exception e) {
-            System.out.println(e);
-        } finally {
-
-            pst.close();
-        }*/
     }
 
     public void createDuel(XYDataset set1, XYDataset set2, JPanel panel) {
@@ -3979,16 +3674,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         renderer1.setSeriesShape(0, new Ellipse2D.Double(-3, -3, 6, 6));
 
-//        Shape cross = ShapeUtilities.createDiagonalCross(3, 1);
-//        Shape cross = ShapeUtilities.createDiagonalCross(3, 1);
-//        plot = (XYPlot) duelchart.getPlot();
-//        renderer1 = plot.getRenderer();
-//        renderer1.setSeriesShape(0, cross);
-//        duelchart.setAutoRangeIncludesZero(false);
-        //to retain zoom
-//        chartPanel_com.setMouseWheelEnabled(true);
-//        chartPanel_com.setHorizontalAxisTrace(true);
-//        chartPanel_com.setVerticalAxisTrace(true);
+
         crosshairOverlay = new CrosshairOverlay();
         xCrosshair = new Crosshair(Double.NaN, Color.GRAY, new BasicStroke(0f));
         xCrosshair.setLabelVisible(false);
@@ -4128,10 +3814,6 @@ public class MainWindow extends javax.swing.JFrame {
                         xyplotT.removeAnnotation(pointer2);
                         chartPanel_com.removeOverlay(crosshairOverlay);
                     }
-
-//                    chartPanel_com.setMouseWheelEnabled(true);
-//                    chartPanel_com.setHorizontalAxisTrace(true);
-//                    chartPanel_com.setVerticalAxisTrace(true);
                 }
 
             }
@@ -4306,7 +3988,7 @@ public class MainWindow extends javax.swing.JFrame {
                         String sql1 = "SET @row_number=0";
                         PreparedStatement pst1 = conn.prepareStatement(sql1);
                         ResultSet rst = pst1.executeQuery();
-                        
+
                         String sql = "SELECT (@row_number:=@row_number + 1) As 'No.', round(`WAVENUMBER`,0) AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group',LIB_INDEX AS 'Lib. Index' from result where wavenumber = " + x;
                         pst = conn.prepareStatement(sql);
                         rs = pst.executeQuery();
@@ -4546,64 +4228,6 @@ public class MainWindow extends javax.swing.JFrame {
         panel.setPreferredSize(new Dimension(654, 350));
         panel.setVisible(true);
 
-//        chartPanel.addChartMouseListener(new ChartMouseListener() {
-//
-//            XYSeriesCollection dataset = new XYSeriesCollection();
-//            XYSeries series1 = new XYSeries("Baseline");
-//
-//            @Override
-//            public void chartMouseClicked(ChartMouseEvent event) {
-//
-//                int f, l;
-//                ChartEntity entity = event.getEntity();
-//
-////                resultTable.getSelectionModel().clearSelection();
-//                if (entity != null && entity instanceof XYItemEntity) {
-////                    chartPanel.setCursor(new Cursor(Cursor.MOVE_CURSOR));
-//                    XYItemEntity ent = (XYItemEntity) entity;
-//
-//                    int sindex = ent.getSeriesIndex();
-//                    int iindex = ent.getItem();
-//
-//                    double x = Math.round(set1.getXValue(sindex, iindex));
-//                    double y = Math.round(set1.getYValue(sindex, iindex));
-//
-//                    DecimalFormat df = new DecimalFormat();
-//                    df.setMaximumFractionDigits(2);
-//
-//                    System.out.println("x = " + x);
-//                    System.out.println("y = " + y);
-//
-//                    DefaultTableModel model = (DefaultTableModel) pointsTable.getModel();
-//                    model.addRow(new Object[]{row, df.format(x), df.format(y)});
-//
-//                    series1.add(x, y);
-//                    dataset.addSeries(series1);
-//                    
-//                    row++;
-//                    
-//                    
-//
-//                }
-//
-//            }
-//
-//            @Override
-//            public void chartMouseMoved(ChartMouseEvent event) {
-//                ChartEntity entity = event.getEntity();
-//                if (entity != null && entity instanceof XYItemEntity && clicked == true) {
-//                    chartPanel.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
-//                }
-//
-//                if (!(entity instanceof XYItemEntity)) {
-//
-//                    chartPanel_com.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-//                }
-//                if (clicked == false) {
-//                    chartPanel_com.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-//                }
-//            }
-//        });
     }
 
     public void baselineCharts(XYDataset set1, XYDataset set2, JPanel panel) {

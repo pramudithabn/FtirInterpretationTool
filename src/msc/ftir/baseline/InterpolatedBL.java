@@ -185,7 +185,6 @@ public class InterpolatedBL {
             wavelenths.add(BigDecimal.valueOf(w));
 //            }
         }
-        System.out.println("wavelength size  " + wavelenths.size());
 
         AkimaSplineInterpolator li = new AkimaSplineInterpolator(); // or other interpolator
         PolynomialSplineFunction psf = li.interpolate(x, y);
@@ -197,7 +196,6 @@ public class InterpolatedBL {
 
             interpolatedDataset.put(wavelenths.get(i), BigDecimal.valueOf(yi[i]));
         }
-        System.out.println("interpolatedDataset.size " + interpolatedDataset.size());
        
         return interpolatedDataset;
     }
