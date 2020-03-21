@@ -25,7 +25,6 @@ import java.text.DecimalFormat;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -33,10 +32,8 @@ import javax.swing.JTable;
 import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 import msc.ftir.main.Javaconnect;
 import msc.ftir.main.MainWindow;
-import net.proteanit.sql.DbUtils;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
@@ -173,9 +170,7 @@ public class CheckList extends javax.swing.JFrame {
             boolean v = (boolean) resultListTable.getValueAt(p, 5);
             if (v == true) {
                 r = p;
-
             }
-
         }
 
         String data1 = (String) resultListTable.getValueAt(r, 1);
@@ -204,7 +199,7 @@ public class CheckList extends javax.swing.JFrame {
                    s2 = rs.getString("Label");
                    mu = "V";
 //                   s = rs.getString("Vib. Mode/ Bond");
-                   s = mu +"-"+s1 +"-"+s2;
+                   s = mu +"[ "+s1 +" "+s2+" ]";
                 
             }
 
@@ -349,7 +344,7 @@ public class CheckList extends javax.swing.JFrame {
 //        renderer1.setBasePositiveItemLabelPosition(new ItemLabelPosition(ItemLabelAnchor.CENTER, TextAnchor.CENTER));
         renderer1.setBasePositiveItemLabelPosition(new ItemLabelPosition(ItemLabelAnchor.OUTSIDE6, TextAnchor.BASELINE_RIGHT, TextAnchor.BASELINE_RIGHT, -Math.PI / 2));
 //        renderer1.setBaseItemLabelFont(renderer1.getBaseItemLabelFont().deriveFont(14f));
-        renderer1.setBaseItemLabelFont(new Font("Palatino Linotype",Font.PLAIN,14));
+        renderer1.setBaseItemLabelFont(new Font("Palatino Linotype",Font.PLAIN,12));
         renderer1.setBaseItemLabelsVisible(true);
         renderer1.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
 

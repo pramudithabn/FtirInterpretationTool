@@ -1,6 +1,5 @@
 package msc.ftir.main;
 
-import static com.oracle.jrockit.jfr.ContentType.Class;
 import java.awt.BasicStroke;
 import msc.ftir.baseline.InterpolatedBL;
 import msc.ftir.valleys.ValleysLocator;
@@ -12,25 +11,14 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.Shape;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
-import java.awt.print.Book;
 import java.awt.print.PageFormat;
-import java.awt.print.Paper;
-import java.awt.print.Printable;
-import static java.awt.print.Printable.NO_SUCH_PAGE;
-import static java.awt.print.Printable.PAGE_EXISTS;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
-import java.io.BufferedOutputStream;
 import net.proteanit.sql.DbUtils;
 import java.io.BufferedReader;
 import java.io.File;
@@ -42,10 +30,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import javax.swing.JFileChooser;
-import javax.swing.table.TableCellRenderer;
 import java.sql.*;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
@@ -77,11 +62,6 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import java.util.Properties;
-import javax.print.attribute.HashPrintRequestAttributeSet;
-import javax.print.attribute.standard.MediaPrintableArea;
-import javax.print.attribute.standard.OrientationRequested;
-import javax.print.attribute.standard.Sides;
-import javax.swing.JTable.PrintMode;
 import javax.swing.table.DefaultTableCellRenderer;
 import msc.ftir.library.LibraryFtir;
 import msc.ftir.result.Predict;
@@ -102,13 +82,6 @@ import msc.ftir.baseline.EditBaseline;
 import msc.ftir.result.CheckBoxRenderer;
 import msc.ftir.result.CheckList;
 import msc.ftir.result.LabeledXYDataset;
-import msc.ftir.result.PrintMultiPageUtil;
-import msc.ftir.result.PrintPreview;
-import msc.ftir.result.Printer;
-import org.jfree.chart.labels.StandardXYToolTipGenerator;
-import org.jfree.util.ShapeUtilities;
-import msc.ftir.print.PrintableWrapper;
-import org.jfree.chart.ChartUtilities;
 
 
 /*
@@ -1165,7 +1138,7 @@ public class MainWindow extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Bond", "Functional Group"
+
             }
         ));
         resultTable.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -1825,27 +1798,7 @@ public class MainWindow extends javax.swing.JFrame {
         try {
 
             v1.peakTopSet();
-//        ml.cal_Minimas(0);
-
-//            switch (algorithm) {
-//                case 1:
-//                    ds = DefaultSmooth.getInstance();
             createDuel(createDataset(v1.peakTopSet(), fileName), createSmoothedDataset(), comPanel);
-//                    break;
-//                case 2:
-////                    ls = SlidingAvgSmoothSingleton.getInstance();
-//                    createDuel(ml.createDataset(), createSmoothedDataset(), comPanel);
-//                    break;
-//                case 3:
-////                    tri = TriangularSmoothSingleton.getInstance();
-//                    createDuel(ml.createDataset(), createSmoothedDataset(), comPanel);
-//                    break;
-//                case 4:
-////                    sgf = SavitzkyGolayFilterSingleton.getInstance();
-//                    createDuel(ml.createDataset(), createSmoothedDataset(), comPanel);
-//                    break;
-//
-//            }
         } catch (SQLException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -1927,8 +1880,6 @@ public class MainWindow extends javax.swing.JFrame {
         smoothPanel.removeAll();
         smoothPanel.revalidate();
         smoothPanel.repaint();
-//        createSmoothed_spectrum(ls.rowDataList, ls.avgPointList); //could be used to show graph of selected section only
-//        ls.updateSmoothedValue();
         switch (MainWindow.getAlgorithm()) {
             case 1:
                 DefaultSmooth df = new DefaultSmooth();
@@ -1936,25 +1887,19 @@ public class MainWindow extends javax.swing.JFrame {
                 generate_spectrum(smoothPanel, "avg_data");
                 break;
             case 2:
-//                SlidingAvgSmooth_Selection sl = new SlidingAvgSmooth_Selection();
                 sl = SlidingAvgSmooth_Selection.getInstance();
                 sl.smooth_selected_section();
                 generate_spectrum(smoothPanel, "avg_data");
                 break;
             case 3:
-//                TriangularSmooth_Selection ts = new TriangularSmooth_Selection();
                 ts = TriangularSmooth_Selection.getInstance();
                 ts.smooth_selected_section();
                 generate_spectrum(smoothPanel, "avg_data");
-                //
                 break;
 
             case 4:
-//                TriangularSmooth_Selection ts = new TriangularSmooth_Selection();
                 sgf = SavitzkyGolayFilterSingleton.getInstance();
-//                sgf.smooth_selected_section();
                 generate_spectrum(smoothPanel, "avg_data");
-                //
                 break;
         }
     }//GEN-LAST:event_smootheSelectionActionPerformed
@@ -1962,11 +1907,9 @@ public class MainWindow extends javax.swing.JFrame {
 
         if ((smAlgoCombo.getSelectedItem().toString().equalsIgnoreCase("Select..."))) {
             inputvalidity = false;
-//            val_label1.setText("* Invaild!");
         }
         if (!threepoints.isSelected() && !fivepoints.isSelected() && !sevenpoints.isSelected() && !ninepoints.isSelected()) {
             inputvalidity = false;
-//            val_label2.setText("* Invalid!");
         }
         return inputvalidity;
     }
@@ -2011,7 +1954,6 @@ public class MainWindow extends javax.swing.JFrame {
                 npoints.setEnabled(false);
             } else if (smAlgoCombo.getSelectedItem().equals("Savitzky-Golay Filter")) {
                 algorithm = 4;
-//                threepoints.setSelected(true);
                 pointsbuttonGroup.clearSelection();
                 threepoints.setEnabled(false);
                 fivepoints.setEnabled(false);
@@ -2022,7 +1964,6 @@ public class MainWindow extends javax.swing.JFrame {
                 npoints.setEnabled(true);
             } else if (smAlgoCombo.getSelectedItem().equals("None")) {
                 algorithm = 5;
-//                threepoints.setSelected(false);
                 pointsbuttonGroup.clearSelection();
                 threepoints.setEnabled(false);
                 fivepoints.setEnabled(false);
@@ -2135,11 +2076,9 @@ public class MainWindow extends javax.swing.JFrame {
         sliderCurrentValue = smoothningSlider.getValue();
 
         if (sliderCurrentValue < sliderPreviousValue) {
-//            System.out.println("Decreasing.");
             reverseSmooth();
 
         } else if (sliderCurrentValue > sliderPreviousValue) {
-//            System.out.println("Increaseing.");
             performSmooth();
         }
 
@@ -2153,14 +2092,9 @@ public class MainWindow extends javax.swing.JFrame {
 
     private void threshSlider1MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_threshSlider1MouseReleased
         threshCurrent = threshSlider1.getValue();
-//        ragneMarker();
-
         if (threshCurrent < threshPrevious) {
-
             reverseThresh();
-
         } else if (threshCurrent > threshPrevious) {
-
             performThresh();
         }
 
@@ -2381,17 +2315,32 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_jCheckBox1ActionPerformed
 
     private void deselectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deselectButtonActionPerformed
-        jCheckBox1.setSelected(false);
-        jCheckBox2.setSelected(false);
-        jCheckBox3.setSelected(false);
-        jCheckBox4.setSelected(false);
-        jCheckBox5.setSelected(false);
-        jCheckBox6.setSelected(false);
-        jCheckBox7.setSelected(false);
-        jCheckBox8.setSelected(false);
-        jCheckBox9.setSelected(false);
-        jCheckBox10.setSelected(false);
+        try {
+            jCheckBox1.setSelected(false);
+            jCheckBox2.setSelected(false);
+            jCheckBox3.setSelected(false);
+            jCheckBox4.setSelected(false);
+            jCheckBox5.setSelected(false);
+            jCheckBox6.setSelected(false);
+            jCheckBox7.setSelected(false);
+            jCheckBox8.setSelected(false);
+            jCheckBox9.setSelected(false);
+            jCheckBox10.setSelected(false);
 
+            String sql1 = "SET @row_number=0";
+            PreparedStatement pst1 = conn.prepareStatement(sql1);
+            ResultSet rst = pst1.executeQuery();
+
+            String sql = "SELECT (@row_number:=@row_number + 1) As 'No.', round(`WAVENUMBER`,0) AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group',LIB_INDEX AS 'Lib. Index' FROM `result` WHERE COMPOUND_CATEGORY IN ('')";
+            pst = conn.prepareStatement(sql);
+            rs = pst.executeQuery();
+
+            if (rs.next() == false) {
+                resultTable.setModel(DbUtils.resultSetToTableModel(rs));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_deselectButtonActionPerformed
 
     private void selectAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectAllButtonActionPerformed
@@ -2781,31 +2730,58 @@ public class MainWindow extends javax.swing.JFrame {
 
     private void openButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openButtonActionPerformed
 
-        //1. select file to upload/ removed this from upload
-        fileChooser();
+        try {
+            String sql = "SELECT * from input_data";
+            pst = conn.prepareStatement(sql);
+            rs = pst.executeQuery();
 
-        class MyWorker extends SwingWorker<String, Void> {
+            if (rs.next() == false) {
+                //1. select file to upload/ removed this from upload
+                fileChooser();
+                class MyWorker extends SwingWorker<String, Void> {
 
-            protected String doInBackground() {
-                progressBar.setVisible(true);
-                loadingText.setVisible(true);
-//                progressBar.setIndeterminate(true);
-                uploadFile();
-//                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-//                Calendar cal = Calendar.getInstance();
-//                
-//                footnoteTextArea.setText("Timestamp: "+dateFormat.format(cal.getTime())+"\n Upload Completed.");
+                    protected String doInBackground() {
+                        progressBar.setVisible(true);
+                        loadingText.setVisible(true);
+                        uploadFile();
+                        return "Done";
+                    }
+                    protected void done() {
+                        progressBar.setVisible(false);
+                        loadingText.setVisible(false);
+                    }
+                }
+                new MyWorker().execute();
+            } else {
+                int confirmed = JOptionPane.showConfirmDialog(null,
+                        "Do you want to start a new session?", "Exit",
+                        JOptionPane.YES_NO_OPTION);
 
-                return "Done";
+                if (confirmed == JOptionPane.YES_OPTION) {
+                    //1. select file to upload/ removed this from upload
+                    fileChooser();
+                    clearAll();
+                    class MyWorker extends SwingWorker<String, Void> {
+                        protected String doInBackground() {
+                            progressBar.setVisible(true);
+                            loadingText.setVisible(true);
+                            uploadFile();
+                            return "Done";
+                        }
+                        protected void done() {
+                            progressBar.setVisible(false);
+                            loadingText.setVisible(false);
+                        }
+                    }
+                    new MyWorker().execute();
+                } else {
+                    setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+                }
+
             }
-
-            protected void done() {
-                progressBar.setVisible(false);
-                loadingText.setVisible(false);
-            }
+        } catch (SQLException ex) {
+            System.err.println(ex);
         }
-
-        new MyWorker().execute();
     }//GEN-LAST:event_openButtonActionPerformed
 
     private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
@@ -3093,10 +3069,8 @@ public class MainWindow extends javax.swing.JFrame {
             }
             br.close();
 
-            System.out.println("Invalid inputs found!");
             if (invalid_input > 0) {
 
-//                String msg = "Data format errors are found at line #" + Arrays.toString(errorLine.toArray());
                 String msg = "Data format errors found!";
                 JOptionPane optionPane = new JOptionPane();
                 optionPane.setMessage(msg);
@@ -3106,7 +3080,6 @@ public class MainWindow extends javax.swing.JFrame {
                 dataformatvalidity = false;
 
             } else {
-//                System.out.println("Data format is correct!");
                 dataformatvalidity = true;
 
             }
@@ -3133,8 +3106,6 @@ public class MainWindow extends javax.swing.JFrame {
             fileType = FileType.DPT;
             return true;
         } else {
-//            JOptionPane.showMessageDialog(null, "Please select a valid file!", "Error", JOptionPane.ERROR_MESSAGE);
-//                System.exit(0);
 
             return false;
         }
@@ -3149,9 +3120,6 @@ public class MainWindow extends javax.swing.JFrame {
             String line;
             String[] value = null;
             int numLines = 0;
-
-//            && line.matches("\\d{3,4}\\.\\d{5,6}(\\,|[ \\t])\\d{1,2}\\.\\d{5,6}(\\,|[ \\t]*)")
-//              && line.matches("[^#].*")
             while ((line = br.readLine()) != null) {
 
                 if (line.startsWith(commentChar) | line.equals("") | line.contains("[a-zA-Z]+")) {
@@ -3191,13 +3159,11 @@ public class MainWindow extends javax.swing.JFrame {
                             String sql = "INSERT INTO input_data (wavenumber, transmittance) VALUES('" + wavenumber + "','" + transmittance + "')";
                             pst = conn.prepareStatement(sql);
                             pst.execute();
-//                            System.out.println("Import rows " + i);
                         }
                         conn.commit();
                         pst.close();
                         conn.close();
                         input.close();
-//                        System.out.println("Successfully imported excel to mysql table");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -3211,8 +3177,6 @@ public class MainWindow extends javax.swing.JFrame {
                 numLines++;
 
             }
-            System.out.print("Uploaded\t");
-            System.out.println(numLines + " lines");
             /*pst = conn.prepareStatement();
             pst.addBatch(sb.toString());
             pst.executeUpdate();
@@ -3505,7 +3469,6 @@ public class MainWindow extends javax.swing.JFrame {
                 System.out.println(e);
             }
         }
-//        System.out.println("All cleared");
         updateInputDataTable();
         updateResultjTable();
 
@@ -3673,7 +3636,6 @@ public class MainWindow extends javax.swing.JFrame {
         panel.setVisible(true);
 
         renderer1.setSeriesShape(0, new Ellipse2D.Double(-3, -3, 6, 6));
-
 
         crosshairOverlay = new CrosshairOverlay();
         xCrosshair = new Crosshair(Double.NaN, Color.GRAY, new BasicStroke(0f));
@@ -4807,159 +4769,115 @@ public class MainWindow extends javax.swing.JFrame {
     public void performSingeTimeSmooth() {
 
         chartPanel_com.restoreAutoBounds();
-//        System.out.println("Auto bounds restored");
-
         if (smAlgoCombo.getSelectedItem().toString().equalsIgnoreCase("Select...")) {
             JOptionPane.showMessageDialog(null, "Algorithmn Invalid!", "Error!", JOptionPane.WARNING_MESSAGE);
         }
-
         if (smAlgoCombo.getSelectedItem().toString().equalsIgnoreCase("Unweighted Sliding Average ")) {
             algorithm = 2;
             SlidingAvgSmooth ls = new SlidingAvgSmooth();
             if (threepoints.isSelected()) {
                 points = 3;
-
                 ls.cal_3point_avg();
-//                                    createSmoothed_spectrum(ls.originalPoints, ls.smoothedPoints);//old
                 try {
                     combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
-
                 } catch (SQLException ex) {
                     Logger.getLogger(MainWindow.class
                             .getName()).log(Level.SEVERE, null, ex);
                 }
-
             } else if (fivepoints.isSelected()) {
                 points = 5;
-
                 ls.cal_5point_avg();
-//                                    createSmoothed_spectrum(ls.originalPoints, ls.smoothedPoints);//old
                 try {
                     combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
-
                 } catch (SQLException ex) {
                     Logger.getLogger(MainWindow.class
                             .getName()).log(Level.SEVERE, null, ex);
                 }
-
             } else if (sevenpoints.isSelected()) {
                 points = 7;
-
                 ls.cal_7point_avg();
-//                                    createSmoothed_spectrum(ls.originalPoints, ls.smoothedPoints);//old
                 try {
                     combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
-
                 } catch (SQLException ex) {
                     Logger.getLogger(MainWindow.class
                             .getName()).log(Level.SEVERE, null, ex);
                 }
-
             } else if (ninepoints.isSelected()) {
                 points = 9;
-
                 ls.cal_9point_avg();
-//                                    createSmoothed_spectrum(ls.originalPoints, ls.smoothedPoints);//old
                 try {
                     combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
-
                 } catch (SQLException ex) {
                     Logger.getLogger(MainWindow.class
                             .getName()).log(Level.SEVERE, null, ex);
                 }
-
             }
-
         }
         if (smAlgoCombo.getSelectedItem().toString().equalsIgnoreCase("Triangular Smoothing")) {
             algorithm = 3;
             TriangularSmooth tri = new TriangularSmooth();
-
             if (threepoints.isSelected()) {
                 points = 3;
                 tri.cal_3point_avg();
-
                 try {
                     combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
-
                 } catch (SQLException ex) {
                     Logger.getLogger(MainWindow.class
                             .getName()).log(Level.SEVERE, null, ex);
                 }
-
             } else if (fivepoints.isSelected()) {
                 points = 5;
                 tri.cal_5point_avg();
-
                 try {
                     combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
-
                 } catch (SQLException ex) {
                     Logger.getLogger(MainWindow.class
                             .getName()).log(Level.SEVERE, null, ex);
                 }
-
             } else if (sevenpoints.isSelected()) {
                 points = 7;
                 tri.cal_7point_avg();
-
                 try {
                     combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
-
                 } catch (SQLException ex) {
                     Logger.getLogger(MainWindow.class
                             .getName()).log(Level.SEVERE, null, ex);
                 }
-
             } else if (ninepoints.isSelected()) {
                 points = 9;
                 tri.cal_9point_avg();
-
                 try {
                     combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
-
                 } catch (SQLException ex) {
                     Logger.getLogger(MainWindow.class
                             .getName()).log(Level.SEVERE, null, ex);
                 }
-
             }
-
         }
         if (smAlgoCombo.getSelectedItem().toString().equalsIgnoreCase("Savitzky-Golay Filter")) {
             algorithm = 4;
             SavitzkyGolayFilter sgf = new SavitzkyGolayFilter();
             if (threepoints.isSelected()) {
                 points = 3;
-
                 sgf.applyFilter_3points();
-//                                    createSmoothed_spectrum(ls.originalPoints, ls.smoothedPoints);//old
                 try {
                     combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
-
                 } catch (SQLException ex) {
                     Logger.getLogger(MainWindow.class
                             .getName()).log(Level.SEVERE, null, ex);
                 }
-
             } else if (fivepoints.isSelected()) {
                 points = 5;
-
                 sgf.applyFilter_5points();
-//                                    createSmoothed_spectrum(ls.originalPoints, ls.smoothedPoints);//old
                 try {
                     combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
-
                 } catch (SQLException ex) {
                     Logger.getLogger(MainWindow.class
                             .getName()).log(Level.SEVERE, null, ex);
                 }
-
             } else if (sevenpoints.isSelected()) {
                 points = 7;
-
                 sgf.applyFilter_7points();
-//                                    createSmoothed_spectrum(ls.originalPoints, ls.smoothedPoints);//old
                 try {
                     combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
 
@@ -4967,12 +4885,9 @@ public class MainWindow extends javax.swing.JFrame {
                     Logger.getLogger(MainWindow.class
                             .getName()).log(Level.SEVERE, null, ex);
                 }
-
             } else if (ninepoints.isSelected()) {
                 points = 9;
-
                 sgf.applyFilter_9points();
-//                                    createSmoothed_spectrum(ls.originalPoints, ls.smoothedPoints);//old
                 try {
                     combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
 
@@ -4980,13 +4895,10 @@ public class MainWindow extends javax.swing.JFrame {
                     Logger.getLogger(MainWindow.class
                             .getName()).log(Level.SEVERE, null, ex);
                 }
-
             }
-
         }
         measurechange();
         showValleys("avg_data");
-
     }
 
     private void reverseThresh() {
@@ -5233,23 +5145,6 @@ public class MainWindow extends javax.swing.JFrame {
             if (baselineMethodCombo2.getSelectedItem().toString().equalsIgnoreCase("Select...")) {
                 JOptionPane.showMessageDialog(null, "Select a point connecting method!", "Error!", JOptionPane.WARNING_MESSAGE);
             }
-//            if (baselineMethodCombo2.getSelectedItem().toString().equalsIgnoreCase("Regression")) {
-//                bc = new RegressionBL();
-////                create3charts(createSmoothedDataset(), createValleyDataset(peaktops), baselinePanel);
-//
-//                if (lineCheckBox2.isSelected()) {
-//
-//                    bc.drawRegressionLine(charts3, createValleyDataset(peaktops), lowerBoundX, upperBoundX);
-//                }
-//                if (splineCheckBox2.isSelected()) {
-//
-//                    bc.drawPolynomialFit(charts3, createValleyDataset(peaktops), lowerBoundX, upperBoundX);
-//                }
-//                combined2Charts(createDataset(bc.getLinePoints(), "Baseline"), createSmoothedDataset(), baselinePanel);
-//                //result
-//                combined2Charts(createDataset(bc.getDifferencewithLine(), "Baseline Corrected"), createSmoothedDataset(), comPanel);
-//                showValleys("baseline_data");
-//            }
             if (baselineMethodCombo2.getSelectedItem().toString().equalsIgnoreCase("Interpolation")) {
                 SortedMap<BigDecimal, BigDecimal> mapi = null;
                 InterpolatedBL intpol = new InterpolatedBL();
@@ -5272,12 +5167,6 @@ public class MainWindow extends javax.swing.JFrame {
             Logger.getLogger(MainWindow.class
                     .getName()).log(Level.SEVERE, null, ex);
         }
-
-//        baselineButton.addActionListener(new ActionListener() {
-//            public void actionPerformed(ActionEvent e) {
-//                nextButton2.setEnabled(true);
-//            }
-//        });
     }
 
     public void updateCandidateTable(NavigableMap<BigDecimal, BigDecimal> list) {
@@ -5367,7 +5256,6 @@ public class MainWindow extends javax.swing.JFrame {
 
                     case 5:
                         return Boolean.class;
-//                        return JCheckBox.class;
 
                     default:
                         return String.class;
@@ -5423,89 +5311,9 @@ public class MainWindow extends javax.swing.JFrame {
         CheckBoxRenderer checkBoxRenderer = new CheckBoxRenderer();
 
         printTable.getColumnModel().getColumn(4).setCellRenderer(checkBoxRenderer);
-//        JCheckBox check = new JCheckBox();
-//        resultTable.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(check));
-//        resultTable.getColumnModel().getColumn(4).setPreferredWidth(70);
-//        resultTable.getColumnModel().getColumn(5).setPreferredWidth(120);
-//        resultTable.getColumnModel().getColumn(6).setPreferredWidth(82);
-//        resultTable.getColumnModel().getColumn(7).setPreferredWidth(25);
-//        resultTable.getColumnModel().getColumn(3).setCellRenderer(rightRenderer);
-//        resultTable.getColumnModel().getColumn(3).setCellRenderer(redRenderer);
-
     }
 
     private void updateResultjTable() {
-
-//        Vector<Object> columnNames = new Vector<Object>();
-//        Vector<Object> data = new Vector<Object>();
-//
-//        try
-//        {
-//            //  Read data from a table
-//            String sql = "select round(`WAVENUMBER`,0) AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group' from result";
-//
-//            pst = conn.prepareStatement(sql);
-//            rs = pst.executeQuery();
-//            ResultSetMetaData md = rs.getMetaData();
-//            int columns = md.getColumnCount();
-//
-//            //  Get column names
-//            for (int i = 1; i <= columns; i++)
-//            {
-//                columnNames.addElement( md.getColumnName(i) );
-//            }
-//
-//            //  Get row data
-//            while (rs.next())
-//            {
-//                Vector<Object> row = new Vector<Object>(columns);
-//
-//                for (int i = 1; i <= columns; i++)
-//                {
-//                    row.addElement( rs.getObject(i) );
-//                }
-//
-//                data.addElement( row );
-//            }
-//
-//            rs.close();
-//            pst.close();
-//          
-//        }
-//        catch(Exception e)
-//        {
-//            System.out.println( e );
-//        }
-//
-//        //  Create table with database data
-//
-//        DefaultTableModel model = new DefaultTableModel(data, columnNames)
-//        {
-//        	@Override
-//            public Class getColumnClass(int column)
-//            {
-//                for (int row = 0; row < getRowCount(); row++)
-//                {
-//                    Object o = getValueAt(row, column);
-//
-//                    if (o != null)
-//                    {
-//                        return o.getClass();
-//                    }
-//                }
-//
-//                return Object.class;
-//            }
-//        };
-//
-////	JTable table = new JTable( model );
-//        resultTable.setModel(model);
-//        JScrollPane scrollPane = new JScrollPane( resultTable );
-//        getContentPane().add( scrollPane );
-//
-//        JPanel buttonPanel = new JPanel();
-//        getContentPane().add( buttonPanel, BorderLayout.SOUTH );
-//        TableFromDatabase();
         try {
 
             String sql1 = "SET @row_number=0";
@@ -5584,23 +5392,13 @@ public class MainWindow extends javax.swing.JFrame {
                 return Object.class;
             }
         };
-
         resultTable.setModel(model);
-//        JScrollPane scrollPane = new JScrollPane( resultTable );
-//        getContentPane().add( scrollPane );
-//
-//        JPanel buttonPanel = new JPanel();
-//        getContentPane().add( buttonPanel, BorderLayout.SOUTH );
     }
 
     private void uploadFile() {
         //1. select file and validate 
-//        fileChooser();
-
         if (validateFileType()) {
-
             try {
-
                 String[] choices = {"Transmittance", "Absorbance"};
                 String input = (String) JOptionPane.showInputDialog(null, "Select input type",
                         "Input type", JOptionPane.QUESTION_MESSAGE, null, // Use
@@ -5608,20 +5406,14 @@ public class MainWindow extends javax.swing.JFrame {
                         // icon
                         choices, // Array of choices
                         choices[0]); // Initial choice
-
                 if (input.equals("Transmittance")) {
-
                     //2.read file
                     readFile();
                     reduceMinfromAllY();
-
                     //create spectrum
                     generate_spectrum(specPanel, "input_data"); //original spectrum
-//                    generate_spectrum_seperateFrame("input_data");
                 }
-
                 if (input.equals("Absorbance")) {
-
                     readAbsFile();
                     AbsToTrans ab = new AbsToTrans();
                     reduceMinfromAllY();
@@ -5629,15 +5421,12 @@ public class MainWindow extends javax.swing.JFrame {
                     //create spectrum
                     generate_spectrum(specPanel, "input_data"); //original spectrum
                 }
-
                 //3.run default smoothing
                 {
                     sg = new SavitzkyGolayFilter();
                     sg.applyFilter_3points();
                     measurechange(); //change from original value = change/no.of points
-
                     combined2Charts(createInputDataset(), createSmoothedDataset(), smoothPanel);
-
                 }
                 //4.draw default baseline
                 {
@@ -5646,22 +5435,17 @@ public class MainWindow extends javax.swing.JFrame {
                     v1.cal_2ndorder_derivative(v1.getSmoothedPointList());
                     v1.findCandidateSet();
                     v1.evaluateNeighbourhood();
-//                    v1.discardBelowThresh(2, lowerBoundT, upperBoundT);
-//                    numBandsLabel.setText(String.valueOf(v1.getCandidates().size()));
 
                     SortedMap<BigDecimal, BigDecimal> mapi = null;
                     intpol = new InterpolatedBL();
 
                     mapi = intpol.linearInterp(createValleyDataset(v1.getPeaktops()), v1.getPeaktops().size());
-
                     combined2Charts(createDataset(mapi, "Baseline"), createSmoothedDataset(), baselinePanel);
-//                        combined2Charts(createDataset(intpol.getDifferencewithLine(), "Baseline Corrected"), createSmoothedDataset(), comPanel);
                     combined2Charts(createDataset(intpol.getDifferencewithLine(), "Baseline Corrected"), input_dataset, comPanel);
                 }
 
                 //Valleys graph plot
                 {
-
                     showValleys("avg_data");
                 }
 
@@ -5678,9 +5462,7 @@ public class MainWindow extends javax.swing.JFrame {
             }
 
         } else {
-
             JOptionPane.showMessageDialog(null, "Invalid file format!", "Error", JOptionPane.ERROR_MESSAGE);
-
         }
 
     }
@@ -5792,10 +5574,8 @@ public class MainWindow extends javax.swing.JFrame {
                 rs = pst.executeQuery();
 
                 if (rs.next() == false) {
-
-                    JOptionPane.showMessageDialog(null, "No results found!");
+                    resultTable.setModel(DbUtils.resultSetToTableModel(rs));
                 } else {
-
                     do {
                         resultTable.setModel(DbUtils.resultSetToTableModel(rs));
                     } while (rs.next());
