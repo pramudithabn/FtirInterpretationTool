@@ -65,8 +65,8 @@ import org.jfree.ui.TextAnchor;
 public class CheckList extends javax.swing.JFrame {
 
     private static Connection conn = null;
-    private ResultSet rs = null;
-    private PreparedStatement pst = null;
+    private ResultSet rs, rs2 = null;
+    private PreparedStatement pst, pst2 = null;
     private static Vector<Vector<Object>> data = new Vector<Vector<Object>>();
     private XYPlot xyplotT = null;
     private LabeledXYDataset ds = null;
@@ -173,42 +173,46 @@ public class CheckList extends javax.swing.JFrame {
             }
         }
 
-        String data1 = (String) resultListTable.getValueAt(r, 1);
-        String data2 = (String) resultListTable.getValueAt(r, 2);
-        String data3 = (String) resultListTable.getValueAt(r, 3);
-        int data4 = (int) resultListTable.getValueAt(r, 4);
+        int libIndex = (int) resultListTable.getValueAt(r, 4);
 
         //display labeled point on spectrum
         try {
 
 //            String sql = "select * from library where BOND_VIBMODE = \"" + data2.trim() + "\" AND FUNCTIONAL_GROUP = \"" + data3.trim() + "\" ";
-//            String sql = "SELECT BOND_VIBMODE, FUNCTIONAL_GROUP, COMPOUND_TYPE, COMPOUND_CATEGORY   from library where ID = " + data4;
-//            String sql = "SELECT round(result.wavenumber) as 'Wavenumber', library.BOND_VIBMODE As 'Vib. Mode/ Bond', library.FUNCTIONAL_GROUP As 'Functional Group', library.COMPOUND_TYPE As 'Compound Type', library.COMPOUND_CATEGORY As 'Compound Category'  from library, result where library.ID = " + data4 + " and result.lib_index = " + data4 + " and library.ID = result.lib_index  LIMIT 1";
+//            String sql = "SELECT BOND_VIBMODE, FUNCTIONAL_GROUP, COMPOUND_TYPE, COMPOUND_CATEGORY   from library where ID = " + libIndex;
+//            String sql = "SELECT round(result.wavenumber) as 'Wavenumber', library.BOND_VIBMODE As 'Vib. Mode/ Bond', library.FUNCTIONAL_GROUP As 'Functional Group', library.COMPOUND_TYPE As 'Compound Type', library.COMPOUND_CATEGORY As 'Compound Category'  from library, result where library.ID = " + libIndex + " and result.lib_index = " + libIndex + " and library.ID = result.lib_index  LIMIT 1";
             //update 09.03.2020
-            String sql = "SELECT round(result.wavenumber) as 'Wavenumber', library2.BOND_VIBMODE As 'Vib. Mode/ Bond', library2.FUNCTIONAL_GROUP As 'Functional Group', library2.COMPOUND_TYPE As 'Compound Type', library2.COMPOUND_CATEGORY As 'Compound Category', library2.LABEL, library2.bond from library2, result where library2.ID = " + data4 + " and result.lib_index = " + data4 + " and library2.ID = result.lib_index  LIMIT 1";
+            String sql = "SELECT round(result.wavenumber) as 'Wavenumber', library2.BOND_VIBMODE As 'Vib. Mode/ Bond', library2.FUNCTIONAL_GROUP As 'Functional Group', library2.COMPOUND_TYPE As 'Compound Type', library2.COMPOUND_CATEGORY As 'Compound Category', library2.LABEL, library2.bond from library2, result where library2.ID = " + libIndex + " and result.lib_index = " + libIndex + " and library2.ID = result.lib_index  LIMIT 1";
             pst = conn.prepareStatement(sql);
             rs = pst.executeQuery();
+            
+            String sql1 = "SELECT result.wavenumber as 'Wavenumber' from result, library2 where library2.ID = " + libIndex + " and result.lib_index = " + libIndex + " and library2.ID = result.lib_index  LIMIT 1";
+            pst2 = conn.prepareStatement(sql1);
+            rs2 = pst2.executeQuery();
 
             double x1 = 0;
             String s = null;
-            while (rs.next()) {
-                x1 = rs.getDouble("Wavenumber");
-                //update 09.03.2020
-                String s1,s2,mu;
-                   s1 = rs.getString("Bond");
-                   s2 = rs.getString("Label");
-                   mu = "V";
-//                   s = rs.getString("Vib. Mode/ Bond");
-                   s = mu +"[ "+s1 +" "+s2+" ]";
+            while (rs.next() && rs2.next()) {
                 
+                x1 = rs2.getDouble("Wavenumber");
+//                JOptionPane.showMessageDialog(this, x1);
+                //update 09.03.2020
+                String s1, s2, mu;
+                s1 = rs.getString("Bond");
+                s2 = rs.getString("Label");
+                mu = "V";
+//                   s = rs.getString("Vib. Mode/ Bond");
+                s = mu + "[ " + s1 + " " + s2 + " ]";
+
             }
 
             for (Object i : series0.getItems()) {
                 XYDataItem item = (XYDataItem) i;
                 double x = item.getXValue();
                 double y = item.getYValue();
-
-                if (Math.abs(x - x1) < 1) {
+                
+                if (Math.abs(x - x1) == 0) {
+                    System.out.println(x+ " "+ x +" "+s);
                     ds.update(x, s);
                 }
             }
@@ -227,7 +231,7 @@ public class CheckList extends javax.swing.JFrame {
         //set selected row to the table
         try {
             //update 09.03.2020
-            String sql = "SELECT round(result.wavenumber) as 'Wavenumber', library2.BOND_VIBMODE As 'Vib. Mode/ Bond', library2.FUNCTIONAL_GROUP As 'Functional Group', library2.COMPOUND_TYPE As 'Compound Type', library2.COMPOUND_CATEGORY As 'Compound Category'  from library2, result where library2.ID = " + data4 + " and result.lib_index = " + data4 + " and library2.ID = result.lib_index  LIMIT 1";
+            String sql = "SELECT round(result.wavenumber) as 'Wavenumber', library2.BOND_VIBMODE As 'Vib. Mode/ Bond', library2.FUNCTIONAL_GROUP As 'Functional Group', library2.COMPOUND_TYPE As 'Compound Type', library2.COMPOUND_CATEGORY As 'Compound Category'  from library2, result where library2.ID = " + libIndex + " and result.lib_index = " + libIndex + " and library2.ID = result.lib_index  LIMIT 1";
             pst = conn.prepareStatement(sql);
             rs = pst.executeQuery();
 
@@ -250,7 +254,7 @@ public class CheckList extends javax.swing.JFrame {
     }//GEN-LAST:event_fixButtonActionPerformed
 
     private void resultListTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_resultListTableMouseClicked
-        
+
         //to select and unselect rows
         {
             int row = resultListTable.getSelectedRow();
@@ -344,7 +348,7 @@ public class CheckList extends javax.swing.JFrame {
 //        renderer1.setBasePositiveItemLabelPosition(new ItemLabelPosition(ItemLabelAnchor.CENTER, TextAnchor.CENTER));
         renderer1.setBasePositiveItemLabelPosition(new ItemLabelPosition(ItemLabelAnchor.OUTSIDE6, TextAnchor.BASELINE_RIGHT, TextAnchor.BASELINE_RIGHT, -Math.PI / 2));
 //        renderer1.setBaseItemLabelFont(renderer1.getBaseItemLabelFont().deriveFont(14f));
-        renderer1.setBaseItemLabelFont(new Font("Palatino Linotype",Font.PLAIN,12));
+        renderer1.setBaseItemLabelFont(new Font("Palatino Linotype", Font.PLAIN, 12));
         renderer1.setBaseItemLabelsVisible(true);
         renderer1.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
 
@@ -423,7 +427,7 @@ public class CheckList extends javax.swing.JFrame {
                         int iindex = ent.getItem();
 
                         double x = set1.getXValue(sindex, iindex);
-
+                        
                         CheckList c = new CheckList();
 
                         String sql1 = "SET @row_number=0";
@@ -431,6 +435,7 @@ public class CheckList extends javax.swing.JFrame {
                         ResultSet rst = pst1.executeQuery();
 
                         String sql = "SELECT (@row_number:=@row_number + 1) As 'No.', round(`WAVENUMBER`,0) AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group',LIB_INDEX AS 'Lib. Index' from result where wavenumber = " + x;
+//                        String sql = "SELECT (@row_number:=@row_number + 1) As 'No.', `WAVENUMBER`AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group',LIB_INDEX AS 'Lib. Index' from result where wavenumber = " + x;
                         pst = conn.prepareStatement(sql);
                         rs = pst.executeQuery();
 
@@ -522,7 +527,7 @@ public class CheckList extends javax.swing.JFrame {
                             } while (rs.next());
                         }
 
-         } catch (SQLException ex) {
+                    } catch (SQLException ex) {
                         Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }

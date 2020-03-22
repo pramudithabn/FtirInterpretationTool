@@ -882,6 +882,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         buttonGroup2.add(lineCheckBox2);
         lineCheckBox2.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        lineCheckBox2.setSelected(true);
         lineCheckBox2.setText("Line");
         lineCheckBox2.setEnabled(false);
         lineCheckBox2.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -905,6 +906,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         baselineMethodCombo2.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         baselineMethodCombo2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select...", "Interpolation" }));
+        baselineMethodCombo2.setSelectedIndex(1);
         baselineMethodCombo2.setToolTipText("");
         baselineMethodCombo2.setEnabled(false);
         baselineMethodCombo2.addActionListener(new java.awt.event.ActionListener() {
@@ -2422,7 +2424,6 @@ public class MainWindow extends javax.swing.JFrame {
             peaktops = v1.getPeaktops();
             baselineCharts(createValleyDataset(peaktops), createSmoothedDataset(), baselinePanel);
 //            baselineCharts(createValleyDataset(peaktops), createSmoothedDataset(), eb.blSpecPanel);
-
         } catch (SQLException ex) {
             Logger.getLogger(MainWindow.class
                     .getName()).log(Level.SEVERE, null, ex);
@@ -2433,7 +2434,6 @@ public class MainWindow extends javax.swing.JFrame {
         Object obj1 = evt.getSource();
         if (obj1 == baselineMethodCombo2) {
             Enumeration<AbstractButton> enumeration = buttonGroup2.getElements();
-
             if (obj1 == baselineMethodCombo2) {
                 if (baselineMethodCombo2.getSelectedItem().equals("Select...")) {
                     while (enumeration.hasMoreElements()) {
@@ -2467,7 +2467,6 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_cubicSplineCheckBox2MouseClicked
 
     private void nextButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButton4ActionPerformed
-
         baselineMethodCombo.setEnabled(false);
         lineCheckBox.setEnabled(false);
         splineCheckBox.setEnabled(false);
@@ -2505,6 +2504,32 @@ public class MainWindow extends javax.swing.JFrame {
             cubicSplineCheckBox2.setEnabled(true);
             nextButton4.setEnabled(true);
         }
+        //points connecting method
+        {
+        Object obj1 = evt.getSource();
+        if (obj1 == baselineMethodCombo2) {
+            Enumeration<AbstractButton> enumeration = buttonGroup2.getElements();
+
+            if (obj1 == baselineMethodCombo2) {
+                if (baselineMethodCombo2.getSelectedItem().equals("Select...")) {
+                    while (enumeration.hasMoreElements()) {
+                        enumeration.nextElement().setEnabled(false);
+                    }
+                } else if (baselineMethodCombo2.getSelectedItem().equals("Regression")) {
+                    buttonGroup2.clearSelection();
+                    lineCheckBox2.setEnabled(true);
+                    splineCheckBox2.setEnabled(true);
+                    cubicSplineCheckBox2.setEnabled(false);
+                } else if (baselineMethodCombo2.getSelectedItem().equals("Interpolation")) {
+                    buttonGroup2.clearSelection();
+                    lineCheckBox2.setEnabled(true);
+                    splineCheckBox2.setEnabled(false);
+                    cubicSplineCheckBox2.setEnabled(true);
+                }
+            }
+        }
+        }
+        editBaseline();
     }//GEN-LAST:event_stopAddingButtonActionPerformed
 
     private void printTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_printTableMouseClicked

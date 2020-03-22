@@ -80,13 +80,6 @@ public class Result {
         this.libIndex = libIndex;
     }
 
-//    public String getBond() {
-//        return bond;
-//    }
-//
-//    public void setBond(String bond) {
-//        this.bond = bond;
-//    }
     public String getFunctional_group() {
         return functional_group;
     }

@@ -31,6 +31,7 @@ public class LabeledXYDataset extends AbstractXYDataset {
         int i = this.getItemCount(0);
         for (int k = 0; k < i; k++) {
             if ((X.get(k) == x)) {
+//                System.out.println(x+" "+k);
                 LABEL.set(k, label);
             }
         }

@@ -41,7 +41,6 @@ public class Predict {
     public Predict() {
         conn = Javaconnect.ConnecrDb();
         getCandidates();
-
     }
 
     public void getCandidates() {
@@ -50,11 +49,9 @@ public class Predict {
         valleyList.clear();
         ResultSet rs = null;
         PreparedStatement pst = null;
-
         try {
             pst = conn.prepareStatement(sql);
             rs = pst.executeQuery();
-
             while (rs.next()) {
                 d = new InputData(rs.getInt("ID"), rs.getBigDecimal("WAVENUMBER"), rs.getBigDecimal("TRANSMITTANCE"));
                 valleyList.add(d);
@@ -75,9 +72,7 @@ public class Predict {
     public void getResults() {
         resultset.clear();
         for (int r = 0; r < listSize; r++) {
-
             f = valleyList.get(r).getWavenumber();
-
             if (f.doubleValue() >= 1000) { //exclude fingerprint region
                 //get results from library
 //                String sql = "Select * from library where " + f + "  <= start_frq AND " + f + ">= end_frq";
@@ -87,15 +82,9 @@ public class Predict {
                     pst = conn.prepareStatement(sql);
                     rs = pst.executeQuery();
                     Result rst;
-
                     while (rs.next()) {
-
-//                    rst = new Result(f, rs.getString("BOND"), rs.getString("FUNCTIONAL_GROUP"));
-                        rst = new Result(f, rs.getString("BOND_VIBMODE"), rs.getString("FUNCTIONAL_GROUP"), rs.getString("COMPOUND_TYPE"), rs.getString("COMPOUND_CATEGORY"),rs.getString("LABEL") ,rs.getInt("ID"));
-//                    BigDecimal w = rs.getBigDecimal("width");
-//                    System.out.println(f+" /  " + w);
+                        rst = new Result(f, rs.getString("BOND_VIBMODE"), rs.getString("FUNCTIONAL_GROUP"), rs.getString("COMPOUND_TYPE"), rs.getString("COMPOUND_CATEGORY"), rs.getString("LABEL"), rs.getInt("ID"));
                         resultset.add(rst);
-
                     }
                 } catch (SQLException ex) {
                     System.err.println(ex);
@@ -106,24 +95,16 @@ public class Predict {
                         pst.close();
                     } catch (Exception e) {
                         System.err.print(e);
-
                     }
                 }
-
             }
         }
-
     }
 
     public void find_min() {
-
         for (int i = 0; i < resultset.size(); i++) {
-
             Result rst1 = resultset.get(i);
-//            rst1.
-
         }
-
     }
 
     public void updateResultsTable() {
@@ -134,13 +115,11 @@ public class Predict {
         for (int i = 0; i < resultset.size(); i++) {
 
             BigDecimal w = resultset.get(i).getWavenumber();
-//            String bond = resultset.get(i).getBond();
             String bond = resultset.get(i).getBondVibMode();
             String fngrp = resultset.get(i).getFunctional_group();
             String type = resultset.get(i).getCompound_type();
             String compound = resultset.get(i).getCompoundCategory();
             int libIndex = resultset.get(i).getLibIndex();
-            
             //update 09/03/2020
 //            String twoarrays = "(" + w + " ,\" " + bond + "\" , \"" + fngrp + "\" , \"" + type + "\" , \"" + compound + "\" , \"" + libIndex + "\")";
             String twoarrays = "(" + w + " ,\" " + bond + "\" , \"" + fngrp + "\" , \"" + type + "\" , \"" + compound + "\" , \"" + libIndex + "\")";
@@ -148,15 +127,12 @@ public class Predict {
         }
 
         fullarrays = fullarrays.substring(0, fullarrays.length() - 1);
-
         String sql = "INSERT INTO result ( WAVENUMBER,BOND, FUNCTIONAL_GROUP, COMPOUND_TYPE,  COMPOUND_CATEGORY, LIB_INDEX )  VALUES " + fullarrays;
         ResultSet rs = null;
         PreparedStatement pst = null;
-
         try {
             pst = conn.prepareStatement(sql);
             pst.executeUpdate();
-
         } catch (Exception e) {
             System.err.println(e);
         } finally {
@@ -164,7 +140,7 @@ public class Predict {
                 rs.close();
                 pst.close();
             } catch (Exception e) {
-
+                System.err.println(e);
             }
         }
     }
@@ -174,17 +150,14 @@ public class Predict {
         try {
             pst = conn.prepareStatement(sql1);
             pst.executeUpdate();
-
         } catch (Exception e) {
             System.out.println(e);
         } finally {
             try {
                 pst.close();
-
             } catch (Exception e) {
                 System.out.println(e);
             }
         }
     }
-
 }
