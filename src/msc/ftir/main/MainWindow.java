@@ -2487,7 +2487,6 @@ public class MainWindow extends javax.swing.JFrame {
         performThresh();
         bandstab = true;
 
-//        if (bltab) {
         settingsTabbedPane.setSelectedIndex(3);
         specSplitPane.getTopComponent().setMinimumSize(new Dimension());
         specSplitPane.setDividerLocation(0.0d);
@@ -2512,6 +2511,7 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_printTableMouseClicked
 
     private void nextButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButton6ActionPerformed
+        filterOutNotSelected();
         settingsTabbedPane.setSelectedIndex(5);
 
         try {
@@ -2808,8 +2808,7 @@ public class MainWindow extends javax.swing.JFrame {
             combined2Charts(input_dataset, createSmoothedDataset(), smoothPanel);
 
         } catch (SQLException ex) {
-            Logger.getLogger(MainWindow.class
-                    .getName()).log(Level.SEVERE, null, ex);
+            System.err.println(ex);
         }
         measurechange();
         showValleys("avg_data");
@@ -5397,7 +5396,7 @@ public class MainWindow extends javax.swing.JFrame {
 
     private void uploadFile() {
         //1. select file and validate 
-        if (validateFileType()) {
+        if (validateFileType() && fileName!="") {
             try {
                 String[] choices = {"Transmittance", "Absorbance"};
                 String input = (String) JOptionPane.showInputDialog(null, "Select input type",
