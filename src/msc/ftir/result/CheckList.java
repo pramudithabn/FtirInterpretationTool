@@ -29,6 +29,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -116,7 +117,7 @@ public class CheckList extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+
             }
         ));
         resultListTable.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -164,16 +165,19 @@ public class CheckList extends javax.swing.JFrame {
 
     private void fixButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fixButtonActionPerformed
         int size = resultListTable.getRowCount();
+        int row = resultListTable.getSelectedRow();
+        String wavenumber = resultListTable.getValueAt(row, 2).toString();
         int r = 0;
+        double x1 = 0;
         for (int p = 0; p < size; p++) {
 
-            boolean v = (boolean) resultListTable.getValueAt(p, 5);
+            boolean v = (boolean) resultListTable.getValueAt(p, 6);
             if (v == true) {
                 r = p;
             }
         }
 
-        int libIndex = (int) resultListTable.getValueAt(r, 4);
+        int libIndex = (int) resultListTable.getValueAt(r, 5);
 
         //display labeled point on spectrum
         try {
@@ -185,15 +189,14 @@ public class CheckList extends javax.swing.JFrame {
             String sql = "SELECT round(result.wavenumber) as 'Wavenumber', library2.BOND_VIBMODE As 'Vib. Mode/ Bond', library2.FUNCTIONAL_GROUP As 'Functional Group', library2.COMPOUND_TYPE As 'Compound Type', library2.COMPOUND_CATEGORY As 'Compound Category', library2.LABEL, library2.bond from library2, result where library2.ID = " + libIndex + " and result.lib_index = " + libIndex + " and library2.ID = result.lib_index  LIMIT 1";
             pst = conn.prepareStatement(sql);
             rs = pst.executeQuery();
-            
+
             String sql1 = "SELECT result.wavenumber as 'Wavenumber' from result, library2 where library2.ID = " + libIndex + " and result.lib_index = " + libIndex + " and library2.ID = result.lib_index  LIMIT 1";
             pst2 = conn.prepareStatement(sql1);
             rs2 = pst2.executeQuery();
 
-            double x1 = 0;
             String s = null;
             while (rs.next() && rs2.next()) {
-                
+
                 x1 = rs2.getDouble("Wavenumber");
 //                JOptionPane.showMessageDialog(this, x1);
                 //update 09.03.2020
@@ -210,9 +213,9 @@ public class CheckList extends javax.swing.JFrame {
                 XYDataItem item = (XYDataItem) i;
                 double x = item.getXValue();
                 double y = item.getYValue();
-                
+
                 if (Math.abs(x - x1) == 0) {
-                    System.out.println(x+ " "+ x +" "+s);
+                    System.out.println(x + " " + x + " " + s);
                     ds.update(x, s);
                 }
             }
@@ -230,11 +233,36 @@ public class CheckList extends javax.swing.JFrame {
 
         //set selected row to the table
         try {
-            //update 09.03.2020
-            String sql = "SELECT round(result.wavenumber) as 'Wavenumber', library2.BOND_VIBMODE As 'Vib. Mode/ Bond', library2.FUNCTIONAL_GROUP As 'Functional Group', library2.COMPOUND_TYPE As 'Compound Type', library2.COMPOUND_CATEGORY As 'Compound Category'  from library2, result where library2.ID = " + libIndex + " and result.lib_index = " + libIndex + " and library2.ID = result.lib_index  LIMIT 1";
+            //check if wavenumber exists in result jtable
+            String sql = "SELECT * FROM `printed_results` WHERE wavenumber = " + wavenumber;
             pst = conn.prepareStatement(sql);
             rs = pst.executeQuery();
+            if (rs.next()) {
+                //delete and insert
+                String sql2 = "delete from printed_results where wavenumber = " + wavenumber;
+                pst = conn.prepareStatement(sql2);
+                pst.execute();
+            }
 
+            //insert checked row into printed_results table.
+            String sql2 = "INSERT INTO `printed_results` ( `WAVENUMBER` , `STD_RANGE`, `BOND`, `FUNCTIONAL_GROUP`, `COMPOUND_TYPE`, `COMPOUND_CATEGORY`) SELECT " + wavenumber + " ,CONCAT(library2.END_FRQ,'-', library2.START_FRQ), library2.BOND_VIBMODE, library2.FUNCTIONAL_GROUP, library2.COMPOUND_TYPE, library2.COMPOUND_CATEGORY from library2, result where library2.ID = " + libIndex + " and result.lib_index = " + libIndex + " and library2.ID = result.lib_index  LIMIT 1";
+            pst = conn.prepareStatement(sql2);
+            pst.executeUpdate();
+
+            //clear jtable content
+            DefaultTableModel model = (DefaultTableModel) MainWindow.printTable.getModel();
+            model.setRowCount(0);
+
+            //select from printed results table
+            String sql31 = "SET @row_number=0";
+            PreparedStatement pst1 = conn.prepareStatement(sql31);
+            ResultSet rst = pst1.executeQuery();
+
+            String sql3 = "SELECT (@row_number:=@row_number + 1) As 'No.',round(`WAVENUMBER`) As `WAVENUMBER`, `STD_RANGE` AS 'Std. Range', `BOND` As 'Bond/Vib. Mode', `FUNCTIONAL_GROUP` AS 'Functional Group', `COMPOUND_TYPE` AS 'Compound Type', `COMPOUND_CATEGORY` AS 'Compound Category' FROM `printed_results`";
+            pst = conn.prepareStatement(sql3);
+            rs = pst.executeQuery();
+
+            //set results to jtable
             MainWindow.printTable.setModel(TableModel(rs));
 
         } catch (SQLException e) {
@@ -247,27 +275,24 @@ public class CheckList extends javax.swing.JFrame {
                 System.out.println(e);
             }
         }
-
         this.dispose();
-
-
     }//GEN-LAST:event_fixButtonActionPerformed
 
     private void resultListTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_resultListTableMouseClicked
 
         //to select and unselect rows
         {
-            int row = resultListTable.getSelectedRow();
-            boolean val = (boolean) resultListTable.getValueAt(row, 5);
-
-            if (val == true) {
-                resultListTable.setValueAt(false, row, 5);
-            } else if (val == false) {
-                resultListTable.setValueAt(true, row, 5);
+            try {
+                int row = resultListTable.getSelectedRow();
+                boolean val = (boolean) resultListTable.getValueAt(row, 6);
+                for (int i = 0; i < resultListTable.getRowCount(); i++) {
+                    resultListTable.setValueAt(false, i, 6);
+                }
+                resultListTable.setValueAt(true, row, 6);
+            } catch (Exception e) {
+                System.err.println(e);
             }
         }
-
-
     }//GEN-LAST:event_resultListTableMouseClicked
 
     /**
@@ -427,15 +452,17 @@ public class CheckList extends javax.swing.JFrame {
                         int iindex = ent.getItem();
 
                         double x = set1.getXValue(sindex, iindex);
-                        
+
                         CheckList c = new CheckList();
 
                         String sql1 = "SET @row_number=0";
                         PreparedStatement pst1 = conn.prepareStatement(sql1);
                         ResultSet rst = pst1.executeQuery();
 
-                        String sql = "SELECT (@row_number:=@row_number + 1) As 'No.', round(`WAVENUMBER`,0) AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group',LIB_INDEX AS 'Lib. Index' from result where wavenumber = " + x;
-//                        String sql = "SELECT (@row_number:=@row_number + 1) As 'No.', `WAVENUMBER`AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group',LIB_INDEX AS 'Lib. Index' from result where wavenumber = " + x;
+//                        String sql = "SELECT (@row_number:=@row_number + 1) As 'No.', round(`WAVENUMBER`,0) AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group',LIB_INDEX AS 'Lib. Index' from result where wavenumber = " + x;
+////                        String sql = "SELECT (@row_number:=@row_number + 1) As 'No.', `WAVENUMBER`AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group',LIB_INDEX AS 'Lib. Index' from result where wavenumber = " + x;
+//                        pst = conn.prepareStatement(sql);
+                        String sql = "SELECT (@row_number:=@row_number + 1) As 'No.',CONCAT(library2.END_FRQ,'-', library2.START_FRQ) AS 'Std. Range', round(`WAVENUMBER`,0) AS 'Wavenumber', result.BOND AS 'Bond', result.FUNCTIONAL_GROUP AS 'Functional Group',LIB_INDEX AS 'Lib. Index' from result, library2 where wavenumber = " + x + "AND library2.ID = result.lib_index";
                         pst = conn.prepareStatement(sql);
                         rs = pst.executeQuery();
 
@@ -464,6 +491,9 @@ public class CheckList extends javax.swing.JFrame {
                                     case 6:
                                         return Boolean.class;
 
+                                    case 7:
+                                        return Boolean.class;
+
                                     default:
                                         return String.class;
                                 }
@@ -472,7 +502,7 @@ public class CheckList extends javax.swing.JFrame {
 
                             @Override
                             public boolean isCellEditable(int rowIndex, int columnIndex) {
-                                if (columnIndex == 5) {
+                                if (columnIndex == 6) {
                                     return true;
                                 }
                                 return false;
@@ -482,6 +512,7 @@ public class CheckList extends javax.swing.JFrame {
 
                         c.resultListTable.setModel(model);
                         model.addColumn("No.");
+                        model.addColumn("Std. Range(cm-1)");
                         model.addColumn("Wavenumber(cm-1)");
                         model.addColumn("Bond");
                         model.addColumn("Functional Group");
@@ -496,11 +527,12 @@ public class CheckList extends javax.swing.JFrame {
                             do {
                                 model.addRow(new Object[0]);
                                 model.setValueAt(rs.getString("No."), i, 0);
-                                model.setValueAt(rs.getString("Wavenumber"), i, 1);
-                                model.setValueAt(rs.getString("Bond"), i, 2);
-                                model.setValueAt(rs.getString("Functional Group"), i, 3);
-                                model.setValueAt(rs.getInt("Lib. Index"), i, 4);
-                                model.setValueAt(false, i, 5);
+                                model.setValueAt(rs.getString("Std. Range"), i, 1);
+                                model.setValueAt(rs.getString("Wavenumber"), i, 2);
+                                model.setValueAt(rs.getString("Bond"), i, 3);
+                                model.setValueAt(rs.getString("Functional Group"), i, 4);
+                                model.setValueAt(rs.getInt("Lib. Index"), i, 5);
+                                model.setValueAt(false, i, 6);
                                 c.setVisible(true);
                                 i++;
 
@@ -515,15 +547,16 @@ public class CheckList extends javax.swing.JFrame {
                                 c.resultListTable.setShowGrid(true);
                                 c.resultListTable.setGridColor(Color.LIGHT_GRAY);
                                 c.resultListTable.setShowHorizontalLines(false);
-                                c.resultListTable.getColumnModel().getColumn(0).setPreferredWidth(20);
-                                c.resultListTable.getColumnModel().getColumn(1).setPreferredWidth(40);
-                                c.resultListTable.getColumnModel().getColumn(2).setPreferredWidth(230);
-                                c.resultListTable.getColumnModel().getColumn(3).setPreferredWidth(140);
-                                c.resultListTable.getColumnModel().getColumn(4).setPreferredWidth(0);
-                                c.resultListTable.getColumnModel().getColumn(5).setPreferredWidth(50);
+                                c.resultListTable.getColumnModel().getColumn(0).setPreferredWidth(3);
+                                c.resultListTable.getColumnModel().getColumn(1).setPreferredWidth(55);
+                                c.resultListTable.getColumnModel().getColumn(2).setPreferredWidth(45);
+                                c.resultListTable.getColumnModel().getColumn(3).setPreferredWidth(230);
+                                c.resultListTable.getColumnModel().getColumn(4).setPreferredWidth(140);
+                                c.resultListTable.getColumnModel().getColumn(5).setPreferredWidth(0);
+                                c.resultListTable.getColumnModel().getColumn(6).setPreferredWidth(20);
                                 CheckBoxRenderer checkBoxRenderer = new CheckBoxRenderer();
 
-                                c.resultListTable.getColumnModel().getColumn(5).setCellRenderer(checkBoxRenderer);
+                                c.resultListTable.getColumnModel().getColumn(6).setCellRenderer(checkBoxRenderer);
                             } while (rs.next());
                         }
 
@@ -631,4 +664,26 @@ public class CheckList extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     public javax.swing.JTable resultListTable;
     // End of variables declaration//GEN-END:variables
+
+    private int equalResultsExist(ResultSet rs) {
+        int rowIndex = -1;
+        if (MainWindow.printTable.getRowCount() > 1) {
+            for (int row = 0; row < MainWindow.printTable.getRowCount(); row++) {
+                try {
+                    DefaultTableModel model = (DefaultTableModel) MainWindow.printTable.getModel();
+                    String wavenum = model.getValueAt(row, 0).toString();
+                    int wv = 0;
+                    rs.first();
+                    wv = (int) rs.getDouble("Wavenumber");
+
+                    if (Integer.parseInt(wavenum) == wv) {
+                        rowIndex = row;
+                    }
+                } catch (SQLException ex) {
+                    Logger.getLogger(CheckList.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+        return rowIndex;
+    }
 }

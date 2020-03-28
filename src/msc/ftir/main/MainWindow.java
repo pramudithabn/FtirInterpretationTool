@@ -112,7 +112,7 @@ public class MainWindow extends javax.swing.JFrame {
     private InterpolatedBL intpol = null;
     private Predict pr = null;
     private SavitzkyGolayFilter sg = null;
-    private PreparedStatement pst2 = null, pst3 = null, pst4 = null, pst5 = null, pst6 = null, pst7 = null; //for clear all
+    private PreparedStatement pst2 = null, pst3 = null, pst4 = null, pst5 = null, pst6 = null, pst7 = null, pst8 = null; //for clear all
     private XYPointerAnnotation pointer = null, pointer2 = null;
     private RegressionBL bc = null;
     public static Boolean newInstance = false;
@@ -2506,28 +2506,28 @@ public class MainWindow extends javax.swing.JFrame {
         }
         //points connecting method
         {
-        Object obj1 = evt.getSource();
-        if (obj1 == baselineMethodCombo2) {
-            Enumeration<AbstractButton> enumeration = buttonGroup2.getElements();
-
+            Object obj1 = evt.getSource();
             if (obj1 == baselineMethodCombo2) {
-                if (baselineMethodCombo2.getSelectedItem().equals("Select...")) {
-                    while (enumeration.hasMoreElements()) {
-                        enumeration.nextElement().setEnabled(false);
+                Enumeration<AbstractButton> enumeration = buttonGroup2.getElements();
+
+                if (obj1 == baselineMethodCombo2) {
+                    if (baselineMethodCombo2.getSelectedItem().equals("Select...")) {
+                        while (enumeration.hasMoreElements()) {
+                            enumeration.nextElement().setEnabled(false);
+                        }
+                    } else if (baselineMethodCombo2.getSelectedItem().equals("Regression")) {
+                        buttonGroup2.clearSelection();
+                        lineCheckBox2.setEnabled(true);
+                        splineCheckBox2.setEnabled(true);
+                        cubicSplineCheckBox2.setEnabled(false);
+                    } else if (baselineMethodCombo2.getSelectedItem().equals("Interpolation")) {
+                        buttonGroup2.clearSelection();
+                        lineCheckBox2.setEnabled(true);
+                        splineCheckBox2.setEnabled(false);
+                        cubicSplineCheckBox2.setEnabled(true);
                     }
-                } else if (baselineMethodCombo2.getSelectedItem().equals("Regression")) {
-                    buttonGroup2.clearSelection();
-                    lineCheckBox2.setEnabled(true);
-                    splineCheckBox2.setEnabled(true);
-                    cubicSplineCheckBox2.setEnabled(false);
-                } else if (baselineMethodCombo2.getSelectedItem().equals("Interpolation")) {
-                    buttonGroup2.clearSelection();
-                    lineCheckBox2.setEnabled(true);
-                    splineCheckBox2.setEnabled(false);
-                    cubicSplineCheckBox2.setEnabled(true);
                 }
             }
-        }
         }
         editBaseline();
     }//GEN-LAST:event_stopAddingButtonActionPerformed
@@ -2771,6 +2771,7 @@ public class MainWindow extends javax.swing.JFrame {
                         uploadFile();
                         return "Done";
                     }
+
                     protected void done() {
                         progressBar.setVisible(false);
                         loadingText.setVisible(false);
@@ -2787,12 +2788,14 @@ public class MainWindow extends javax.swing.JFrame {
                     fileChooser();
                     clearAll();
                     class MyWorker extends SwingWorker<String, Void> {
+
                         protected String doInBackground() {
                             progressBar.setVisible(true);
                             loadingText.setVisible(true);
                             uploadFile();
                             return "Done";
                         }
+
                         protected void done() {
                             progressBar.setVisible(false);
                             loadingText.setVisible(false);
@@ -3437,6 +3440,7 @@ public class MainWindow extends javax.swing.JFrame {
         String sql5 = "delete from band";
         String sql6 = "delete from candidates";
         String sql7 = "delete from result";
+        String sql8 = "delete from printed_results";
 
         try {
             pst = conn.prepareStatement(sql1);
@@ -3459,6 +3463,9 @@ public class MainWindow extends javax.swing.JFrame {
 
             pst7 = conn.prepareStatement(sql7);
             pst7.execute();
+            
+            pst8 = conn.prepareStatement(sql8);
+            pst8.execute();
 
             //revalidate panels    
             specPanel.removeAll();
@@ -3975,7 +3982,8 @@ public class MainWindow extends javax.swing.JFrame {
                         PreparedStatement pst1 = conn.prepareStatement(sql1);
                         ResultSet rst = pst1.executeQuery();
 
-                        String sql = "SELECT (@row_number:=@row_number + 1) As 'No.', round(`WAVENUMBER`,0) AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group',LIB_INDEX AS 'Lib. Index' from result where wavenumber = " + x;
+//                        String sql = "SELECT (@row_number:=@row_number + 1) As 'No.', round(`WAVENUMBER`,0) AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group',LIB_INDEX AS 'Lib. Index' from result where wavenumber = " + x;
+                        String sql = "SELECT (@row_number:=@row_number + 1) As 'No.',CONCAT(library2.END_FRQ,'-', library2.START_FRQ) AS 'Std. Range', round(`WAVENUMBER`,0) AS 'Wavenumber', result.BOND AS 'Bond', result.FUNCTIONAL_GROUP AS 'Functional Group',LIB_INDEX AS 'Lib. Index' from result, library2 where wavenumber = " + x + "AND library2.ID = result.lib_index";
                         pst = conn.prepareStatement(sql);
                         rs = pst.executeQuery();
 
@@ -4004,6 +4012,9 @@ public class MainWindow extends javax.swing.JFrame {
                                     case 6:
                                         return Boolean.class;
 
+                                    case 7:
+                                        return Boolean.class;
+
                                     default:
                                         return String.class;
                                 }
@@ -4012,7 +4023,7 @@ public class MainWindow extends javax.swing.JFrame {
 
                             @Override
                             public boolean isCellEditable(int rowIndex, int columnIndex) {
-                                if (columnIndex == 5) {
+                                if (columnIndex == 6) {
                                     return true;
                                 }
                                 return false;
@@ -4022,6 +4033,7 @@ public class MainWindow extends javax.swing.JFrame {
 
                         c.resultListTable.setModel(model);
                         model.addColumn("No.");
+                        model.addColumn("Std. Range(cm-1)");
                         model.addColumn("Wavenumber(cm-1)");
                         model.addColumn("Bond");
                         model.addColumn("Functional Group");
@@ -4036,11 +4048,12 @@ public class MainWindow extends javax.swing.JFrame {
                             do {
                                 model.addRow(new Object[0]);
                                 model.setValueAt(rs.getString("No."), i, 0);
-                                model.setValueAt(rs.getString("Wavenumber"), i, 1);
-                                model.setValueAt(rs.getString("Bond"), i, 2);
-                                model.setValueAt(rs.getString("Functional Group"), i, 3);
-                                model.setValueAt(rs.getInt("Lib. Index"), i, 4);
-                                model.setValueAt(false, i, 5);
+                                model.setValueAt(rs.getString("Std. Range"), i, 1);
+                                model.setValueAt(rs.getString("Wavenumber"), i, 2);
+                                model.setValueAt(rs.getString("Bond"), i, 3);
+                                model.setValueAt(rs.getString("Functional Group"), i, 4);
+                                model.setValueAt(rs.getInt("Lib. Index"), i, 5);
+                                model.setValueAt(false, i, 6);
                                 c.setVisible(true);
                                 i++;
 
@@ -4055,15 +4068,16 @@ public class MainWindow extends javax.swing.JFrame {
                                 c.resultListTable.setShowGrid(true);
                                 c.resultListTable.setGridColor(Color.LIGHT_GRAY);
                                 c.resultListTable.setShowHorizontalLines(false);
-                                c.resultListTable.getColumnModel().getColumn(0).setPreferredWidth(20);
-                                c.resultListTable.getColumnModel().getColumn(1).setPreferredWidth(40);
-                                c.resultListTable.getColumnModel().getColumn(2).setPreferredWidth(230);
-                                c.resultListTable.getColumnModel().getColumn(3).setPreferredWidth(140);
-                                c.resultListTable.getColumnModel().getColumn(4).setPreferredWidth(0);
-                                c.resultListTable.getColumnModel().getColumn(5).setPreferredWidth(50);
+                                c.resultListTable.getColumnModel().getColumn(0).setPreferredWidth(3);
+                                c.resultListTable.getColumnModel().getColumn(1).setPreferredWidth(55);
+                                c.resultListTable.getColumnModel().getColumn(2).setPreferredWidth(45);
+                                c.resultListTable.getColumnModel().getColumn(3).setPreferredWidth(230);
+                                c.resultListTable.getColumnModel().getColumn(4).setPreferredWidth(140);
+                                c.resultListTable.getColumnModel().getColumn(5).setPreferredWidth(0);
+                                c.resultListTable.getColumnModel().getColumn(6).setPreferredWidth(20);
                                 CheckBoxRenderer checkBoxRenderer = new CheckBoxRenderer();
 
-                                c.resultListTable.getColumnModel().getColumn(5).setCellRenderer(checkBoxRenderer);
+                                c.resultListTable.getColumnModel().getColumn(6).setCellRenderer(checkBoxRenderer);
                             } while (rs.next());
                         }
                     } catch (SQLException ex) {
@@ -5421,7 +5435,7 @@ public class MainWindow extends javax.swing.JFrame {
 
     private void uploadFile() {
         //1. select file and validate 
-        if (validateFileType() && fileName!="") {
+        if (validateFileType() && fileName != "") {
             try {
                 String[] choices = {"Transmittance", "Absorbance"};
                 String input = (String) JOptionPane.showInputDialog(null, "Select input type",
