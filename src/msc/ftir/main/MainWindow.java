@@ -62,6 +62,8 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import java.util.Properties;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import msc.ftir.library.LibraryFtir;
 import msc.ftir.result.Predict;
@@ -148,6 +150,7 @@ public class MainWindow extends javax.swing.JFrame {
     private int clickcount = 0;
     private EditBaseline eb = null;
     private static LabeledXYDataset labeled_dataset = null;
+    private XYPlot com_plot = null;
 
     public static LabeledXYDataset getLabeled_dataset() {
         return labeled_dataset;
@@ -2101,6 +2104,7 @@ public class MainWindow extends javax.swing.JFrame {
         }
 
         threshPrevious = threshCurrent;
+    
     }//GEN-LAST:event_threshSlider1MouseReleased
 
     private void nextButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButton1ActionPerformed
@@ -2136,6 +2140,7 @@ public class MainWindow extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Error!", "Error", JOptionPane.ERROR_MESSAGE);
         }
         performNoBandAnalysis();
+        com_plot.clearRangeMarkers();
     }//GEN-LAST:event_predictButtonActionPerformed
 
     private void fivepointsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fivepointsMouseClicked
@@ -3357,7 +3362,7 @@ public class MainWindow extends javax.swing.JFrame {
             chartPanel.setDomainZoomable(true);
 
             BarRenderer renderer = null;
-//            XYPlot plot = chart.getXYPlot(); //old
+//            XYPlot com_plot = chart.getXYPlot(); //old
             plot = chart.getXYPlot();
             NumberAxis range = (NumberAxis) plot.getRangeAxis();
             range.setAutoRange(true);
@@ -3463,7 +3468,7 @@ public class MainWindow extends javax.swing.JFrame {
 
             pst7 = conn.prepareStatement(sql7);
             pst7.execute();
-            
+
             pst8 = conn.prepareStatement(sql8);
             pst8.execute();
 
@@ -3621,7 +3626,8 @@ public class MainWindow extends javax.swing.JFrame {
         panel.revalidate();
         panel.repaint();
 
-        XYPlot plot = new XYPlot();
+//        XYPlot com_plot = new XYPlot();
+        com_plot = new XYPlot();
 
         XYDataset collection1 = set1;
         peakset = set1;
@@ -3632,10 +3638,10 @@ public class MainWindow extends javax.swing.JFrame {
         domain1.setInverted(true);
         range1.setAutoRange(true);
 
-        plot.setDataset(0, collection1);
-        plot.setRenderer(0, renderer1);
-        plot.setDomainAxis(0, domain1);
-        plot.setRangeAxis(0, range1);
+        com_plot.setDataset(0, collection1);
+        com_plot.setRenderer(0, renderer1);
+        com_plot.setDomainAxis(0, domain1);
+        com_plot.setRangeAxis(0, range1);
 
         XYDataset collection2 = set2;
         XYItemRenderer renderer2 = new XYLineAndShapeRenderer(true, false);	// Lines only
@@ -3644,21 +3650,21 @@ public class MainWindow extends javax.swing.JFrame {
         ValueAxis domain2 = new NumberAxis("");
         ValueAxis range2 = new NumberAxis("");
 
-        plot.setDataset(1, collection2);
-        plot.setRenderer(1, renderer2);
-        plot.setDomainAxis(1, domain2);
-        plot.setRangeAxis(1, range2);
-        xyplotT = plot;
-//        plot.mapDatasetToDomainAxis(0, 1);
-//        plot.mapDatasetToRangeAxis(0, 1);
+        com_plot.setDataset(1, collection2);
+        com_plot.setRenderer(1, renderer2);
+        com_plot.setDomainAxis(1, domain2);
+        com_plot.setRangeAxis(1, range2);
+        xyplotT = com_plot;
+//        com_plot.mapDatasetToDomainAxis(0, 1);
+//        com_plot.mapDatasetToRangeAxis(0, 1);
         domain2.setAutoRange(true);
         domain2.setInverted(true);
         domain2.setVisible(false);
         range2.setVisible(false);
 
-//        plot.mapDatasetToDomainAxis(1, 1);
-//        plot.mapDatasetToRangeAxis(1, 1);
-        duelchart = new JFreeChart("", JFreeChart.DEFAULT_TITLE_FONT, plot, true);
+//        com_plot.mapDatasetToDomainAxis(1, 1);
+//        com_plot.mapDatasetToRangeAxis(1, 1);
+        duelchart = new JFreeChart("", JFreeChart.DEFAULT_TITLE_FONT, com_plot, true);
         chartPanel_com = new ChartPanel(duelchart);
         panel.setLayout(new java.awt.BorderLayout());
         panel.add(chartPanel_com, BorderLayout.CENTER);
@@ -3789,9 +3795,9 @@ public class MainWindow extends javax.swing.JFrame {
                     double x = xAxis.java2DToValue(event.getTrigger().getX(), dataArea, xyplotT.getDomainAxisEdge());
                     double y = yAxis.java2DToValue(event.getTrigger().getY(), dataArea, xyplotT.getRangeAxisEdge());
 
-//                    double x = plot.getDomainAxis().java2DToValue(p.getX(), plotArea, plot.getDomainAxisEdge());
-//                    double y = plot.getRangeAxis().java2DToValue(p.getY(), plotArea, plot.getRangeAxisEdge());
-//                    double y = DatasetUtilities.findYValue(plot.getDataset(), 0, x);
+//                    double x = com_plot.getDomainAxis().java2DToValue(p.getX(), plotArea, com_plot.getDomainAxisEdge());
+//                    double y = com_plot.getRangeAxis().java2DToValue(p.getY(), plotArea, com_plot.getRangeAxisEdge());
+//                    double y = DatasetUtilities.findYValue(com_plot.getDataset(), 0, x);
                     pointer2.setX(x);
                     pointer2.setY(y);
                     pointer2.setText("X = " + df.format(x) + " , Y = " + df.format(y));
@@ -3864,15 +3870,15 @@ public class MainWindow extends javax.swing.JFrame {
         plot.setDomainAxis(1, domain2);
         plot.setRangeAxis(1, range2);
 
-//        plot.mapDatasetToDomainAxis(0, 1);
-//        plot.mapDatasetToRangeAxis(0, 1);
+//        com_plot.mapDatasetToDomainAxis(0, 1);
+//        com_plot.mapDatasetToRangeAxis(0, 1);
         domain2.setAutoRange(true);
         domain2.setInverted(true);
         domain2.setVisible(false);
         range2.setVisible(false);
 
-//        plot.mapDatasetToDomainAxis(1, 1);
-//        plot.mapDatasetToRangeAxis(1, 1);
+//        com_plot.mapDatasetToDomainAxis(1, 1);
+//        com_plot.mapDatasetToRangeAxis(1, 1);
         charts3 = new JFreeChart("", JFreeChart.DEFAULT_TITLE_FONT, plot, true);
         ChartPanel chartPanel = new ChartPanel(duelchart);
         panel.setLayout(new java.awt.BorderLayout());
@@ -4129,9 +4135,9 @@ public class MainWindow extends javax.swing.JFrame {
                     double x = xAxis.java2DToValue(event.getTrigger().getX(), dataArea, xyplotT.getDomainAxisEdge());
                     double y = yAxis.java2DToValue(event.getTrigger().getY(), dataArea, xyplotT.getRangeAxisEdge());
 
-//                    double x = plot.getDomainAxis().java2DToValue(p.getX(), plotArea, plot.getDomainAxisEdge());
-//                    double y = plot.getRangeAxis().java2DToValue(p.getY(), plotArea, plot.getRangeAxisEdge());
-//                    double y = DatasetUtilities.findYValue(plot.getDataset(), 0, x);
+//                    double x = com_plot.getDomainAxis().java2DToValue(p.getX(), plotArea, com_plot.getDomainAxisEdge());
+//                    double y = com_plot.getRangeAxis().java2DToValue(p.getY(), plotArea, com_plot.getRangeAxisEdge());
+//                    double y = DatasetUtilities.findYValue(com_plot.getDataset(), 0, x);
                     pointer2.setX(x);
                     pointer2.setY(y);
                     pointer2.setText("X = " + df.format(x) + " , Y = " + df.format(y));
@@ -4211,15 +4217,15 @@ public class MainWindow extends javax.swing.JFrame {
         xyplot.setDomainAxis(1, domain2);
         xyplot.setRangeAxis(1, range2);
 
-//        plot.mapDatasetToDomainAxis(0, 1);
-//        plot.mapDatasetToRangeAxis(0, 1);
+//        com_plot.mapDatasetToDomainAxis(0, 1);
+//        com_plot.mapDatasetToRangeAxis(0, 1);
         domain2.setAutoRange(true);
         domain2.setInverted(true);
         domain2.setVisible(false);
         range2.setVisible(false);
 
-//        plot.mapDatasetToDomainAxis(1, 1);
-//        plot.mapDatasetToRangeAxis(1, 1);
+//        com_plot.mapDatasetToDomainAxis(1, 1);
+//        com_plot.mapDatasetToRangeAxis(1, 1);
         smoothed_chart = new JFreeChart("", JFreeChart.DEFAULT_TITLE_FONT, xyplot, true);
         ChartPanel chartPanel = new ChartPanel(smoothed_chart);
         panel.setLayout(new java.awt.BorderLayout());
@@ -4270,15 +4276,15 @@ public class MainWindow extends javax.swing.JFrame {
         xyplot.setDomainAxis(1, domain2);
         xyplot.setRangeAxis(1, range2);
 
-//        plot.mapDatasetToDomainAxis(0, 1);
-//        plot.mapDatasetToRangeAxis(0, 1);
+//        com_plot.mapDatasetToDomainAxis(0, 1);
+//        com_plot.mapDatasetToRangeAxis(0, 1);
         domain2.setAutoRange(true);
         domain2.setInverted(true);
         domain2.setVisible(false);
         range2.setVisible(false);
 
-//        plot.mapDatasetToDomainAxis(1, 1);
-//        plot.mapDatasetToRangeAxis(1, 1);
+//        com_plot.mapDatasetToDomainAxis(1, 1);
+//        com_plot.mapDatasetToRangeAxis(1, 1);
         smoothed_chart = new JFreeChart("", JFreeChart.DEFAULT_TITLE_FONT, xyplot, true);
         ChartPanel chartPanel = new ChartPanel(smoothed_chart);
         panel.setLayout(new java.awt.BorderLayout());
@@ -4399,15 +4405,15 @@ public class MainWindow extends javax.swing.JFrame {
         plot.setDomainAxis(1, domain2);
         plot.setRangeAxis(1, range2);
 
-//        plot.mapDatasetToDomainAxis(0, 1);
-//        plot.mapDatasetToRangeAxis(0, 1);
+//        com_plot.mapDatasetToDomainAxis(0, 1);
+//        com_plot.mapDatasetToRangeAxis(0, 1);
         domain2.setAutoRange(true);
         domain2.setInverted(true);
         domain2.setVisible(false);
         range2.setVisible(false);
 
-//        plot.mapDatasetToDomainAxis(1, 1);
-//        plot.mapDatasetToRangeAxis(1, 1);
+//        com_plot.mapDatasetToDomainAxis(1, 1);
+//        com_plot.mapDatasetToRangeAxis(1, 1);
         JFreeChart chart = new JFreeChart("", JFreeChart.DEFAULT_TITLE_FONT, plot, true);
         ChartPanel chartPanel = new ChartPanel(chart);
         panel.setLayout(new java.awt.BorderLayout());
@@ -4954,6 +4960,7 @@ public class MainWindow extends javax.swing.JFrame {
             v1.discardBelowThresh(threshCurrent, lowerBoundT, upperBoundT);
             numBandsText.setText(String.valueOf(v1.getCandidates().size()));
             createDuel(createValleyDataset(v1.getCandidates()), createBaselineDataset(), comPanel);
+            v1.rangeMarker(com_plot);
             updateCandidateTable(v1.getCandidates());
 
         } catch (SQLException ex) {
@@ -4983,6 +4990,7 @@ public class MainWindow extends javax.swing.JFrame {
             numBandsText.setText(String.valueOf(v2.getCandidates().size()));
 
             createDuel(createValleyDataset(v2.getCandidates()), createBaselineDataset(), comPanel);
+            v2.rangeMarker(com_plot);
             updateCandidateTable(v2.getCandidates());
 
         } catch (SQLException ex) {
@@ -5482,7 +5490,7 @@ public class MainWindow extends javax.swing.JFrame {
                     combined2Charts(createDataset(intpol.getDifferencewithLine(), "Baseline Corrected"), input_dataset, comPanel);
                 }
 
-                //Valleys graph plot
+                //Valleys graph com_plot
                 {
                     showValleys("avg_data");
                 }

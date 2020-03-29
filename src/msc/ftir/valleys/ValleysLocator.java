@@ -5,6 +5,7 @@
  */
 package msc.ftir.valleys;
 
+import java.awt.Color;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -22,10 +23,14 @@ import javax.swing.JOptionPane;
 import msc.ftir.main.InputData;
 import msc.ftir.main.Javaconnect;
 import msc.ftir.main.MainWindow;
+import org.jfree.chart.plot.ValueMarker;
+import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.statistics.Regression;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.ui.RectangleAnchor;
+import org.jfree.ui.TextAnchor;
 
 /**
  *
@@ -47,6 +52,7 @@ public class ValleysLocator {
     private double hScale;
     private double c;
     private static ArrayList<InputData> smoothedPointList = new ArrayList<InputData>();
+    private double g_threshold;
 
     public static ArrayList<InputData> getSmoothedPointList() {
         return smoothedPointList;
@@ -319,11 +325,8 @@ public class ValleysLocator {
     //4. threshold adjuster
     public void discardBelowThresh(int n, double l, double u) {
 
-
         double max = Collections.max(candidates.values()).doubleValue();
         double min = Collections.min(candidates.values()).doubleValue();
-
-       
 
         lowerB = l;
         upperT = u;
@@ -354,15 +357,7 @@ public class ValleysLocator {
         candidates.clear();
         candidates = temp;
 
-//        System.out.println("New size " + candidates.size());
-        //print all
-/*        for (BigDecimal name : candidates.keySet()) {
-
-            String key = name.toString();
-            String value = candidates.get(name).toString();
-            System.out.println("new list " + key + " " + value);
-        }
-         */
+        g_threshold = threshold;
     }
 
     //6. noise level control
@@ -1383,12 +1378,12 @@ public class ValleysLocator {
             w = Math.abs(x1 - x2);
             System.out.println("w------  " + w);
 
-            if (d*100 > w) {
+            if (d * 100 > w) {
                 type = "sharp";
             } else if (w > d && X.doubleValue() > 3000) {
                 type = "broad";
             }
-            System.err.println("Type = " +type);
+            System.err.println("Type = " + type);
             //empty table
             String sql1 = "INSERT INTO `band`(`WAVENUMBER`, `D`, `W`, `TYPE`) VALUES (?,?,?,?)";
             ResultSet rs1 = null;
@@ -1414,6 +1409,23 @@ public class ValleysLocator {
 
         }
 
+    }
+
+    public void rangeMarker(XYPlot com_plot) {
+        ValueMarker marker = null;
+//                com_plot.clearRangeMarkers();
+//                if (!(threshSlider1.getValueIsAdjusting())) {
+//        int thresholdValue = threshSlider1.getValue();
+        //horizontal line drawer
+        marker = new ValueMarker(g_threshold);
+        marker.setLabel("Threshold Level");
+        marker.setLabelAnchor(RectangleAnchor.CENTER);
+        marker.setLabelTextAnchor(TextAnchor.TOP_CENTER);
+        marker.setLabelPaint(new Color(10, 122, 14));
+        marker.setPaint(new Color(10, 122, 14));
+        com_plot.addRangeMarker(marker);
+        //end
+//                }
     }
 
 }
