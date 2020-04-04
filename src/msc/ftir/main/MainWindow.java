@@ -5585,7 +5585,7 @@ public class MainWindow extends javax.swing.JFrame {
             JasperPrint jp = JasperFillManager.fillReport(ClassLoader.getSystemResourceAsStream("msc/ftir/print/resultsReport.jasper"), null, conn);
 //            JasperReport jr = JasperCompileManager.compileReport(reportPath);
 //            JasperPrint jp = JasperFillManager.fillReport(jr, null, conn);
-            JasperViewer.viewReport(jp);
+            JasperViewer.viewReport(jp, false);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

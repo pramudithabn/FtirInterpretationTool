@@ -227,18 +227,18 @@ FROM
 				<textElement textAlignment="Center">
 					<font fontName="Calibri" size="22" isBold="true"/>
 				</textElement>
-				<text><![CDATA[FTIR Report]]></text>
+				<text><![CDATA[FTIR Analysis Report]]></text>
 			</staticText>
 		</band>
 	</title>
 	<pageHeader>
 		<band height="58">
 			<staticText>
-				<reportElement x="11" y="10" width="49" height="20" uuid="8343fa9a-4589-4708-a179-eddbf32d70f5"/>
+				<reportElement x="11" y="10" width="85" height="20" uuid="8343fa9a-4589-4708-a179-eddbf32d70f5"/>
 				<textElement>
 					<font fontName="Calibri" size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Name :]]></text>
+				<text><![CDATA[Sample Label :]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="396" y="10" width="36" height="20" uuid="28967afb-daf5-4821-aa45-ecad4a349a48"/>
