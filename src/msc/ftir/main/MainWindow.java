@@ -5580,11 +5580,7 @@ public class MainWindow extends javax.swing.JFrame {
         try {
             OutputStream out = new FileOutputStream("chart_image.png");
             ChartUtilities.writeChartAsPNG(out, duelchart, comPanel.getWidth(), comPanel.getHeight());
-//            final String dir = System.getProperty("user.dir");
-//            String reportPath = dir + "/src/msc/ftir/print/resultsReport.jrxml";
             JasperPrint jp = JasperFillManager.fillReport(ClassLoader.getSystemResourceAsStream("msc/ftir/print/resultsReport.jasper"), null, conn);
-//            JasperReport jr = JasperCompileManager.compileReport(reportPath);
-//            JasperPrint jp = JasperFillManager.fillReport(jr, null, conn);
             JasperViewer.viewReport(jp, false);
         } catch (Exception ex) {
             ex.printStackTrace();
