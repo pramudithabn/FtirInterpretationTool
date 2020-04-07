@@ -33,7 +33,6 @@ import java.net.URL;
 import javax.swing.JFileChooser;
 import java.sql.*;
 import java.text.DecimalFormat;
-import java.text.MessageFormat;
 import javax.swing.*;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -83,11 +82,8 @@ import msc.ftir.result.CheckBoxRenderer;
 import msc.ftir.result.CheckList;
 import msc.ftir.result.LabeledXYDataset;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.view.JasperViewer;
 import org.jfree.chart.ChartUtilities;
 
@@ -1793,9 +1789,14 @@ public class MainWindow extends javax.swing.JFrame {
                 peaktops = null;
                 temp_peaktops = null;
                 clickcount = 0;
-
             }
             clearAll();
+            DefaultTableModel dtm = (DefaultTableModel) printTable.getModel();
+            dtm.setRowCount(0);
+
+            specSplitPane.getTopComponent().setMaximumSize(new Dimension());
+            specSplitPane.setDividerLocation(0.5d);
+//            chartPanel_com.setSize(859, 425);
         } else {
             setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         }
@@ -2868,11 +2869,11 @@ public class MainWindow extends javax.swing.JFrame {
     private void fileChooser() {
         try {
             Properties props = new Properties();
+//            props.load(getClass().getResourceAsStream("/msc/ftir/util/file.properties"));
             props.load(ClassLoader.class.getResourceAsStream("/msc/ftir/util/file.properties"));
             String p = props.getProperty("jfilechooser.browser.filepath");
             JFileChooser chooser = new JFileChooser(p, null);
             chooser.showOpenDialog(this);
-
             //for file type validation
             File dataFile = chooser.getSelectedFile();
 
@@ -2885,17 +2886,19 @@ public class MainWindow extends javax.swing.JFrame {
                 //store current directory
                 File dataFile2 = chooser.getCurrentDirectory();
                 String newDirectoryLoc = dataFile2.getAbsolutePath().replace("\\", "/");
-                URL url = this.getClass().getResource("/msc/ftir/util/file.properties");
+                URL url = ClassLoader.class.getClass().getResource("/msc/ftir/util/file.properties");
                 String path = url.getPath();
                 OutputStream out = new FileOutputStream(path);
                 props.setProperty("jfilechooser.browser.filepath", newDirectoryLoc);
 
                 props.store(out, null);
                 out.close();
+               
+                        
             }
 
         } catch (Exception e) {
-            System.out.println(e);
+            System.err.println(e);
         }
 
     }
@@ -3320,7 +3323,6 @@ public class MainWindow extends javax.swing.JFrame {
             comPanel.removeAll();
             comPanel.revalidate();
             comPanel.repaint();
-
         } catch (Exception e) {
             System.out.println(e);
         } finally {
@@ -5198,14 +5200,11 @@ public class MainWindow extends javax.swing.JFrame {
             PreparedStatement pst1 = conn.prepareStatement(sql1);
             ResultSet rst = pst1.executeQuery();
 
-//            String sql = "select `WAVENUMBER` AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group', `COMPOUND_TYPE` AS 'Compound Type' , `COMPOUND_CATEGORY` AS 'Compound Category' from result";
             String sql = "SELECT (@row_number:=@row_number + 1) AS 'Index', round(`WAVENUMBER`,0) AS 'Wavenumber', `BOND` AS 'Bond', `FUNCTIONAL_GROUP` AS 'Functional Group', LIB_INDEX AS 'Lib.Index' from result";
             pst = conn.prepareStatement(sql);
             rs = pst.executeQuery();
             resultTable.setModel(DbUtils.resultSetToTableModel(rs));
 
-//            CheckBoxWrapperTableModel wrapperModel = new CheckBoxWrapperTableModel(DbUtils.resultSetToTableModel(rs), "Select");
-//            resultTable.setModel( wrapperModel );
         } catch (Exception e) {
             System.out.println(e);
         } finally {

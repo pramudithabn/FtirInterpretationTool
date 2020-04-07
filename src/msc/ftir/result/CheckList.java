@@ -186,11 +186,13 @@ public class CheckList extends javax.swing.JFrame {
 //            String sql = "SELECT BOND_VIBMODE, FUNCTIONAL_GROUP, COMPOUND_TYPE, COMPOUND_CATEGORY   from library where ID = " + libIndex;
 //            String sql = "SELECT round(result.wavenumber) as 'Wavenumber', library.BOND_VIBMODE As 'Vib. Mode/ Bond', library.FUNCTIONAL_GROUP As 'Functional Group', library.COMPOUND_TYPE As 'Compound Type', library.COMPOUND_CATEGORY As 'Compound Category'  from library, result where library.ID = " + libIndex + " and result.lib_index = " + libIndex + " and library.ID = result.lib_index  LIMIT 1";
             //update 09.03.2020
-            String sql = "SELECT round(result.wavenumber) as 'Wavenumber', library2.BOND_VIBMODE As 'Vib. Mode/ Bond', library2.FUNCTIONAL_GROUP As 'Functional Group', library2.COMPOUND_TYPE As 'Compound Type', library2.COMPOUND_CATEGORY As 'Compound Category', library2.LABEL, library2.bond from library2, result where library2.ID = " + libIndex + " and result.lib_index = " + libIndex + " and library2.ID = result.lib_index  LIMIT 1";
+//            String sql = "SELECT round(result.wavenumber) as 'Wavenumber', library2.BOND_VIBMODE As 'Vib. Mode/ Bond', library2.FUNCTIONAL_GROUP As 'Functional Group', library2.COMPOUND_TYPE As 'Compound Type', library2.COMPOUND_CATEGORY As 'Compound Category', library2.LABEL, library2.bond from library2, result where library2.ID = " + libIndex + " and result.lib_index = " + libIndex + " and library2.ID = result.lib_index  LIMIT 1";
+            
+            String sql = "SELECT round(result.wavenumber) as 'Wavenumber', library2.BOND_VIBMODE As 'Vib. Mode/ Bond', library2.FUNCTIONAL_GROUP As 'Functional Group', library2.COMPOUND_TYPE As 'Compound Type', library2.COMPOUND_CATEGORY As 'Compound Category', library2.LABEL, library2.bond from library2, result where library2.ID = " + libIndex + " and result.lib_index = " + libIndex + " and library2.ID = result.lib_index and round(result.wavenumber)="+wavenumber;
             pst = conn.prepareStatement(sql);
             rs = pst.executeQuery();
 
-            String sql1 = "SELECT result.wavenumber as 'Wavenumber' from result, library2 where library2.ID = " + libIndex + " and result.lib_index = " + libIndex + " and library2.ID = result.lib_index  LIMIT 1";
+            String sql1 = "SELECT result.wavenumber as 'Wavenumber' from result, library2 where library2.ID = " + libIndex + " and result.lib_index = " + libIndex + " and library2.ID = result.lib_index and round(result.wavenumber)="+wavenumber;
             pst2 = conn.prepareStatement(sql1);
             rs2 = pst2.executeQuery();
 
@@ -206,20 +208,21 @@ public class CheckList extends javax.swing.JFrame {
                 mu = "V";
 //                   s = rs.getString("Vib. Mode/ Bond");
                 s = mu + "[ " + s1 + " " + s2 + " ]";
-
+                     
             }
-
-            for (Object i : series0.getItems()) {
+                for (Object i : series0.getItems()) {
                 XYDataItem item = (XYDataItem) i;
                 double x = item.getXValue();
                 double y = item.getYValue();
 
                 if (Math.abs(x - x1) == 0) {
                     System.out.println(x + " " + x + " " + s);
+//                    JOptionPane.showMessageDialog(this, x1 + " " + x + " " + s+" "+libIndex);
                     ds.update(x, s);
                 }
             }
             createReportSpectrum(ds, createBaselineDataset(), MainWindow.comPanel);
+            
         } catch (SQLException e) {
             System.err.println(e);
         } finally {
@@ -561,7 +564,7 @@ public class CheckList extends javax.swing.JFrame {
                         }
 
                     } catch (SQLException ex) {
-                        Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                        System.err.println(ex);
                     }
                 }
             }
