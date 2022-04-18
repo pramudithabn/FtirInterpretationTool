@@ -1,7 +1,6 @@
 package msc.ftir.main;
 
 import java.awt.BorderLayout;
-import javafx.scene.control.Button;
 import java.awt.Dimension;
 import net.proteanit.sql.DbUtils;
 import java.io.BufferedReader;
@@ -22,17 +21,6 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.*;
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
-import javafx.util.Duration;
-import javafx.scene.layout.HBox;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import msc.ftir.util.FileType;
